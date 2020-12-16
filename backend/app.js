@@ -23,6 +23,15 @@ require('./models/push_user');
 		
 require('./models/image');
 require('./models/comment');
+require('./models/like');
+require('./models/user');
+
+// Must first load the models
+require('./models/user');
+require('./models/push_user');
+		
+require('./models/image');
+require('./models/comment');
 
 // Must first load the models
 require('./models/user');

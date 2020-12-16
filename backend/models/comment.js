@@ -6,17 +6,15 @@ const CommentSchema = new mongoose.Schema({
 
 	_id: Schema.Types.ObjectId,
 
-	image_thumbnail:String,
 	text:String,
-	date_of_publishing:String,
-	author_name:String,
-	comment_order:Number,
+	commenting_timestamp:String,
 
 // other model links
-	image:{ type: Schema.Types.ObjectId, ref: 'Image'  },
-	user:{ type: Schema.Types.ObjectId, ref: 'User'  },
-	total_image:0,
+	image:{ type: Schema.Types.ObjectId, ref: 'Image'  , default: null},
+	video: { type: Schema.Types.ObjectId, ref: 'Video' , default: null },
+	blogpost: { type: Schema.Types.ObjectId, ref: 'BlogPost' , default: null},
 
+	user:{ type: Schema.Types.ObjectId, ref: 'User', required: true},
 })
 
 mongoose.model('Comment', CommentSchema);

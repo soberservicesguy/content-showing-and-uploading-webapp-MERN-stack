@@ -2,36 +2,41 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+var endpoint_number = 393893
+
 const VideoSchema = new mongoose.Schema({
 
 	_id: Schema.Types.ObjectId,
 
 	category:String,
-	image_main:String,
+	image_thumbnail:String,
+	video_filename:String,
 	title:String,
-	description:String,
-	date_of_publishing:String,
-	author_name:String,
-	first_para:String,
-	total_likes:String,
-	total_shares:String,
 	endpoint:String,
-	initial_tags:String,
-	video_path:String,
-	video_format:String,
+	description:String,
+	timestamp_of_uploading:String,
 	all_tags:String,
-	uploader_details:String,
 
 // other model links
 	comments:[{ type: Schema.Types.ObjectId, ref: 'Comment' }],
+	likes:[{ type: Schema.Types.ObjectId, ref: 'Like' }],
+
+	user:{ type: Schema.Types.ObjectId, ref: 'User' },
+
 	total_comments:0,
+	total_likes:0,
 
 })
 
 mongoose.model('Video', VideoSchema);
 	
 VideoSchema.pre('save', function(next) {
+
 	this.total_comments = this.comments.length
+	this.total_likes = this.likes.length
+
+	this.endpoint = String( endpoint_number + 1 )
+	endpoint_number += 1
 
     next();
 

@@ -68,11 +68,8 @@ class CreateComment extends Component {
 // STATE	
 		this.state = {
 			redirectToRoute: false,
-			image_thumbnail: '',
 			text: '',
-			date_of_publishing: '',
-			author_name: '',
-			comment_order: '',
+			commenting_timestamp: '',
 		}
 
 	}
@@ -106,18 +103,6 @@ class CreateComment extends Component {
 				  	<div style={styles.textinputContainer}>
 						<form className={styles.root} noValidate autoComplete="off">
 							<TextField 
-								label="Type your image_thumbnail" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
-								onChange={ (value) => this.setState( prev => ({...prev, image_thumbnail: value})) }
-							/>
-						</form>
-				  	</div>
-
-				  	<div style={styles.textinputContainer}>
-						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
 								label="Type your text" // placeholder 
 								id="standard-basic" // "filled-basic" / "outlined-basic"
 								variant="outlined" // "filled"
@@ -130,35 +115,11 @@ class CreateComment extends Component {
 				  	<div style={styles.textinputContainer}>
 						<form className={styles.root} noValidate autoComplete="off">
 							<TextField 
-								label="Type your date_of_publishing" // placeholder 
+								label="Type your commenting_timestamp" // placeholder 
 								id="standard-basic" // "filled-basic" / "outlined-basic"
 								variant="outlined" // "filled"
 								classes={styles.textinput}
-								onChange={ (value) => this.setState( prev => ({...prev, date_of_publishing: value})) }
-							/>
-						</form>
-				  	</div>
-
-				  	<div style={styles.textinputContainer}>
-						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
-								label="Type your author_name" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
-								onChange={ (value) => this.setState( prev => ({...prev, author_name: value})) }
-							/>
-						</form>
-				  	</div>
-
-				  	<div style={styles.textinputContainer}>
-						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
-								label="Type your comment_order" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
-								onChange={ (value) => this.setState( prev => ({...prev, comment_order: value})) }
+								onChange={ (value) => this.setState( prev => ({...prev, commenting_timestamp: value})) }
 							/>
 						</form>
 				  	</div>
@@ -169,11 +130,8 @@ class CreateComment extends Component {
 
 							// first create child object
 							let comment_object = {
-								image_thumbnail: this.state.image_thumbnail,
 								text: this.state.text,
-								date_of_publishing: this.state.date_of_publishing,
-								author_name: this.state.author_name,
-								comment_order: this.state.comment_order,
+								commenting_timestamp: this.state.commenting_timestamp,
 							}
 
 							// 2nd create linked object from redux (linked_object_and_live_object_in_redux in schema)
@@ -181,6 +139,19 @@ class CreateComment extends Component {
 
 								user_name: this.props.user_name,
 								phone_number: this.props.phone_number,
+								user_image: this.props.user_image,
+								hash: this.props.hash,
+								salt: this.props.salt,
+								user_name: this.props.user_name,
+								phone_number: this.props.phone_number,
+								user_image: this.props.user_image,
+								hash: this.props.hash,
+								salt: this.props.salt,
+								user_name: this.props.user_name,
+								phone_number: this.props.phone_number,
+								user_image: this.props.user_image,
+								hash: this.props.hash,
+								salt: this.props.salt,
 							}
 
 							// 3rd create parent object								

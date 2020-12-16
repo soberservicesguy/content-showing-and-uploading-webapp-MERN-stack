@@ -5,7 +5,6 @@ import {mapStateToProps, mapDispatchToProps} from "./store_configuration";
 import {
 
 	RootRouterContainer,
-
 	BlogPostContainer,
 	IndividualBlogPost,
 	VideoContainer,
@@ -39,13 +38,9 @@ import {
 	CreateComment,
 } from "../components/comments"
 
-// import {
-// 	CreateComment,
-// } from "../components/comments"
-
-// import {
-// 	CreateComment,
-// } from "../components/comments"
+import {
+	CreateLike,
+} from "../components/likes"
 
 export const ConnectedRootRouterContainer = connect(
 	mapStateToProps,
@@ -78,6 +73,11 @@ export const ConnectedCreateComment = connect(
 	mapDispatchToProps
 )(CreateComment);
 
+export const ConnectedCreateLike = connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(CreateLike);
+
 export const ConnectedCreateVideo = connect(
 	mapStateToProps,
 	mapDispatchToProps
@@ -92,11 +92,6 @@ export const ConnectedComponentForShowingVideo = connect(
 	mapStateToProps,
 	mapDispatchToProps
 )(ComponentForShowingVideo);
-
-// export const ConnectedCreateComment = connect(
-// 	mapStateToProps,
-// 	mapDispatchToProps
-// )(CreateComment);
 
 export const ConnectedCreateImage = connect(
 	mapStateToProps,
@@ -113,12 +108,6 @@ export const ConnectedComponentForShowingImage = connect(
 	mapDispatchToProps
 )(ComponentForShowingImage);
 
-// export const ConnectedCreateComment = connect(
-// 	mapStateToProps,
-// 	mapDispatchToProps
-// )(CreateComment);
-
-
 export const ConnectedIndividualBlogPost = connect(
 	mapStateToProps,
 	mapDispatchToProps
@@ -129,8 +118,6 @@ export const ConnectedBlogPostContainer = connect(
 	mapDispatchToProps
 )(BlogPostContainer);
 
-
-
 export const ConnectedIndividualVideo = connect(
 	mapStateToProps,
 	mapDispatchToProps
@@ -140,8 +127,6 @@ export const ConnectedVideoContainer = connect(
 	mapStateToProps,
 	mapDispatchToProps
 )(VideoContainer);
-
-
 
 export const ConnectedIndividualImage = connect(
 	mapStateToProps,

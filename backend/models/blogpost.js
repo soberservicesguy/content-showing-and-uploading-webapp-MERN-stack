@@ -1,6 +1,7 @@
-
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+
+var endpoint_number = 393893
 
 const BlogPostSchema = new mongoose.Schema({
 
@@ -10,30 +11,36 @@ const BlogPostSchema = new mongoose.Schema({
 	image_main:String,
 	title:String,
 	date_of_publishing:String,
-	author_name:String,
-	first_para:String,
-	total_likes:String,
-	total_shares:String,
-	endpoint:String,
 	initial_tags:String,
+	endpoint:String,
+	first_para:String,
 	second_para:String,
 	qouted_para:String,
 	third_para:String,
 	fourth_para:String,
 	all_tags:String,
-	author_details:String,
 
 // other model links
 	comments:[{ type: Schema.Types.ObjectId, ref: 'Comment' }],
+	likes:[{ type: Schema.Types.ObjectId, ref: 'Like' }],
+
 	user:{ type: Schema.Types.ObjectId, ref: 'User' },
+
 	total_comments:0,
+	total_likes:0,
 
 })
 
 mongoose.model('BlogPost', BlogPostSchema);
-	
+
+
 BlogPostSchema.pre('save', function(next) {
+
 	this.total_comments = this.comments.length
+	this.total_likes = this.likes.length
+
+	this.endpoint = String( endpoint_number + 1 )
+	endpoint_number += 1
 
     next();
 

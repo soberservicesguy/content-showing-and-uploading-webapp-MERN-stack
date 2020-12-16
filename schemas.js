@@ -15,25 +15,21 @@ const all_schemas = [
 			summarized_version_length:6,
 			index:'endpoint',
 
-			children_classes:['Comment','User',],
+			children_classes:['Comment','Like','User',],
 			schemafields:
 					{
 						category: 'String',
 						image_main: 'String',
 						title: 'String',
 						date_of_publishing: 'String',
-						author_name: 'String',
-						first_para: 'String',
-						total_likes: 'String',
-						total_shares: 'String',
-						endpoint: 'String',
 						initial_tags: 'String',
+						endpoint: 'String',
+						first_para: 'String',
 						second_para: 'String',
 						qouted_para: 'String',
 						third_para: 'String',
 						fourth_para: 'String',
 						all_tags: 'String',
-						author_details: 'String',
 					},
 
 			
@@ -77,6 +73,8 @@ const all_schemas = [
 	
 					{comments: `[{ type: Schema.Types.ObjectId, ref: 'Comment' }]`},
 
+					{likes: `[{ type: Schema.Types.ObjectId, ref: 'Like' }]`},
+
 					{user: `{ type: Schema.Types.ObjectId, ref: 'User' }`},
 
 				]
@@ -89,15 +87,34 @@ const all_schemas = [
 				react_class_name_for_container:'Comment', // used for pushing reducers and endpoints, and state to containers. ALSO fill container names WITHOUT CONTAINER suffix but with underscores
 				react_class_name_for_card:'Comment_Card',
 				class_name:'Comment', // first letter should be capitalized of each token and singular
-				summarized_version_length:5,
+				summarized_version_length:2,
 				index:'comment_order',
 				schemafields:
 					{
-						image_thumbnail: 'String',
 						text: 'String',
-						date_of_publishing: 'String',
-						author_name: 'String',
-						comment_order: 'Number',
+						commenting_timestamp: 'String',
+					},
+
+				other_model_links:[
+					{blogpost: `{ type: Schema.Types.ObjectId, ref: 'BlogPost'  }`},
+					{user: `{ type: Schema.Types.ObjectId, ref: 'User'  }`},
+
+
+				],
+			
+				linked_object_and_live_object_in_redux: 'User',
+			},				
+	
+			{
+				react_class_name_for_component:'Individual_Like', // used for pushing reducers and endpoints, and state to components. ALSO always use underscores, they will be removed where needed
+				react_class_name_for_container:'Like', // used for pushing reducers and endpoints, and state to containers. ALSO fill container names WITHOUT CONTAINER suffix but with underscores
+				react_class_name_for_card:'Like_Card',
+				class_name:'Like', // first letter should be capitalized of each token and singular
+				summarized_version_length:1,
+				index:'time_of_liking',
+				schemafields:
+					{
+						timestamp_of_liking: 'String',
 					},
 
 				other_model_links:[
@@ -115,17 +132,21 @@ const all_schemas = [
 				react_class_name_for_container:'User', // used for pushing reducers and endpoints, and state to containers. ALSO fill container names WITHOUT CONTAINER suffix but with underscores
 				react_class_name_for_card:'User_Card',
 				class_name:'User', // first letter should be capitalized of each token and singular
-				summarized_version_length:2,
+				summarized_version_length:3,
 				index:'phone_number',
 				schemafields:
 					{
 						user_name: 'String',
 						phone_number: 'String',
+						user_image: 'String',
+						hash: 'String',
+						salt: 'String',
 					},
 
 				other_model_links:[
 					{blogposts: `[{ type: Schema.Types.ObjectId, ref: 'Blog_Post'  }]`},
 					{comments: `[{ type: Schema.Types.ObjectId, ref: 'Comment'  }]`},
+					{likes: `[{ type: Schema.Types.ObjectId, ref: 'Like'  }]`},
 
 				],
 			
@@ -142,27 +163,20 @@ const all_schemas = [
 			react_class_name_for_card:'Video_Card',
 
 			class_name:'Video', // first letter should be capitalized of each token and singular
-			summarized_version_length:8,
+			summarized_version_length:5,
 			index:'endpoint',
 
-			children_classes:['Comment',],
+			children_classes:['Comment','Like','User',],
 			schemafields:
 					{
 						category: 'String',
-						image_main: 'String',
+						image_thumbnail: 'String',
+						video_filename: 'String',
 						title: 'String',
-						description: 'String',
-						date_of_publishing: 'String',
-						author_name: 'String',
-						first_para: 'String',
-						total_likes: 'String',
-						total_shares: 'String',
 						endpoint: 'String',
-						initial_tags: 'String',
-						video_path: 'String',
-						video_format: 'String',
+						description: 'String',
+						timestamp_of_uploading: 'String',
 						all_tags: 'String',
-						uploader_details: 'String',
 					},
 
 			
@@ -206,6 +220,10 @@ const all_schemas = [
 	
 					{comments: `[{ type: Schema.Types.ObjectId, ref: 'Comment' }]`},
 
+					{likes: `[{ type: Schema.Types.ObjectId, ref: 'Like' }]`},
+
+					{user: `{ type: Schema.Types.ObjectId, ref: 'User' }`},
+
 				]
 			},
 
@@ -216,15 +234,12 @@ const all_schemas = [
 				react_class_name_for_container:'Comment', // used for pushing reducers and endpoints, and state to containers. ALSO fill container names WITHOUT CONTAINER suffix but with underscores
 				react_class_name_for_card:'Comment_Card',
 				class_name:'Comment', // first letter should be capitalized of each token and singular
-				summarized_version_length:5,
+				summarized_version_length:2,
 				index:'comment_order',
 				schemafields:
 					{
-						image_thumbnail: 'String',
 						text: 'String',
-						date_of_publishing: 'String',
-						author_name: 'String',
-						comment_order: 'Number',
+						commenting_timestamp: 'String',
 					},
 
 				other_model_links:[
@@ -237,6 +252,57 @@ const all_schemas = [
 				linked_object_and_live_object_in_redux: 'User',
 			},				
 	
+			{
+				react_class_name_for_component:'Individual_Like', // used for pushing reducers and endpoints, and state to components. ALSO always use underscores, they will be removed where needed
+				react_class_name_for_container:'Like', // used for pushing reducers and endpoints, and state to containers. ALSO fill container names WITHOUT CONTAINER suffix but with underscores
+				react_class_name_for_card:'Like_Card',
+				class_name:'Like', // first letter should be capitalized of each token and singular
+				summarized_version_length:1,
+				index:'time_of_liking',
+				schemafields:
+					{
+						timestamp_of_liking: 'String',
+					},
+
+				other_model_links:[
+					{video: `{ type: Schema.Types.ObjectId, ref: 'Video'  }`},
+					{user: `{ type: Schema.Types.ObjectId, ref: 'User'  }`},
+
+
+				],
+			
+				linked_object_and_live_object_in_redux: 'User',
+			},				
+	
+			{
+				react_class_name_for_component:'Individual_User', // used for pushing reducers and endpoints, and state to components. ALSO always use underscores, they will be removed where needed
+				react_class_name_for_container:'User', // used for pushing reducers and endpoints, and state to containers. ALSO fill container names WITHOUT CONTAINER suffix but with underscores
+				react_class_name_for_card:'User_Card',
+				class_name:'User', // first letter should be capitalized of each token and singular
+				summarized_version_length:3,
+				index:'phone_number',
+				schemafields:
+					{
+						user_name: 'String',
+						phone_number: 'String',
+						user_image: 'String',
+						hash: 'String',
+						salt: 'String',
+					},
+
+				other_model_links:[
+					{blogposts: `[{ type: Schema.Types.ObjectId, ref: 'Blog_Post'  }]`},
+					{comments: `[{ type: Schema.Types.ObjectId, ref: 'Comment'  }]`},
+					{likes: `[{ type: Schema.Types.ObjectId, ref: 'Like'  }]`},
+					{videos: `[{ type: Schema.Types.ObjectId, ref: 'Video'  }]`},
+					{comments: `[{ type: Schema.Types.ObjectId, ref: 'Comment'  }]`},
+					{likes: `[{ type: Schema.Types.ObjectId, ref: 'Like'  }]`},
+
+				],
+			
+				linked_object_and_live_object_in_redux: '',
+			},				
+	
 		]
 	},
 
@@ -247,23 +313,19 @@ const all_schemas = [
 			react_class_name_for_card:'Image_Card',
 
 			class_name:'Image', // first letter should be capitalized of each token and singular
-			summarized_version_length:8,
+			summarized_version_length:4,
 			index:'endpoint',
 
-			children_classes:['Comment',],
+			children_classes:['Comment','Like','User',],
 			schemafields:
 					{
 						category: 'String',
 						image_source: 'String',
 						title: 'String',
-						description: 'String',
-						date_of_publishing: 'String',
-						author_name: 'String',
-						total_likes: 'String',
-						total_shares: 'String',
 						endpoint: 'String',
+						timestamp_of_uploading: 'String',
+						description: 'String',
 						all_tags: 'String',
-						uploader_details: 'String',
 					},
 
 			
@@ -307,6 +369,10 @@ const all_schemas = [
 	
 					{comments: `[{ type: Schema.Types.ObjectId, ref: 'Comment' }]`},
 
+					{likes: `[{ type: Schema.Types.ObjectId, ref: 'Like' }]`},
+
+					{user: `{ type: Schema.Types.ObjectId, ref: 'User' }`},
+
 				]
 			},
 
@@ -317,15 +383,12 @@ const all_schemas = [
 				react_class_name_for_container:'Comment', // used for pushing reducers and endpoints, and state to containers. ALSO fill container names WITHOUT CONTAINER suffix but with underscores
 				react_class_name_for_card:'Comment_Card',
 				class_name:'Comment', // first letter should be capitalized of each token and singular
-				summarized_version_length:5,
+				summarized_version_length:2,
 				index:'comment_order',
 				schemafields:
 					{
-						image_thumbnail: 'String',
 						text: 'String',
-						date_of_publishing: 'String',
-						author_name: 'String',
-						comment_order: 'Number',
+						commenting_timestamp: 'String',
 					},
 
 				other_model_links:[
@@ -336,6 +399,60 @@ const all_schemas = [
 				],
 			
 				linked_object_and_live_object_in_redux: 'User',
+			},				
+	
+			{
+				react_class_name_for_component:'Individual_Like', // used for pushing reducers and endpoints, and state to components. ALSO always use underscores, they will be removed where needed
+				react_class_name_for_container:'Like', // used for pushing reducers and endpoints, and state to containers. ALSO fill container names WITHOUT CONTAINER suffix but with underscores
+				react_class_name_for_card:'Like_Card',
+				class_name:'Like', // first letter should be capitalized of each token and singular
+				summarized_version_length:1,
+				index:'time_of_liking',
+				schemafields:
+					{
+						timestamp_of_liking: 'String',
+					},
+
+				other_model_links:[
+					{image: `{ type: Schema.Types.ObjectId, ref: 'Image'  }`},
+					{user: `{ type: Schema.Types.ObjectId, ref: 'User'  }`},
+
+
+				],
+			
+				linked_object_and_live_object_in_redux: 'User',
+			},				
+	
+			{
+				react_class_name_for_component:'Individual_User', // used for pushing reducers and endpoints, and state to components. ALSO always use underscores, they will be removed where needed
+				react_class_name_for_container:'User', // used for pushing reducers and endpoints, and state to containers. ALSO fill container names WITHOUT CONTAINER suffix but with underscores
+				react_class_name_for_card:'User_Card',
+				class_name:'User', // first letter should be capitalized of each token and singular
+				summarized_version_length:3,
+				index:'phone_number',
+				schemafields:
+					{
+						user_name: 'String',
+						phone_number: 'String',
+						user_image: 'String',
+						hash: 'String',
+						salt: 'String',
+					},
+
+				other_model_links:[
+					{blogposts: `[{ type: Schema.Types.ObjectId, ref: 'Blog_Post'  }]`},
+					{comments: `[{ type: Schema.Types.ObjectId, ref: 'Comment'  }]`},
+					{likes: `[{ type: Schema.Types.ObjectId, ref: 'Like'  }]`},
+					{videos: `[{ type: Schema.Types.ObjectId, ref: 'Video'  }]`},
+					{comments: `[{ type: Schema.Types.ObjectId, ref: 'Comment'  }]`},
+					{likes: `[{ type: Schema.Types.ObjectId, ref: 'Like'  }]`},
+					{images: `[{ type: Schema.Types.ObjectId, ref: 'Image'  }]`},
+					{comments: `[{ type: Schema.Types.ObjectId, ref: 'Comment'  }]`},
+					{likes: `[{ type: Schema.Types.ObjectId, ref: 'Like'  }]`},
+
+				],
+			
+				linked_object_and_live_object_in_redux: '',
 			},				
 	
 		]

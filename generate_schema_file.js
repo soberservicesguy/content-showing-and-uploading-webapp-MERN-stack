@@ -10,43 +10,46 @@ const parents_children_pairs = [
 			{	
 				Comment:{		
 					schemafields:{
-						image_thumbnail:`String`, 
 						text:`String`,
-						date_of_publishing:`String`,
-						author_name:'String',
-						comment_order:'Number',
-						// first_para:'String',
-						// total_likes:'String',
-						// total_shares:'String',
-						// comment_order:'String', 
-						// above attributes will populate cards together with below ones they will populate entire object
-						// initial_tags:'String',
-						// second_para:'String',
-						// qouted_para:'String',
-						// source_of_qoutation:'String',
-						// third_para:'String',
-						// fourth_para:'String',
-						// all_tags:'String',
-						// author_details:'String',
+						commenting_timestamp:`String`,
 					},
 
 					linked_object_and_live_object_in_redux: 'User',
 					index:'comment_order',
-					summarized_version_length:5, 
+					summarized_version_length:2, 
 					special_lists_in_frontend:[],
 					// attributes_which_can_be_modified_in_frontend:['initial_quantity', ]
 					object_filtering_keys:[],
 				}
 			},
+
+			{	
+				Like:{		
+					schemafields:{
+						timestamp_of_liking:`String`,
+					},
+
+					linked_object_and_live_object_in_redux: 'User',
+					index:'time_of_liking', // not needed
+					summarized_version_length:1, 
+					special_lists_in_frontend:[],
+					// attributes_which_can_be_modified_in_frontend:['initial_quantity', ]
+					object_filtering_keys:[],
+				}
+			},
+
 			{
 				User:{
 					schemafields:{
 						user_name: `String`,
 						phone_number:'String',
+						user_image:'String',
+						hash:'String',
+						salt:'String',
 					},
 					linked_object_and_live_object_in_redux: '',
 					index:'phone_number',
-					summarized_version_length:2, 
+					summarized_version_length:3, 
 					special_lists_in_frontend:[],
 					// attributes_which_can_be_modified_in_frontend:['initial_quantity', ]
 					object_filtering_keys:[],
@@ -58,20 +61,19 @@ const parents_children_pairs = [
 			image_main:`String`, 
 			title:`String`,
 			date_of_publishing:`String`,
-			author_name:'String',
-			first_para:'String',
-			total_likes:'String',
-			total_shares:'String',
+			initial_tags:'String',
 			endpoint:'String', // there should be always endpoint in parent, and in summarized version
 			// above attributes will populate cards together with below ones they will populate entire object
-			initial_tags:'String',
+			first_para:'String',
 			second_para:'String',
 			qouted_para:'String',
-			// source_of_qoutation:'String',
 			third_para:'String',
 			fourth_para:'String',
 			all_tags:'String',
-			author_details:'String',
+
+			// NOT NEEDED, IT MIGHT BE GENERATED AUTOMATICALLY
+			// total_likes: 'String',
+			// total_comments: 'String',
 		},
 		linked_object_and_live_object_in_redux: 'User',
 		index:'endpoint',
@@ -94,74 +96,66 @@ const parents_children_pairs = [
 			{	
 				Comment:{		
 					schemafields:{
-						image_thumbnail:`String`, 
 						text:`String`,
-						date_of_publishing:`String`,
-						author_name:'String',
-						comment_order:'Number',
-						// first_para:'String',
-						// total_likes:'String',
-						// total_shares:'String',
-						// comment_order:'String', 
-						// above attributes will populate cards together with below ones they will populate entire object
-						// initial_tags:'String',
-						// second_para:'String',
-						// qouted_para:'String',
-						// source_of_qoutation:'String',
-						// third_para:'String',
-						// fourth_para:'String',
-						// all_tags:'String',
-						// author_details:'String',
+						commenting_timestamp:`String`,
 					},
 
 					linked_object_and_live_object_in_redux: 'User',
 					index:'comment_order',
-					summarized_version_length:5, 
+					summarized_version_length:2, 
 					special_lists_in_frontend:[],
 					// attributes_which_can_be_modified_in_frontend:['initial_quantity', ]
 					object_filtering_keys:[],
 				}
 			},
-// NOT NEEDED TO CREATE LINKED OBJECT AGAIN AND AGAIN
-			// {
-			// 	User:{
-			// 		schemafields:{
-			// 			user_name: `String`,
-			// 			phone_number:'String',
-			// 		},
-			// 		linked_object_and_live_object_in_redux: '',
-			// 		index:'phone_number',
-			// 		summarized_version_length:2, 
-			// 		special_lists_in_frontend:[],
-			// 		// attributes_which_can_be_modified_in_frontend:['initial_quantity', ]
-			// 		object_filtering_keys:[],
-			// 	}
-			// },
+
+			{	
+				Like:{		
+					schemafields:{
+						timestamp_of_liking:`String`,
+					},
+
+					linked_object_and_live_object_in_redux: 'User',
+					index:'time_of_liking', // not needed
+					summarized_version_length:1, 
+					special_lists_in_frontend:[],
+					// attributes_which_can_be_modified_in_frontend:['initial_quantity', ]
+					object_filtering_keys:[],
+				}
+			},
+
+			{
+				User:{
+					schemafields:{
+						user_name: `String`,
+						phone_number:'String',
+						user_image:'String',
+						hash:'String',
+						salt:'String',
+					},
+					linked_object_and_live_object_in_redux: '',
+					index:'phone_number',
+					summarized_version_length:3, 
+					special_lists_in_frontend:[],
+					// attributes_which_can_be_modified_in_frontend:['initial_quantity', ]
+					object_filtering_keys:[],
+				}
+			},
 		], 
 		schemafields:{
 			category:'String',
-			image_main:`String`, 
+			image_thumbnail:`String`, 
+			video_filename: 'String',
 			title:`String`,
-			description:'String',
-			date_of_publishing:`String`,
-			author_name:'String',
-			first_para:'String',
-			total_likes:'String',
-			total_shares:'String',
 			endpoint:'String', // there should be always endpoint in parent, and in summarized version
 			// above attributes will populate cards together with below ones they will populate entire object
-			initial_tags:'String',
-			video_path:'String',
-			video_format:'String',
-			// source_of_qoutation:'String',
-			// third_para:'String',
-			// fourth_para:'String',
+			description:'String',
+			timestamp_of_uploading:`String`,
 			all_tags:'String',
-			uploader_details:'String',
 		},
 		linked_object_and_live_object_in_redux: 'User',
 		index:'endpoint',
-		summarized_version_length:8,
+		summarized_version_length:5,
 		special_lists_in_frontend:[], // dont create it in parent
 		attributes_which_can_be_modified_in_frontend:[],// KKEP IT SINGLE TOJENNED
 		object_filtering_keys:[
@@ -171,9 +165,6 @@ const parents_children_pairs = [
 			{set_collection_name:'Sports Videos', category:'Sports'}, 
 			{set_collection_name:'Travel & Events Videos', category:'Travel & Events'}, 
 			{set_collection_name:'Entertainment Videos', category:'Entertainment'}, 
-			// {set_collection_name:'Low Price Products', price:'>10 and <20'}, 
-			// {set_collection_name:'High Ratings Products', rating:'>10'}, 
-			// {set_collection_name:'Products For Men', product_category:'men'},
 		],
 	},
 
@@ -183,74 +174,67 @@ const parents_children_pairs = [
 			{	
 				Comment:{		
 					schemafields:{
-						image_thumbnail:`String`, 
 						text:`String`,
-						date_of_publishing:`String`,
-						author_name:'String',
-						comment_order:'Number',
-						// first_para:'String',
-						// total_likes:'String',
-						// total_shares:'String',
-						// comment_order:'String', 
-						// above attributes will populate cards together with below ones they will populate entire object
-						// initial_tags:'String',
-						// second_para:'String',
-						// qouted_para:'String',
-						// source_of_qoutation:'String',
-						// third_para:'String',
-						// fourth_para:'String',
-						// all_tags:'String',
-						// author_details:'String',
+						commenting_timestamp:`String`,
 					},
 
 					linked_object_and_live_object_in_redux: 'User',
 					index:'comment_order',
-					summarized_version_length:5, 
+					summarized_version_length:2, 
 					special_lists_in_frontend:[],
 					// attributes_which_can_be_modified_in_frontend:['initial_quantity', ]
 					object_filtering_keys:[],
 				}
 			},
-// NOT NEEDED TO CREATE LINKED OBJECT AGAIN AND AGAIN
-			// {
-			// 	User:{
-			// 		schemafields:{
-			// 			user_name: `String`,
-			// 			phone_number:'String',
-			// 		},
-			// 		linked_object_and_live_object_in_redux: '',
-			// 		index:'phone_number',
-			// 		summarized_version_length:2, 
-			// 		special_lists_in_frontend:[],
-			// 		// attributes_which_can_be_modified_in_frontend:['initial_quantity', ]
-			// 		object_filtering_keys:[],
-			// 	}
-			// },
+
+			{	
+				Like:{		
+					schemafields:{
+						timestamp_of_liking:`String`,
+					},
+
+					linked_object_and_live_object_in_redux: 'User',
+					index:'time_of_liking', // not needed
+					summarized_version_length:1, 
+					special_lists_in_frontend:[],
+					// attributes_which_can_be_modified_in_frontend:['initial_quantity', ]
+					object_filtering_keys:[],
+				}
+			},
+
+			{
+				User:{
+					schemafields:{
+						user_name: `String`,
+						phone_number:'String',
+						user_image:'String',
+						hash:'String',
+						salt:'String',
+					},
+					linked_object_and_live_object_in_redux: '',
+					index:'phone_number',
+					summarized_version_length:3, 
+					special_lists_in_frontend:[],
+					// attributes_which_can_be_modified_in_frontend:['initial_quantity', ]
+					object_filtering_keys:[],
+				}
+			},
 		], 
 		schemafields:{
 			category:'String',
 			image_source:`String`, 
 			title:`String`,
-			description:'String',
-			date_of_publishing:`String`,
-			author_name:'String',
-			// first_para:'String',
-			total_likes:'String',
-			total_shares:'String',
 			endpoint:'String', // there should be always endpoint in parent, and in summarized version
-			// above attributes will populate cards together with below ones they will populate entire object
-			// initial_tags:'String',
-			// video_path:'String',
-			// video_format:'String',
-			// source_of_qoutation:'String',
-			// third_para:'String',
-			// fourth_para:'String',
+			timestamp_of_uploading:`String`,
+			description:'String',
 			all_tags:'String',
-			uploader_details:'String',
+
+			// total_likes:'String',
+			// total_comments:'String',
 		},
 		linked_object_and_live_object_in_redux: 'User',
 		index:'endpoint',
-		summarized_version_length:8,
+		summarized_version_length:4,
 		special_lists_in_frontend:[], // dont create it in parent
 		attributes_which_can_be_modified_in_frontend:[],// KKEP IT SINGLE TOJENNED
 		object_filtering_keys:[
@@ -260,125 +244,8 @@ const parents_children_pairs = [
 			{set_collection_name:'Sports Images', category:'Sports'}, 
 			{set_collection_name:'Travel Images', category:'Travel'}, 
 			{set_collection_name:'Nature Images', category:'Nature'}, 
-			// {set_collection_name:'Low Price Products', price:'>10 and <20'}, 
-			// {set_collection_name:'High Ratings Products', rating:'>10'}, 
-			// {set_collection_name:'Products For Men', product_category:'men'},
 		],
 	},
-
-	// {
-	// 	// parent children pair is below
-	// 	Image_Category:[ 
-	// 	], 
-	// 	schemafields:{
-	// 		category_name:'String',
-	// 		// image_source:`String`, 
-	// 		// title:`String`,
-	// 		// description:'String',
-	// 		// date_of_publishing:`String`,
-	// 		// author_name:'String',
-	// 		// // first_para:'String',
-	// 		// total_likes:'String',
-	// 		// total_shares:'String',
-	// 		// endpoint:'String', // there should be always endpoint in parent, and in summarized version
-	// 		// // above attributes will populate cards together with below ones they will populate entire object
-	// 		// // initial_tags:'String',
-	// 		// // video_path:'String',
-	// 		// // video_format:'String',
-	// 		// // source_of_qoutation:'String',
-	// 		// // third_para:'String',
-	// 		// // fourth_para:'String',
-	// 		// all_tags:'String',
-	// 		// uploader_details:'String',
-	// 	},
-	// 	linked_object_and_live_object_in_redux: '',
-	// 	index:'category_name',
-	// 	summarized_version_length:1,
-	// 	special_lists_in_frontend:[], // dont create it in parent
-	// 	attributes_which_can_be_modified_in_frontend:[],// KKEP IT SINGLE TOJENNED
-	// 	object_filtering_keys:[
-	// 		// {set_collection_name:'Latest Products', date_of_publishing:'after 10/Jun/2020'}, 
-	// 		// {set_collection_name:'Low Price Products', price:'>10 and <20'}, 
-	// 		// {set_collection_name:'High Ratings Products', rating:'>10'}, 
-	// 		// {set_collection_name:'Products For Men', product_category:'men'},
-	// 	],
-	// },	
-
-	// {
-	// 	// parent children pair is below
-	// 	Video_Category:[ 
-	// 	], 
-	// 	schemafields:{
-	// 		category_name:'String',
-	// 		// image_source:`String`, 
-	// 		// title:`String`,
-	// 		// description:'String',
-	// 		// date_of_publishing:`String`,
-	// 		// author_name:'String',
-	// 		// // first_para:'String',
-	// 		// total_likes:'String',
-	// 		// total_shares:'String',
-	// 		// endpoint:'String', // there should be always endpoint in parent, and in summarized version
-	// 		// // above attributes will populate cards together with below ones they will populate entire object
-	// 		// // initial_tags:'String',
-	// 		// // video_path:'String',
-	// 		// // video_format:'String',
-	// 		// // source_of_qoutation:'String',
-	// 		// // third_para:'String',
-	// 		// // fourth_para:'String',
-	// 		// all_tags:'String',
-	// 		// uploader_details:'String',
-	// 	},
-	// 	linked_object_and_live_object_in_redux: '',
-	// 	index:'category_name',
-	// 	summarized_version_length:1,
-	// 	special_lists_in_frontend:[], // dont create it in parent
-	// 	attributes_which_can_be_modified_in_frontend:[],// KKEP IT SINGLE TOJENNED
-	// 	object_filtering_keys:[
-	// 		// {set_collection_name:'Latest Products', date_of_publishing:'after 10/Jun/2020'}, 
-	// 		// {set_collection_name:'Low Price Products', price:'>10 and <20'}, 
-	// 		// {set_collection_name:'High Ratings Products', rating:'>10'}, 
-	// 		// {set_collection_name:'Products For Men', product_category:'men'},
-	// 	],
-	// },
-
-	// {
-	// 	// parent children pair is below
-	// 	Blog_Category:[ 
-	// 	], 
-	// 	schemafields:{
-	// 		category_name:'String',
-	// 		// image_source:`String`, 
-	// 		// title:`String`,
-	// 		// description:'String',
-	// 		// date_of_publishing:`String`,
-	// 		// author_name:'String',
-	// 		// // first_para:'String',
-	// 		// total_likes:'String',
-	// 		// total_shares:'String',
-	// 		// endpoint:'String', // there should be always endpoint in parent, and in summarized version
-	// 		// // above attributes will populate cards together with below ones they will populate entire object
-	// 		// // initial_tags:'String',
-	// 		// // video_path:'String',
-	// 		// // video_format:'String',
-	// 		// // source_of_qoutation:'String',
-	// 		// // third_para:'String',
-	// 		// // fourth_para:'String',
-	// 		// all_tags:'String',
-	// 		// uploader_details:'String',
-	// 	},
-	// 	linked_object_and_live_object_in_redux: '',
-	// 	index:'category_name',
-	// 	summarized_version_length:1,
-	// 	special_lists_in_frontend:[], // dont create it in parent
-	// 	attributes_which_can_be_modified_in_frontend:[],// KKEP IT SINGLE TOJENNED
-	// 	object_filtering_keys:[
-	// 		// {set_collection_name:'Latest Products', date_of_publishing:'after 10/Jun/2020'}, 
-	// 		// {set_collection_name:'Low Price Products', price:'>10 and <20'}, 
-	// 		// {set_collection_name:'High Ratings Products', rating:'>10'}, 
-	// 		// {set_collection_name:'Products For Men', product_category:'men'},
-	// 	],
-	// },
 ]
 
 function showListsProperly(the_list){
