@@ -17,28 +17,28 @@ var filename_used_to_store_image_in_assets_without_format = ''
 
 // Set The Storage Engine
 const image_storage = multer.diskStorage({
-	destination: '../assets/images/uploads/',
+	destination: path.join(__dirname , '../../assets/images/uploads/images_uploaded_by_user'),
 	filename: function(req, file, cb){
 		// file name pattern fieldname-currentDate-fileformat
 		filename_used_to_store_image_in_assets_without_format = file.fieldname + '-' + Date.now()
 		filename_used_to_store_image_in_assets = filename_used_to_store_image_in_assets_without_format + path.extname(file.originalname)
 
-		cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+		cb(null, filename_used_to_store_image_in_assets);
 
 	}
 });
 
 // Init Upload
-const image_upload = multer({
+const user_content_image_upload = multer({
 	storage: image_storage,
 	limits:{fileSize: 1000000}, // 1 mb
 	fileFilter: function(req, file, cb){
-		checkFileTypeForImage(file, cb);
+		checkFileTypeForUserContentImage(file, cb);
 	}
-}).single('myImage');
+}).single('users_image_content'); // this is the field that will be dealt
 
 // Check File Type
-function checkFileTypeForImage(file, cb){
+function checkFileTypeForUserContentImage(file, cb){
 	// Allowed ext
 	let filetypes = /jpeg|jpg|png|gif/;
 	// Check ext
@@ -53,9 +53,12 @@ function checkFileTypeForImage(file, cb){
 	}
 }
 
-router.post('/protected-image-upload', passport.authenticate('jwt', { session: false }), (req, res, next) => {
+router.post('/protected-content-image-upload', passport.authenticate('jwt', { session: false }), (req, res, next) => {
 
-	image_upload(req, res, (err) => {
+	console.log('OUTER LOG')
+	console.log(req.body)
+
+	user_content_image_upload(req, res, (err) => {
 		if(err){
 
 			console.log(err)
@@ -67,12 +70,13 @@ router.post('/protected-image-upload', passport.authenticate('jwt', { session: f
 				res.status(404).json({ success: false, msg: 'File is undefined!',file: `uploads/${req.file.filename}`})
 
 			} else {
-
+				console.log('INNER LOG')
+				console.log(req.body)
 			// image is uploaded , now saving image in db
 				const newImage = new Image({
 
 					_id: new mongoose.Types.ObjectId(),
-					image_source: `../assets/images/uploads/${filename_used_to_store_image_in_assets}`,
+					image_source: `../../assets/images/uploads/images_uploaded_by_user/${filename_used_to_store_image_in_assets}`,
 					category: req.body.category,
 					title: req.body.title,
 					description: req.body.description,
@@ -84,10 +88,12 @@ router.post('/protected-image-upload', passport.authenticate('jwt', { session: f
 
 				newImage.save(function (err, newImage) {
 
-					if (err) return console.log(err);
+					if (err){
+						res.status(404).json({ success: false, msg: 'couldnt create image database entry'})
+						return console.log(err)
+					}
 					// assign user object then save
 
-					res.status(404).json({ success: false, msg: 'couldnt create image database entry'})
 
 				})
 

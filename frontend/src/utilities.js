@@ -1,6 +1,6 @@
 
 const utils = {
-    baseUrl:'https://b9270b1d6d49.ngrok.io',
+    baseUrl:'http://localhost:3001',
     productsEndpoint:'',
 }
 

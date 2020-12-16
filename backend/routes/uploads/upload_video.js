@@ -36,7 +36,7 @@ const video_upload = multer({
 	fileFilter: function(req, file, cb){
 		checkFileTypeForVideo(file, cb);
 	}
-}).single('myVideo');
+}).single('myVideo');  // this is the field that will be dealt
 
 // Check File Type
 function checkFileTypeForVideo(file, cb){
