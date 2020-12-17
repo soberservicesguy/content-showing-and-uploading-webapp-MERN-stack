@@ -11,14 +11,20 @@ const passport = require('passport');
 const utils = require('../../lib/utils');
 
 router.get('/protected', passport.authenticate('jwt', { session: false }), (req, res, next) => {
+
+	// check whether the user has allow_surfing privilege, if not then do not authenticate
+
+	// check whether user isLoggedIn, if not then do not authenticate
 	res.status(200).json({ success: true, msg: "You are successfully authenticated to this route!"});
 });
 
 // Validate an existing user and issue a JWT
 router.post('/login', function(req, res, next){
 
-	User.findOne({ user_name: req.body.user_name })
+	User.findOne({ phone_number: req.body.phone_number })
 	.then((user) => {
+
+		console.log(user)
 
 		if (!user) {
 			res.status(401).json({ success: false, msg: "could not find user" });

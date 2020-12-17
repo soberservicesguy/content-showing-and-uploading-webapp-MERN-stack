@@ -8,11 +8,14 @@ const UserSchema = new mongoose.Schema({
 
 	user_name:String,
 	phone_number:String,
-	user_image:String,
 	hash:String,
 	salt:String,
+	isLoggedIn: Boolean,
 
 // other model links
+	privileges: [{ type: Schema.Types.ObjectId, ref: 'Privilege'  }],
+	user_image:{ type: Schema.Types.ObjectId, ref: 'Image'  },
+
 	blogposts:[{ type: Schema.Types.ObjectId, ref: 'Blog_Post'  }],
 	blogpost_comments:[{ type: Schema.Types.ObjectId, ref: 'Comment'  }],
 	blogpost_likes:[{ type: Schema.Types.ObjectId, ref: 'Like'  }],

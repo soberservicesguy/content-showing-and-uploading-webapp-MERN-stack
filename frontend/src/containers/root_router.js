@@ -33,6 +33,7 @@ import MoreIcon from '@material-ui/icons/MoreVert';
 // IMPORT CONNECTED CONTAINERS
 import {
 	ConnectedLoginContainer,
+	ConnectedSignUpContainer,
 	ConnectedBlogPostContainer,
 	ConnectedIndividualBlogPost,
 	ConnectedVideoContainer,
@@ -272,6 +273,15 @@ class RootRouterContainer extends Component {
 
 {/* ------------ MENU OPTIONS STARTS HERE ------------ */}						
 
+								<Link to="/signup">
+									<IconButton aria-label="show 4 new mails" color="inherit">
+										<p>
+											SIGNUP
+										</p>
+
+									</IconButton>
+								</Link>
+
 								<Link to="/login">
 									<IconButton aria-label="show 4 new mails" color="inherit">
 										<p>
@@ -358,6 +368,11 @@ class RootRouterContainer extends Component {
 
 
 					<Switch>
+
+						<Route exact path="/signup">
+							<ConnectedSignUpContainer/>
+						</Route>
+
 
 						<Route exact path="/login">
 							<ConnectedLoginContainer/>

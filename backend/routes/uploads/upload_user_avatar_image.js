@@ -1,10 +1,13 @@
 require('../../models/image');
 require('../../models/user');
+require('../../models/privilige');
+
 
 const mongoose = require('mongoose');
 const router = require('express').Router();   
 const User = mongoose.model('User');
 const Image = mongoose.model('Image');
+const Privilege = mongoose.model('Privilege');
 
 const passport = require('passport');
 const utils = require('../../lib/utils');
@@ -57,8 +60,8 @@ function checkFileTypeForUserAvatar(file, cb){
 router.post('/avatar-image-upload', (req, res, next) => {
 
 //	here there will be no req.body due to multer 
-	console.log('OUTER LOG')
-	console.log(req.body)
+	// console.log('OUTER LOG')
+	// console.log(req.body)
 
 	user_avatar_image_upload(req, res, (err) => {
 		if(err){
@@ -72,8 +75,10 @@ router.post('/avatar-image-upload', (req, res, next) => {
 				res.status(404).json({ success: false, msg: 'File is undefined!',file: `uploads/${req.file.filename}`})
 
 			} else {
-				console.log('INNER LOG')
-				console.log( req.body.user_name )
+
+			// here req.body will work
+				// console.log('INNER LOG')
+				// console.log( req.body.user_name )
 
 			// image is uploaded , now saving image in db
 				const newImage = new Image({
@@ -81,9 +86,9 @@ router.post('/avatar-image-upload', (req, res, next) => {
 					_id: new mongoose.Types.ObjectId(),
 					image_source: `../../assets/images/uploads/avatar_image/${filename_used_to_store_image_in_assets}`,
 					category: req.body.category,
-					title: req.body.title,
-					description: req.body.description,
-					all_tags: req.body.all_tags,
+					// title: req.body.title,
+					// description: req.body.description,
+					// all_tags: req.body.all_tags,
 					timestamp_of_uploading: String( Date.now() ),
 					// endpoint: req.body.endpoint, // this will be taken care in db model
 
@@ -92,16 +97,86 @@ router.post('/avatar-image-upload', (req, res, next) => {
 				newImage.save(function (err, newImage) {
 
 					if (err){
+
 						res.status(404).json({ success: false, msg: 'couldnt create image database entry'})
 						return console.log(err)
+
 					}
 					// assign user object then save
 
+					User.findOne({ phone_number: req.body.phone_number })
+					.then((user) => {
+
+						if (!user) {
+
+							const saltHash = utils.genPassword(req.body.password);							
+							const salt = saltHash.salt;
+							const hash = saltHash.hash;
+
+							const newUser = new User({
+
+								_id: new mongoose.Types.ObjectId(),
+								user_name: req.body.user_name,
+								phone_number: req.body.phone_number,
+								user_image: newImage,
+								hash: hash,
+								salt: salt,
+
+							});
+
+							newUser.save(function (err, newUser) {
+
+								Privilege.findOne({ privilege_name: 'allow_surfing' })
+								.then((privilege) => {
+									if (!privilege){
+
+										const newPrivilege = new Privilege({
+
+											_id: new mongoose.Types.ObjectId(),
+											privilege_name: 'allow_surfing',
+
+										})
+									
+										newPrivilege.users.push(newUser._id)
+										newPrivilege.save()
+										newUser.privileges.push(newPrivilege._id)
+										newUser.save()
+
+									} else if (privilege) {
+
+										privilege.users.push(newUser._id)
+										privilege.save()
+										newUser.privileges.push(privilege._id)
+										newUser.save()
+								
+									}
+								})
+			
+								newImage.user = newUser
+								newImage.save()
+								res.status(200).json({ success: true, msg: 'new user saved' });
+
+							})
+
+
+						} else {
+
+							res.status(200).json({ success: false, msg: "user already exists, try another" });
+
+						}
+
+					})
+					.catch((err) => {
+
+						next(err);
+
+					});
 
 				})
 
+				// used only when testing multer, now not needed since res is used while saving db with uploaded image
+				// res.status(200).json({ success: true, msg: 'File Uploaded!',file: `uploads/${req.file.filename}`})
 
-				res.status(200).json({ success: true, msg: 'File Uploaded!',file: `uploads/${req.file.filename}`})
 			}
 		}
 	})

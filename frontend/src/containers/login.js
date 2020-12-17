@@ -121,9 +121,8 @@ class LoginContainer extends Component {
 		super(props);
 		this.state = {
 
-			user_name: '',
 			phone_number: '',
-			user_image: '',
+			password:'',
 
 		}
 	}
@@ -132,39 +131,44 @@ class LoginContainer extends Component {
 
 	}
 
+	make_request_to_protected_route(){
 
-	storeDataAtBackend(){
-		// upload file with axios request
-		const formData = new FormData()
-		formData.append('user_name', this.state.user_name)
-		formData.append('phone_number', this.state.phone_number)
-		formData.append('category', 'avatar')
-		formData.append('avatar_image', this.state.user_image, this.state.user_image.name)
-
-
-		axios.post(utils.baseUrl + '/avatar-uploads/avatar-image-upload', formData, {
-			onUploadProgress: progressEvent => {
-				console.log( 'upload progress: ' + Math.round((progressEvent.loaded / progressEvent.total)*100) + '%' )
-			}
-		})
+		axios.get(utils.baseUrl + '/users/protected')
 		.then(function (response) {
-			console.log(`POST rest call response is${JSON.stringify(response.data, null, 1)}`);
 			if (response.data.success === true){
-				// console.log('yes')
+
+				console.log(response.data)
+
+			} else {
+				console.log('not authorized')
 			}
 
-			return response
 		})
-		.then((response) => {
-			if (response.data.success === true){
-				this.props.set_is_signed_in( true )
-				// this.props.set_user_token( response.data.userToken )
+		.catch(function (error) {
+			// console.log(error);
+		});	
+	}
 
-				this.props.set_user_name( this.state.user_name )
-				this.props.set_phone_number( this.state.phone_number )
-				this.props.set_user_image( this.state.user_image )
+	login_and_get_jwt_token(){
 
+		axios.post(utils.baseUrl + '/users/login', 
+			{
+				phone_number:this.state.phone_number, 
+				password:this.state.password
 			}
+		)
+		.then(function (response) {
+			if (response.data.success === true){
+
+				// console.log(response.data)
+				axios.defaults.headers.common['Authorization'] = response.data.token				
+				this.props.set_is_signed_in( true )
+				this.props.set_phone_number( this.state.phone_number )
+
+			} else {
+				console.log('couldnt login')
+			}
+
 		})
 		.catch(function (error) {
 			// console.log(error);
@@ -178,7 +182,7 @@ class LoginContainer extends Component {
 				<div style={styles.buttonContainer}>
 					<button style={styles.roundButton} onClick={() => null} activeOpacity={0.2}>
 						<p style={styles.text}>
-							SIGN UP WITH FACEBOOK
+							LOGIN WITH FACEBOOK
 						</p>
 					</button>
 				</div>
@@ -200,21 +204,6 @@ class LoginContainer extends Component {
 
 				<div style={styles.textinputContainer}>
 					<p style={styles.headingOverInput}>
-						USER_NAME
-					</p>
-					<form className={styles.root} noValidate autoComplete="off">
-						<TextField 
-							label="Type your user name" // placeholder 
-							id="standard-basic" // "filled-basic" / "outlined-basic"
-							variant="outlined" // "filled"
-							classes={styles.textinput}
-							onChange={ (event) =>  this.setState(prev => ({...prev, user_name: event.target.value})) }
-						/>
-					</form>
-				</div>
-
-				<div style={styles.textinputContainer}>
-					<p style={styles.headingOverInput}>
 						PHONE_NUMBER
 					</p>
 					<form className={styles.root} noValidate autoComplete="off">
@@ -230,36 +219,38 @@ class LoginContainer extends Component {
 
 				<div style={styles.textinputContainer}>
 					<p style={styles.headingOverInput}>
-						USER_IMAGE
+						PASSWORD
 					</p>
 					<form className={styles.root} noValidate autoComplete="off">
-						<input
-							name="avatar_image" // name of input field or fieldName simply
-							enctype="multipart/form-data"
-							type="file"
-							onChange={(event) => {
-								// console logging selected file from menu
-								console.log( event.target.files[0] ) // gives first file
-								// setState method with event.target.files[0] as argument
-								this.setState(prev => ({...prev, user_image: event.target.files[0]}))
-							}}
+						<TextField 
+							label="Type your password" // placeholder 
+							id="standard-basic" // "filled-basic" / "outlined-basic"
+							variant="outlined" // "filled"
+							classes={styles.textinput}
+							onChange={ (event) =>  this.setState(prev => ({...prev, password: event.target.value})) }
 						/>
 					</form>
 				</div>
-
-						
-				<button  onClick={() => {}} style={styles.buttonWithoutBG}>
-					<p style={styles.lowerText}>
-						Already have an account ?
-					</p>
-				</button>
 					
 				<button style={styles.lowerButton} activeOpacity={0.2}
-					onClick={ () => this.storeDataAtBackend() }
+					onClick={ () => this.login_and_get_jwt_token() }
 				>
-					Create Account
+					Sign In
 				</button>
 								
+
+				<button style={styles.lowerButton} activeOpacity={0.2}
+					onClick={ () => this.make_request_to_protected_route() }
+				>
+					MAKE REQUEST AT PROTECTED ROUTE
+				</button>
+
+				<button style={styles.lowerButton} activeOpacity={0.2}
+					onClick={ () => this.logout_and_remove_jwt_token() }
+				>
+					LOGOUT
+				</button>
+
 			</div>
 		);
 	}

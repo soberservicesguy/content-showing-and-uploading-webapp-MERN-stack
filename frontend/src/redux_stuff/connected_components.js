@@ -12,7 +12,7 @@ import {
 	ImageContainer,
 	IndividualImage,	
 	LoginContainer,
-
+	SignUpContainer,
 } from "../containers";
 
 
@@ -137,4 +137,9 @@ export const ConnectedImageContainer = connect(
 	mapStateToProps,
 	mapDispatchToProps
 )(ImageContainer);
+
+export const ConnectedSignUpContainer = connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(SignUpContainer);
 

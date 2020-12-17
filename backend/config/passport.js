@@ -15,10 +15,12 @@ const options = {
 };
 
 // app.js will pass the global passport object here, and this function will configure it
+// this will execute everytime there is a request on protected route
 module.exports = (passport) => {
 	// The JWT payload is passed into the verify callback
 	passport.use(new JwtStrategy(options, function(jwt_payload, done) {
 
+		console.log('BELOW IS JWT PAYLOAD')
 		console.log(jwt_payload);
 		
 		// We will assign the `sub` property on the JWT to the database ID of user
@@ -30,6 +32,10 @@ module.exports = (passport) => {
 				return done(err, false);
 			}
 			if (user) {
+
+				console.log('USER IS BELOW')
+				console.log(user)
+				
 				return done(null, user);
 			} else {
 				return done(null, false);
