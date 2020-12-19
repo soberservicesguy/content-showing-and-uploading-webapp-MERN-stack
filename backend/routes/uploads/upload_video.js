@@ -20,11 +20,12 @@ var filename_used_to_store_video_in_assets_without_format = ''
 
 // Set The Storage Engine
 const video_storage = multer.diskStorage({
-	destination: '../assets/videos/uploads/videos/',
+	destination: '../assets/videos/uploads/videos_uploaded_by_users/',
 	filename: function(req, file, cb){
 		// file name pattern fieldname-currentDate-fileformat
-		filename_used_to_store_video_in_assets_without_format = file.fieldname + '-' + Date.now()
-		filename_used_to_store_video_in_assets = filename_used_to_store_video_in_assets_without_format + path.extname(file.originalname)
+		filename_used_to_store_video_in_assets_without_format = file.originalname.replace( path.extname(file.originalname), "");
+		// filename_used_to_store_video_in_assets = filename_used_to_store_video_in_assets_without_format + path.extname(file.originalname)
+		filename_used_to_store_video_in_assets = file.originalname
 		cb(null, filename_used_to_store_video_in_assets)
 	}
 });
@@ -32,11 +33,11 @@ const video_storage = multer.diskStorage({
 // Init Upload
 const video_upload = multer({
 	storage: video_storage,
-	limits:{fileSize: 10000000}, // 100 mb
+	limits:{fileSize: 5000000000}, // 500 mb
 	fileFilter: function(req, file, cb){
 		checkFileTypeForVideo(file, cb);
 	}
-}).single('myVideo');  // this is the field that will be dealt
+}).single('videos_uploaded_by_users');  // this is the field that will be dealt
 
 // Check File Type
 function checkFileTypeForVideo(file, cb){
@@ -70,7 +71,7 @@ router.post('/protected-video-upload', passport.authenticate('jwt', { session: f
 			} else {
 
 			// video is uploaded , NOW creating thumbnail from video using snapshot
- 				ffmpeg(`../assets/videos/uploads/videos/${filename_used_to_store_video_in_assets}`)
+ 				ffmpeg(`./assets/videos/uploads/videos_uploaded_by_users/${filename_used_to_store_video_in_assets}`)
 				.on('end', function() {
 					console.log('Screenshots taken');
 				})
@@ -103,34 +104,59 @@ router.post('/protected-video-upload', passport.authenticate('jwt', { session: f
 						`${filename_used_to_store_video_in_assets_without_format}4.png`,
 					],
 					size: '150x100', 
-					folder: '../assets/videos/uploads/upload_thumbnails/',
+					folder: './assets/videos/uploads/upload_thumbnails/',
 				})
 			// saving video in DB
-				.then(() => {
-
-					const newVideo = new Video({
-						_id: new mongoose.Types.ObjectId(),
-						category: req.body.category,
-						video_filename: filename_used_to_store_video_in_assets,
-						title: req.body.title,
-						all_tags: req.body.all_tags,
-						image_thumbnail: `${filename_used_to_store_video_in_assets_without_format}1.png`,
-						description: req.body.description,
-						timestamp_of_uploading: String( Date.now() ),
-						// endpoint:String, // will be taken care at db model
-					})
-
-					newVideo.save(function (err, newVideo) {
-
-						if (err) return console.log(err)
-						// assign user object then save
-
-						res.status(404).json({ success: false, msg: 'couldnt create video database entry',file: `uploads/${req.file.filename}`})
-					})
-
-					res.status(200).json({ success: true, msg: 'File Uploaded!',file: `uploads/${req.file.filename}`})
-
+				const newVideo = new Video({
+					_id: new mongoose.Types.ObjectId(),
+					category: req.body.video_object.category,
+					video_filename: filename_used_to_store_video_in_assets,
+					title: req.body.video_object.title,
+					all_tags: req.body.video_object.all_tags,
+					image_thumbnail: `${filename_used_to_store_video_in_assets_without_format}1.png`,
+					description: req.body.video_object.description,
+					timestamp_of_uploading: String( Date.now() ),
+					// endpoint:String, // will be taken care at db model
 				})
+
+				newVideo.save(function (err, newVideo) {
+
+					if (err){
+						res.status(404).json({ success: false, msg: 'couldnt create video database entry'})
+						return console.log(err)
+					}
+
+					// assign user object then save
+					User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
+					.then((user) => {
+						if (user){
+
+							newVideo.user = user
+							newVideo.save()
+
+							console.log('ENDPOINT SUPPLIED IS ')
+							console.log(newVideo.endpoint)
+							res.status(200).json({ success: true, msg: 'new user saved', video_endpoint: newVideo.endpoint});	
+
+						} else {
+
+							res.status(200).json({ success: false, msg: "user doesnt exists, try logging in again" });
+
+						}
+					})
+					.catch((err) => {
+
+						next(err);
+
+					});
+
+
+					res.status(404).json({ success: false, msg: 'couldnt create video database entry',file: `uploads/${req.file.filename}`})
+				})
+
+					// not needed anymore, was used in multer
+					// res.status(200).json({ success: true, msg: 'File Uploaded!',file: `uploads/${req.file.filename}`})
+
 			}
 		}
 	})

@@ -17,6 +17,8 @@ import {
 	// Button 
 } from "@material-ui/core";
 
+import { verify_privilege } from "../handy_functions/"
+
 const styles = theme => ({
 	iconStyle:{
 		alignSelf:'center',
@@ -140,6 +142,7 @@ class LoginContainer extends Component {
 				console.log(response.data)
 
 			} else {
+				console.log(response.data)
 				console.log('not authorized')
 			}
 
@@ -149,7 +152,7 @@ class LoginContainer extends Component {
 		});	
 	}
 
-	login_and_get_jwt_token(){
+	login_and_get_jwt_token_and_privileges(){
 
 		axios.post(utils.baseUrl + '/users/login', 
 			{
@@ -164,6 +167,47 @@ class LoginContainer extends Component {
 				axios.defaults.headers.common['Authorization'] = response.data.token				
 				this.props.set_is_signed_in( true )
 				this.props.set_phone_number( this.state.phone_number )
+
+				verify_privilege(this, response.data.privileges)
+			// not needed anymore, made it DRY using above function
+				// // response.data.privileges.map((privilege_name) => {
+
+				// // 	if ( privilege_name === 'Basic' ){
+
+				// // 		this.props.allow_basic_privilege()
+
+				// // 	} else if ( privilege_name === 'Images control' ){
+
+				// // 		this.props.allow_images_privilege()
+
+				// // 	} else if ( privilege_name === 'Videos control' ){
+
+				// // 		this.props.allow_videos_privilege()
+
+				// // 	} else if ( privilege_name === 'Blogposts control' ){
+
+				// // 		this.props.allow_blogpost_privilege()
+
+				// // 	} else  if ( privilege_name === 'Revoke Basic' ){
+
+				// // 		this.props.revoke_basic_privilege()
+
+				// // 	} else if  ( privilege_name === 'Revoke Images control' ){
+
+				// // 		this.props.revoke_images_privilege()
+
+				// // 	} else if  ( privilege_name === 'Revoke Videos control' ){
+
+				// // 		this.props.revoke_videos_privilege()
+
+				// // 	} else if  ( privilege_name === 'Revoke Blogposts control' ){
+
+				// // 		this.props.revoke_blogpost_privilege()
+
+				// // 	} else {
+				// // 	}
+
+				// })
 
 			} else {
 				console.log('couldnt login')
@@ -233,7 +277,7 @@ class LoginContainer extends Component {
 				</div>
 					
 				<button style={styles.lowerButton} activeOpacity={0.2}
-					onClick={ () => this.login_and_get_jwt_token() }
+					onClick={ () => this.login_and_get_jwt_token_and_privileges() }
 				>
 					Sign In
 				</button>

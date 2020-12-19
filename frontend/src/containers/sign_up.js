@@ -14,7 +14,11 @@ import {
 	TextField,
 	// Modal, 
 	// Grid, 
-	// Button 
+	// Button,
+	InputLabel,
+	MenuItem,
+	FormControl,
+	Select,
 } from "@material-ui/core";
 
 import {
@@ -119,6 +123,14 @@ const styles = theme => ({
 	textinputContainer:{
 		width:'80%',
 	},
+
+	formControl: {
+		margin: theme.spacing(1),
+		minWidth: 500,
+	},
+	selectEmpty: {
+		marginTop: theme.spacing(2),
+	},
 });
 
 class SignUpContainer extends Component {
@@ -131,6 +143,8 @@ class SignUpContainer extends Component {
 			password:'',
 			user_image: '',
 
+			privileges_selected:'',
+
 			redirectToRoute: false,
 
 		}
@@ -141,17 +155,18 @@ class SignUpContainer extends Component {
 	}
 
 
-	storeDataAtBackend(){
+	signup_and_get_privileges(){
 		// upload file with axios request
 		const formData = new FormData()
 		formData.append('user_name', this.state.user_name)
 		formData.append('password', this.state.password)
 		formData.append('phone_number', this.state.phone_number)
+		formData.append('privileges_selected', this.state.privileges_selected)
 		formData.append('category', 'avatar')
 		formData.append('avatar_image', this.state.user_image, this.state.user_image.name)
 
 
-		axios.post(utils.baseUrl + '/avatar-uploads/avatar-image-upload', formData, {
+		axios.post(utils.baseUrl + '/users/signup-and-get-privileges', formData, {
 			onUploadProgress: progressEvent => {
 				console.log( 'upload progress: ' + Math.round((progressEvent.loaded / progressEvent.total)*100) + '%' )
 			}
@@ -281,7 +296,47 @@ class SignUpContainer extends Component {
 						</form>
 					</div>
 
-							
+					<div style={{marginTop: 10,}}>
+						<FormControl variant="outlined" style={styles.formControl}>
+							<InputLabel id="demo-simple-select-outlined-label" style={{fontSize:20}}>
+								Select Privileges To Use
+							</InputLabel>
+							<Select
+								style={{width:280, fontSize:20}}
+								labelId="demo-simple-select-outlined-label"
+								id="demo-simple-select-outlined"
+								value={this.state.privileges_selected}
+								label="Select Privileges To Use"
+								onChange={(event) => {
+									// console logging selected file from menu
+									console.log( event.target.value ) // gives first file
+									// setState method with event.target.files[0] as argument
+									this.setState(prev => ({...prev, privileges_selected: event.target.value}))
+								}}
+							>
+								<MenuItem value="">
+									<em>None</em>
+								</MenuItem>
+								<MenuItem value={'Basic'}>
+									Basic (commenting, liking content)
+								</MenuItem>
+								<MenuItem value={'Images control'}>
+									Uploading Images
+								</MenuItem>
+								<MenuItem value={'Videos control'}>
+									Uploading Videos
+								</MenuItem>
+								<MenuItem value={'Blogposts control'}>
+									Uploading Blogposts
+								</MenuItem>
+								<MenuItem value={'Total control'}>
+									All Privileges
+								</MenuItem>
+							</Select>
+						</FormControl>
+					</div>
+
+
 					<button  onClick={() => {}} style={styles.buttonWithoutBG}>
 						<p style={styles.lowerText}>
 							Already have an account ?
@@ -289,7 +344,7 @@ class SignUpContainer extends Component {
 					</button>
 						
 					<button style={styles.lowerButton} activeOpacity={0.2}
-						onClick={ () => this.storeDataAtBackend() }
+						onClick={ () => this.signup_and_get_privileges() }
 					>
 						Create Account
 					</button>

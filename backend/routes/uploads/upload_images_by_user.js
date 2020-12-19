@@ -12,6 +12,8 @@ const utils = require('../../lib/utils');
 const multer = require('multer');
 const path = require('path');
 
+const base64_encode = require('../../lib/image_to_base64')
+
 var filename_used_to_store_image_in_assets = ''
 var filename_used_to_store_image_in_assets_without_format = ''
 
@@ -20,10 +22,11 @@ const image_storage = multer.diskStorage({
 	destination: path.join(__dirname , '../../assets/images/uploads/images_uploaded_by_user'),
 	filename: function(req, file, cb){
 		// file name pattern fieldname-currentDate-fileformat
-		filename_used_to_store_image_in_assets_without_format = file.fieldname + '-' + Date.now()
-		filename_used_to_store_image_in_assets = filename_used_to_store_image_in_assets_without_format + path.extname(file.originalname)
+		// filename_used_to_store_image_in_assets_without_format = file.fieldname + '-' + Date.now()
+		// filename_used_to_store_image_in_assets = filename_used_to_store_image_in_assets_without_format + path.extname(file.originalname)
 
-		cb(null, filename_used_to_store_image_in_assets);
+		filename_used_to_store_image_in_assets = file.originalname
+		cb(null, file.originalname);
 
 	}
 });
@@ -31,11 +34,11 @@ const image_storage = multer.diskStorage({
 // Init Upload
 const user_content_image_upload = multer({
 	storage: image_storage,
-	limits:{fileSize: 1000000}, // 1 mb
+	limits:{fileSize: 10000000}, // 1 mb
 	fileFilter: function(req, file, cb){
 		checkFileTypeForUserContentImage(file, cb);
 	}
-}).single('users_image_content'); // this is the field that will be dealt
+}).single('upload_images_by_user'); // this is the field that will be dealt
 
 // Check File Type
 function checkFileTypeForUserContentImage(file, cb){
@@ -53,7 +56,7 @@ function checkFileTypeForUserContentImage(file, cb){
 	}
 }
 
-router.post('/protected-content-image-upload', passport.authenticate('jwt', { session: false }), (req, res, next) => {
+router.post('/protected-image-upload', passport.authenticate('jwt', { session: false }), (req, res, next) => {
 
 	console.log('OUTER LOG')
 	console.log(req.body)
@@ -70,17 +73,18 @@ router.post('/protected-content-image-upload', passport.authenticate('jwt', { se
 				res.status(404).json({ success: false, msg: 'File is undefined!',file: `uploads/${req.file.filename}`})
 
 			} else {
-				console.log('INNER LOG')
-				console.log(req.body)
+				// console.log('INNER LOG')
+				// console.log(req.body)
+
 			// image is uploaded , now saving image in db
 				const newImage = new Image({
 
 					_id: new mongoose.Types.ObjectId(),
-					image_source: `../../assets/images/uploads/images_uploaded_by_user/${filename_used_to_store_image_in_assets}`,
-					category: req.body.category,
-					title: req.body.title,
-					description: req.body.description,
-					all_tags: req.body.all_tags,
+					category: req.body.image_object.category,
+					title: req.body.image_object.title,
+					description: req.body.image_object.description,
+					all_tags: req.body.image_object.all_tags,
+					image_source: `./assets/images/uploads/images_uploaded_by_user/${filename_used_to_store_image_in_assets}`,
 					timestamp_of_uploading: String( Date.now() ),
 					// endpoint: req.body.endpoint, // this will be taken care in db model
 
@@ -93,12 +97,35 @@ router.post('/protected-content-image-upload', passport.authenticate('jwt', { se
 						return console.log(err)
 					}
 					// assign user object then save
+					User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
+					.then((user) => {
+						if (user){
 
+							newImage.user = user
+							newImage.save()
+
+							// console.log(newImage)
+
+							// in response sending new image too with base64 encoding
+							let base64_encoded_image = base64_encode(newImage.image_source)
+							res.status(200).json({ success: true, msg: 'new user saved', new_image: base64_encoded_image});	
+
+						} else {
+
+							res.status(200).json({ success: false, msg: "user doesnt exists, try logging in again" });
+
+						}
+					})
+					.catch((err) => {
+
+						next(err);
+
+					});
 
 				})
 
-
-				res.status(200).json({ success: true, msg: 'File Uploaded!',file: `uploads/${req.file.filename}`})
+				// not needed, this is used only in multer
+				// res.status(200).json({ success: true, msg: 'File Uploaded!',file: `uploads/${req.file.filename}`})
 			}
 		}
 	})

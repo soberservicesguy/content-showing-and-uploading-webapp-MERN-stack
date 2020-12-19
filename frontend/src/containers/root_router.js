@@ -398,7 +398,7 @@ class RootRouterContainer extends Component {
 
 
 
-						<Route path="/videos/:endpoint-param">
+						<Route path="/Individual-Video">
 							<ConnectedIndividualVideo/>
 						</Route>
 
@@ -410,7 +410,7 @@ class RootRouterContainer extends Component {
 
 
 
-						<Route path="/images/:endpoint-param">
+						<Route path="/Individual-Image">
 							<ConnectedIndividualImage/>
 						</Route>
 

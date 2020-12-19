@@ -73,8 +73,8 @@ class CreateImage extends Component {
 			category: '',
 			image_source: '',
 			title: '',
-			endpoint: '',
-			timestamp_of_uploading: '',
+			// endpoint: '',
+			// timestamp_of_uploading: '',
 			description: '',
 			all_tags: '',		}
 
@@ -105,6 +105,25 @@ class CreateImage extends Component {
 			// e.g a social post, textinput which lets user to enter text, takes persons id as assigned object
 				<div style={styles.outerContainer}>
 
+					<div style={styles.textinputContainer}>
+						<p style={styles.headingOverInput}>
+							USER_IMAGE
+						</p>
+						<form className={styles.root} noValidate autoComplete="off">
+							<input
+								name="upload_images_by_user" // name of input field or fieldName simply
+								enctype="multipart/form-data"
+								type="file"
+								onChange={(event) => {
+									// console logging selected file from menu
+									console.log( event.target.files[0] ) // gives first file
+									// setState method with event.target.files[0] as argument
+									this.setState(prev => ({...prev, image_source: event.target.files[0]}))
+								}}
+							/>
+						</form>
+					</div>
+
 
 				  	<div style={styles.textinputContainer}>
 						<form className={styles.root} noValidate autoComplete="off">
@@ -122,50 +141,11 @@ class CreateImage extends Component {
 				  	<div style={styles.textinputContainer}>
 						<form className={styles.root} noValidate autoComplete="off">
 							<TextField 
-								label="Type your image_source" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
-								onChange={ (event) => this.setState( prev => ({...prev, image_source: event.target.value})) }
-							/>
-						</form>
-				  	</div>
-
-
-				  	<div style={styles.textinputContainer}>
-						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
 								label="Type your title" // placeholder 
 								id="standard-basic" // "filled-basic" / "outlined-basic"
 								variant="outlined" // "filled"
 								classes={styles.textinput}
 								onChange={ (event) => this.setState( prev => ({...prev, title: event.target.value})) }
-							/>
-						</form>
-				  	</div>
-
-
-				  	<div style={styles.textinputContainer}>
-						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
-								label="Type your endpoint" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
-								onChange={ (event) => this.setState( prev => ({...prev, endpoint: event.target.value})) }
-							/>
-						</form>
-				  	</div>
-
-
-				  	<div style={styles.textinputContainer}>
-						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
-								label="Type your timestamp_of_uploading" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
-								onChange={ (event) => this.setState( prev => ({...prev, timestamp_of_uploading: event.target.value})) }
 							/>
 						</form>
 				  	</div>
@@ -205,45 +185,36 @@ class CreateImage extends Component {
 							// first create parent object
 							let image_object = {
 								category: this.state.category,
-								image_source: this.state.image_source,
 								title: this.state.title,
-								endpoint: this.state.endpoint,
-								timestamp_of_uploading: this.state.timestamp_of_uploading,
+								timestamp_of_uploading: Date.now(),
 								description: this.state.description,
 								all_tags: this.state.all_tags,
+								// image_source: this.state.image_source,
+								// endpoint: this.state.endpoint,
 							}
 
 							// 2nd create child object from redux (linked_object_and_live_object_in_redux in schema)
-							let user_object = {
+						// not needed, the user will be obtained from passport js middleware
+							// let user_object = {
 
-								user_name: this.props.user_name,
-								phone_number: this.props.phone_number,
-								user_image: this.props.user_image,
-								hash: this.props.hash,
-								salt: this.props.salt,
-								user_name: this.props.user_name,
-								phone_number: this.props.phone_number,
-								user_image: this.props.user_image,
-								hash: this.props.hash,
-								salt: this.props.salt,
-								user_name: this.props.user_name,
-								phone_number: this.props.phone_number,
-								user_image: this.props.user_image,
-								hash: this.props.hash,
-								salt: this.props.salt,
-							}
+							// 	user_name: this.props.user_name,
+							// 	phone_number: this.props.phone_number,
+
+							// }
+
+							const formData = new FormData()
+							formData.append('image_object', image_object)
+							// formData.append('user_object', user_object) // not needed, since object will be pulled from passport js jwt token
+							formData.append('upload_images_by_user', this.state.image_source, this.state.image_source.name)
 
 							// 3rd send post request
-							axios.post(utils.baseUrl + '/images/create-image-with-user', 
-								{
-									image_object: image_object,
-									user_object: user_object,
-								})
+							axios.post(utils.baseUrl + '/image-uploads/protected-image-upload', formData)
 							.then(function (response) {
+								// console.log(this.props.user_name)
 								console.log(response.data) // current image screen data
 								
 								// set to current parent object
-								setResponseInCurrentImage(response.data)
+								setResponseInCurrentImage(response.data.new_image)
 
 								// change route to current_image
 								redirectToNewImage()

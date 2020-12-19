@@ -72,7 +72,7 @@ class CreateVideo extends Component {
 			redirectToRoute: false,
 			category: '',
 			image_thumbnail: '',
-			video_filename: '',
+			video_filepath: '',
 			title: '',
 			endpoint: '',
 			description: '',
@@ -106,6 +106,25 @@ class CreateVideo extends Component {
 			// e.g a social post, textinput which lets user to enter text, takes persons id as assigned object
 				<div style={styles.outerContainer}>
 
+					<div style={styles.textinputContainer}>
+						<p style={styles.headingOverInput}>
+							VIDEO FILE
+						</p>
+						<form className={styles.root} noValidate autoComplete="off">
+							<input
+								name="videos_uploaded_by_users" // name of input field or fieldName simply
+								enctype="multipart/form-data"
+								type="file"
+								onChange={(event) => {
+									// console logging selected file from menu
+									console.log( event.target.files[0] ) // gives first file
+									// setState method with event.target.files[0] as argument
+									this.setState(prev => ({...prev, video_filepath: event.target.files[0]}))
+								}}
+							/>
+						</form>
+					</div>
+
 
 				  	<div style={styles.textinputContainer}>
 						<form className={styles.root} noValidate autoComplete="off">
@@ -115,32 +134,6 @@ class CreateVideo extends Component {
 								variant="outlined" // "filled"
 								classes={styles.textinput}
 								onChange={ (event) => this.setState( prev => ({...prev, category: event.target.value})) }
-							/>
-						</form>
-				  	</div>
-
-
-				  	<div style={styles.textinputContainer}>
-						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
-								label="Type your image_thumbnail" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
-								onChange={ (event) => this.setState( prev => ({...prev, image_thumbnail: event.target.value})) }
-							/>
-						</form>
-				  	</div>
-
-
-				  	<div style={styles.textinputContainer}>
-						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
-								label="Type your video_filename" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
-								onChange={ (event) => this.setState( prev => ({...prev, video_filename: event.target.value})) }
 							/>
 						</form>
 				  	</div>
@@ -162,37 +155,11 @@ class CreateVideo extends Component {
 				  	<div style={styles.textinputContainer}>
 						<form className={styles.root} noValidate autoComplete="off">
 							<TextField 
-								label="Type your endpoint" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
-								onChange={ (event) => this.setState( prev => ({...prev, endpoint: event.target.value})) }
-							/>
-						</form>
-				  	</div>
-
-
-				  	<div style={styles.textinputContainer}>
-						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
 								label="Type your description" // placeholder 
 								id="standard-basic" // "filled-basic" / "outlined-basic"
 								variant="outlined" // "filled"
 								classes={styles.textinput}
 								onChange={ (event) => this.setState( prev => ({...prev, description: event.target.value})) }
-							/>
-						</form>
-				  	</div>
-
-
-				  	<div style={styles.textinputContainer}>
-						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
-								label="Type your timestamp_of_uploading" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
-								onChange={ (event) => this.setState( prev => ({...prev, timestamp_of_uploading: event.target.value})) }
 							/>
 						</form>
 				  	</div>
@@ -216,49 +183,42 @@ class CreateVideo extends Component {
 							let setResponseInCurrentVideo = (arg) => this.props.set_current_video(arg)
 							let redirectToNewVideo = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
 
+
 							// first create parent object
 							let video_object = {
 								category: this.state.category,
-								image_thumbnail: this.state.image_thumbnail,
-								video_filename: this.state.video_filename,
 								title: this.state.title,
-								endpoint: this.state.endpoint,
 								description: this.state.description,
-								timestamp_of_uploading: this.state.timestamp_of_uploading,
 								all_tags: this.state.all_tags,
+								// image_thumbnail: this.state.image_thumbnail,
+								// video_filepath: this.state.video_filepath,
+								// endpoint: this.state.endpoint,
+								// timestamp_of_uploading: this.state.timestamp_of_uploading,
 							}
+
+							const formData = new FormData()
+							formData.append('video_object', video_object)
+							// formData.append('user_object', user_object) // not needed, since object will be pulled from passport js jwt token
+							formData.append('videos_uploaded_by_users', this.state.video_filepath, this.state.video_filepath.name)
 
 							// 2nd create child object from redux (linked_object_and_live_object_in_redux in schema)
-							let user_object = {
+						// not needed, the user will be obtained from passport js middleware
+							// let user_object = {
 
-								user_name: this.props.user_name,
-								phone_number: this.props.phone_number,
-								user_image: this.props.user_image,
-								hash: this.props.hash,
-								salt: this.props.salt,
-								user_name: this.props.user_name,
-								phone_number: this.props.phone_number,
-								user_image: this.props.user_image,
-								hash: this.props.hash,
-								salt: this.props.salt,
-								user_name: this.props.user_name,
-								phone_number: this.props.phone_number,
-								user_image: this.props.user_image,
-								hash: this.props.hash,
-								salt: this.props.salt,
-							}
+							// 	user_name: this.props.user_name,
+							// 	phone_number: this.props.phone_number,
+							// 	user_image: this.props.user_image,
+							// 	hash: this.props.hash,
+							// 	salt: this.props.salt,
+							// }
 
 							// 3rd send post request
-							axios.post(utils.baseUrl + '/videos/create-video-with-user', 
-								{
-									video_object: video_object,
-									user_object: user_object,
-								})
+							axios.post(utils.baseUrl + '/video-uploads/protected-video-upload', formData)
 							.then(function (response) {
 								console.log(response.data) // current video screen data
 								
 								// set to current parent object
-								setResponseInCurrentVideo(response.data)
+								setResponseInCurrentVideo(response.data.video_endpoint)
 
 								// change route to current_video
 								redirectToNewVideo()

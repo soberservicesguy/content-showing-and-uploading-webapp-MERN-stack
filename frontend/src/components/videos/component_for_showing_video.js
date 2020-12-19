@@ -36,6 +36,7 @@ class ComponentForShowingVideo extends Component {
 
 		return (
 			<div style={styles.outerContainer}>
+
 				<p>
 					{ data.category }
 				</p>

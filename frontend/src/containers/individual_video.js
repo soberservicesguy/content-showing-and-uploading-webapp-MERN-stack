@@ -13,6 +13,7 @@ import {
 import withResponsiveness from "../responsiveness_hook";
 
 import { withRouter } from "react-router-dom";
+import ReactPlayer from 'react-player'
 
 const styles = theme => ({
   root: {
@@ -44,43 +45,22 @@ class IndividualIndividualVideo extends Component {
 		const { classes } = this.props;
 	  	const {_xs, _sm, _md, _lg, _xl} = this.props
 
+		  		// <ReactPlayer 
+		  		// 	controls={true}
+			  	// 	url={`http://localhost:3001/video-stream/video?endpoint=${this.props.current_video}`} 
+		  		// />
+		console.log(this.props.current_video)
 	  	return (
-	  		<Grid container direction="row" spacing={4} style={{backgroundColor: '#eee'}} >
+	  		<div>
 
-	  			<Grid item container direction="column" xs={12} sm={12} md={2} lg={3}>
-	  				<Grid item>
-	  				</Grid>
+		  		<video 
+			  		src = {`http://localhost:3001/video-stream/video?endpoint=${this.props.current_video}`} 
+			  		controls = {true}
+		  		/>
+	  			
+	  		</div>
 
-	  				<Grid item>
-	  				</Grid>
 
-	  				<Grid item>
-	  				</Grid>
-	  			</Grid>
-
-	  			<Grid item container direction="column" xs={12} sm={12} md={8} lg={6}>
-	  				<Grid item>
-	  				</Grid>
-
-	  				<Grid item>
-	  				</Grid>
-
-	  				<Grid item>
-	  				</Grid>
-	  			</Grid>
-
-	  			<Grid item container direction="column" xs={12} sm={12} md={2} lg={3}>
-	  				<Grid item>
-	  				</Grid>
-
-	  				<Grid item>
-	  				</Grid>
-
-	  				<Grid item>
-	  				</Grid>
-	  			</Grid>
-
-	  		</Grid>
 		);
 	}
 }
@@ -90,3 +70,40 @@ IndividualIndividualVideo.defaultProps = {
 };
 
 export default withRouter(withResponsiveness(withStyles(styles)(IndividualIndividualVideo)));
+
+	  		// <Grid container direction="row" spacing={4} style={{backgroundColor: '#eee'}} >
+
+	  		// 	<Grid item container direction="column" xs={12} sm={12} md={2} lg={3}>
+	  		// 		<Grid item>
+	  		// 		</Grid>
+
+	  		// 		<Grid item>
+	  		// 		</Grid>
+
+	  		// 		<Grid item>
+	  		// 		</Grid>
+	  		// 	</Grid>
+
+	  		// 	<Grid item container direction="column" xs={12} sm={12} md={8} lg={6}>
+	  		// 		<Grid item>
+	  		// 		</Grid>
+
+	  		// 		<Grid item>
+	  		// 		</Grid>
+
+	  		// 		<Grid item>
+	  		// 		</Grid>
+	  		// 	</Grid>
+
+	  		// 	<Grid item container direction="column" xs={12} sm={12} md={2} lg={3}>
+	  		// 		<Grid item>
+	  		// 		</Grid>
+
+	  		// 		<Grid item>
+	  		// 		</Grid>
+
+	  		// 		<Grid item>
+	  		// 		</Grid>
+	  		// 	</Grid>
+
+	  		// </Grid>

@@ -22,6 +22,22 @@ const styles = theme => ({
     	paddingLeft:100
     },
   },
+
+  imageStyle:{
+  	resizeMode: "stretch",
+  	height: 300,
+  	width: 300,
+  },
+  
+  imageContainer:{
+  	// marginTop: windowHeight * 0.05, // or 30  gap
+  	height: '80%', // or 100
+  	width: '80%',
+  	justifyContent: 'center', // vertically centered
+  	alignSelf: 'center', // horizontally centered
+  	// backgroundColor: utils.lightGreen,
+  },
+
 });
 
 
@@ -36,6 +52,8 @@ class IndividualIndividualImage extends Component {
 // COMPONENT DID MOUNT
 	componentDidMount() {
 
+		console.log('this')
+		console.log(this.props.current_image)
 // FETCHING DATA FOR COMPONENT
 	}
 
@@ -44,43 +62,11 @@ class IndividualIndividualImage extends Component {
 		const { classes } = this.props;
 	  	const {_xs, _sm, _md, _lg, _xl} = this.props
 
+  		var base64Image = "data:image/jpeg;base64," + this.props.current_image
 	  	return (
-	  		<Grid container direction="row" spacing={4} style={{backgroundColor: '#eee'}} >
-
-	  			<Grid item container direction="column" xs={12} sm={12} md={2} lg={3}>
-	  				<Grid item>
-	  				</Grid>
-
-	  				<Grid item>
-	  				</Grid>
-
-	  				<Grid item>
-	  				</Grid>
-	  			</Grid>
-
-	  			<Grid item container direction="column" xs={12} sm={12} md={8} lg={6}>
-	  				<Grid item>
-	  				</Grid>
-
-	  				<Grid item>
-	  				</Grid>
-
-	  				<Grid item>
-	  				</Grid>
-	  			</Grid>
-
-	  			<Grid item container direction="column" xs={12} sm={12} md={2} lg={3}>
-	  				<Grid item>
-	  				</Grid>
-
-	  				<Grid item>
-	  				</Grid>
-
-	  				<Grid item>
-	  				</Grid>
-	  			</Grid>
-
-	  		</Grid>
+	  		<div style={styles.imageContainer}>
+	  			<img src={base64Image} alt="" style={{width:200, height:400, resizeMode: "contain"}}/>
+	  		</div>
 		);
 	}
 }

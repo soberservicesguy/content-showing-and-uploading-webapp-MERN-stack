@@ -10,7 +10,7 @@ const VideoSchema = new mongoose.Schema({
 
 	category:String,
 	image_thumbnail:String,
-	video_filename:String,
+	video_filepath:String,
 	title:String,
 	endpoint:String,
 	description:String,

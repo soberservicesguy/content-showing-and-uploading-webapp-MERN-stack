@@ -3,6 +3,9 @@ require('../../models/comment');
 require('../../models/like');
 require('../../models/user');
 
+const passport = require('passport');
+const { isAllowedSurfing } = require('../authMiddleware/isAllowedSurfing')
+const { isAllowedWritingBlogposts } = require('../authMiddleware/isAllowedWritingBlogposts')
 
 const base64_encode = require('../../lib/image_to_base64')
 const mongoose = require('mongoose');
@@ -11,6 +14,7 @@ const BlogPost = mongoose.model('BlogPost');
 const Comment = mongoose.model('Comment');
 const Like = mongoose.model('Like');
 const User = mongoose.model('User');
+
 
 // create a new blogpost with children
 
@@ -45,24 +49,24 @@ router.post('/create-blogpost-with-children', function(req, res, next){
 			commenting_timestamp: req.body.children.commenting_timestamp,
 
 		//assigning parent
-			blogpost:newBlogPost._id,
-			user:newBlogPost._id,
+			blogpost:newBlogPost,
+			user:newBlogPost,
 
 		});
 
-		newBlogPost.comments.push(newComment._id)
+		newBlogPost.comments.push(newComment)
 		const newLike = new Like({
 
 			_id: new mongoose.Types.ObjectId(),
 			timestamp_of_liking: req.body.children.timestamp_of_liking,
 
 		//assigning parent
-			blogpost:newBlogPost._id,
-			user:newBlogPost._id,
+			blogpost:newBlogPost,
+			user:newBlogPost,
 
 		});
 
-		newBlogPost.likes.push(newLike._id)
+		newBlogPost.likes.push(newLike)
 		const newUser = new User({
 
 			_id: new mongoose.Types.ObjectId(),
@@ -73,13 +77,13 @@ router.post('/create-blogpost-with-children', function(req, res, next){
 			salt: req.body.children.salt,
 
 		//assigning parent
-			blogposts:newBlogPost._id,
-			comments:newBlogPost._id,
-			likes:newBlogPost._id,
+			blogposts:newBlogPost,
+			comments:newBlogPost,
+			likes:newBlogPost,
 
 		});
 
-		newBlogPost.users.push(newUser._id)
+		newBlogPost.users.push(newUser)
 
 	newBlogPost.save();
 
@@ -242,8 +246,8 @@ router.get('/get-all-likes-of-blogpost', function(req, res, next){
 
 
 // create blogpost with undefined
-
-router.post('/create-blogpost-with-user', function(req, res, next){
+// USED IN CREATING BLOGPOST
+router.post('/create-blogpost-with-user', passport.authenticate('jwt', { session: false }), isAllowedWritingBlogposts, function(req, res, next){
 	
 	var blogpost_object = req.body.blogpost_object
 	var user_object = req.body.user_object
@@ -256,8 +260,8 @@ router.post('/create-blogpost-with-user', function(req, res, next){
 	newBlogPost.save(function (err, newBlogPost) {
 		if (err) return console.log(err);
 
-			User.
-			findOne({...user_object})
+		User.
+		findOne({...user_object})
 		.then((user) => {
 			
 			if( !user ){

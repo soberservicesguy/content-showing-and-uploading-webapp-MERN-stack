@@ -124,17 +124,24 @@ class CreateBlogPost extends Component {
 				  	</div>
 
 
-				  	<div style={styles.textinputContainer}>
+					<div style={styles.textinputContainer}>
+						<p style={styles.headingOverInput}>
+							IMAGE MAIN
+						</p>
 						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
-								label="Type your image_main" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
-								onChange={ (event) => this.setState( prev => ({...prev, image_main: event.target.value})) }
+							<input
+								name="blogpost_image_main" // name of input field or fieldName simply
+								enctype="multipart/form-data"
+								type="file"
+								onChange={(event) => {
+									// console logging selected file from menu
+									console.log( event.target.files[0] ) // gives first file
+									// setState method with event.target.files[0] as argument
+									this.setState(prev => ({...prev, image_main: event.target.files[0]}))
+								}}
 							/>
 						</form>
-				  	</div>
+					</div>
 
 
 				  	<div style={styles.textinputContainer}>
@@ -275,7 +282,7 @@ class CreateBlogPost extends Component {
 							// first create parent object
 							let blogpost_object = {
 								category: this.state.category,
-								image_main: this.state.image_main,
+								// image_main: this.state.image_main,
 								title: this.state.title,
 								date_of_publishing: this.state.date_of_publishing,
 								initial_tags: this.state.initial_tags,
@@ -290,30 +297,16 @@ class CreateBlogPost extends Component {
 
 							// 2nd create child object from redux (linked_object_and_live_object_in_redux in schema)
 							let user_object = {
-
-								user_name: this.props.user_name,
 								phone_number: this.props.phone_number,
-								user_image: this.props.user_image,
-								hash: this.props.hash,
-								salt: this.props.salt,
-								user_name: this.props.user_name,
-								phone_number: this.props.phone_number,
-								user_image: this.props.user_image,
-								hash: this.props.hash,
-								salt: this.props.salt,
-								user_name: this.props.user_name,
-								phone_number: this.props.phone_number,
-								user_image: this.props.user_image,
-								hash: this.props.hash,
-								salt: this.props.salt,
 							}
 
+							const formData = new FormData()
+							formData.append('blogpost_object', blogpost_object)
+							formData.append('user_object', user_object)
+							formData.append('blogpost_image_main', this.state.image_main, this.state.image_main.name)
+
 							// 3rd send post request
-							axios.post(utils.baseUrl + '/blogposts/create-blogpost-with-user', 
-								{
-									blogpost_object: blogpost_object,
-									user_object: user_object,
-								})
+							axios.post(utils.baseUrl + '/blogposts/create-blogpost-with-user', formData)
 							.then(function (response) {
 								console.log(response.data) // current blogpost screen data
 								

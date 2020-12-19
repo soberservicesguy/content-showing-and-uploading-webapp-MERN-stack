@@ -12,6 +12,7 @@ import { combineReducers } from 'redux';
 import {rootSaga} from "../saga_stuff/saga_combined";
 
 import {
+	reducerForPrivileges,
 	reducerJWT,
 	reducerForBlogPost,
 	reducerForComment,
@@ -32,27 +33,33 @@ export const rootReducer = combineReducers({
 	comments: reducerForComment,
 	likes: reducerForLike,
 	users: reducerForUser,
+	privileges: reducerForPrivileges,
 });
 
 export const mapStateToProps = state => {
-  return {
+	return {
 
-	total_blogposts: state.blogposts.totalBlogPost,
-	current_blogpost: state.blogposts.currentBlogPost,
+		total_blogposts: state.blogposts.totalBlogPost,
+		current_blogpost: state.blogposts.currentBlogPost,
 
-	total_videos: state.videos.totalVideo,
-	current_video: state.videos.currentVideo,
+		total_videos: state.videos.totalVideo,
+		current_video: state.videos.currentVideo,
 
-	total_images: state.images.totalImage,
-	current_image: state.images.currentImage,
+		total_images: state.images.totalImage,
+		current_image: state.images.currentImage,
 
-	userToken: state.users.userToken,
-	isSignedIn: state.users.isSignedIn,
-	user_name: state.users.user_name,
-	phone_number: state.users.phone_number,
-	user_image: state.users.user_image,
-	// hash: state.users.hash,
-	// salt: state.users.salt,
+		userToken: state.users.userToken,
+		isSignedIn: state.users.isSignedIn,
+		user_name: state.users.user_name,
+		phone_number: state.users.phone_number,
+		user_image: state.users.user_image,
+		// hash: state.users.hash,
+		// salt: state.users.salt,
+
+		isAllowedBasic: state.privileges.isAllowedBasic,
+		isAllowedImagesControl: state.privileges.isAllowedImagesControl,
+		isAllowedVideosControl: state.privileges.isAllowedVideosControl,
+		isAllowedBlogpostsControl: state.privileges.isAllowedBlogpostsControl,
 
 	};
 };
@@ -95,6 +102,16 @@ export const mapDispatchToProps = dispatch => {
 		remove_comment_from_image: (image_id, comment_object, comment_id) => dispatch( { type: "REMOVE_COMMENT_FROM_IMAGE", image_id: image_id, comment_object: comment_object, comment_id: comment_id } ),
 		add_like_to_image: (image_id, like_object) => dispatch( { type: "ADD_LIKE_TO_IMAGE", image_id: image_id, like_object: like_object } ),
 		remove_like_from_image: (image_id, like_object, like_id) => dispatch( { type: "REMOVE_LIKE_FROM_IMAGE", image_id: image_id, like_object: like_object, like_id: like_id } ),
+
+		allow_basic_privilege: () => dispatch( { type: "ALLOW_BASIC" } ),
+		allow_images_privilege: () => dispatch( { type: "ALLOW_IMAGES_CONTROL" } ),
+		allow_videos_privilege: () => dispatch( { type: "ALLOW_VIDEOS_CONTROL" } ),
+		allow_blogpost_privilege: () => dispatch( { type: "ALLOW_BLOGPOSTS_CONTROL" } ),		
+		revoke_basic_privilege: () => dispatch( { type: "REVOKE_BASIC" } ),
+		revoke_images_privilege: () => dispatch( { type: "REVOKE_IMAGES_CONTROL" } ),
+		revoke_videos_privilege: () => dispatch( { type: "REVOKE_VIDEOS_CONTROL" } ),
+		revoke_blogpost_privilege: () => dispatch( { type: "REVOKE_BLOGPOSTS_CONTROL" } ),
+
 	};
 
 };
