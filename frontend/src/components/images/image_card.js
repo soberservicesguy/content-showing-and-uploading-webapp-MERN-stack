@@ -25,7 +25,7 @@ import {
 } from "../comments/"
 
 import {
-	ConnectedCreateComment,
+	ConnectedCreateCommentForImage,
 } from "../../redux_stuff/connected_components"
 
 
@@ -35,7 +35,7 @@ import {
 } from "../likes/"
 
 import {
-	ConnectedCreateLike,
+	ConnectedCreateLikeForImage,
 } from "../../redux_stuff/connected_components"
 
 
@@ -178,10 +178,10 @@ class ImageCard extends Component {
 
 				<div>
 					{/* 4th create individual child options like comment / like */}					
-					<ConnectedCreateComment
+					<ConnectedCreateCommentForImage
 						parentDetailsPayload = { this.props.dataPayloadFromParent }
 					/>					
-					<ConnectedCreateLike
+					<ConnectedCreateLikeForImage
 						parentDetailsPayload = { this.props.dataPayloadFromParent }
 					/>
 				</div>

@@ -25,7 +25,7 @@ import {
 } from "../comments/"
 
 import {
-	ConnectedCreateComment,
+	ConnectedCreateCommentForBlogpost,
 } from "../../redux_stuff/connected_components"
 
 
@@ -35,7 +35,7 @@ import {
 } from "../likes/"
 
 import {
-	ConnectedCreateLike,
+	ConnectedCreateLikeForBlogpost,
 } from "../../redux_stuff/connected_components"
 
 
@@ -58,6 +58,10 @@ const styles = theme => ({
 	expandOpen: {
 		transform: 'rotate(180deg)',
 	},
+	buttonWithoutBG:{
+		marginTop: 50,
+		marginBottom: 50,
+	}
 
 });
 
@@ -76,7 +80,7 @@ class BlogPostCard extends Component {
 
 	fetchAllComment(endpoint) {
 
-		axios.get(utils.baseUrl + '/images/get-all-comments-of-image', 
+		axios.get(utils.baseUrl + '/blogpostings/get-all-comments-of-blogpost', 
 			{
 			    params: {
 					endpoint: endpoint,
@@ -86,7 +90,7 @@ class BlogPostCard extends Component {
 		.then((response) => {
 			// console.log(response.data);
 			this.setState( prev => ({...prev, comments: ( prev.comments.length === 0 ) ? response.data : [] }) )
-			
+			console.log(this.state.comments)
 		})
 		.catch((error) => {
 			console.log(error);
@@ -97,7 +101,7 @@ class BlogPostCard extends Component {
 
 	fetchAllLike(endpoint) {
 
-		axios.get(utils.baseUrl + '/images/get-all-likes-of-image', 
+		axios.get(utils.baseUrl + '/blogpostings/get-all-likes-of-blogpost', 
 			{
 			    params: {
 					endpoint: endpoint,
@@ -123,6 +127,8 @@ class BlogPostCard extends Component {
 	}
 
 	render() {
+		// console.log('COMMENTS')
+		// console.log(this.state.comments)
 
 		return (
 		  	<div>
@@ -134,7 +140,7 @@ class BlogPostCard extends Component {
 			  		/>
 		  		</div>
 
-				<div>
+				<div style={{marginTop:10}}>
 					{/* 2nd show individual summary of childs */}
 					<SummarizeCommentsOfBlogPost
 						showOnlyQuantity= { false }
@@ -148,14 +154,14 @@ class BlogPostCard extends Component {
 					/>
 				</div>
 
-				<div>
+				<div style={{marginTop:10}}>
 					{/* 3rd show individual button for showing childs */}
 
 					<button style={styles.buttonWithoutBG}
-						onPress={ () => this.fetchAllComment( this.props.dataPayloadFromParent.endpoint ) }
+						onClick={ () => this.fetchAllComment( this.props.dataPayloadFromParent.endpoint ) }
 					>
 						<p>
-							Show All Comment
+							Show All Comments
 						</p>
 					</button>
 					
@@ -163,8 +169,8 @@ class BlogPostCard extends Component {
 						dataPayloadFromParent = { this.state.comments }
 					/>
 
-					<button style={styles.buttonWithoutBG}
-						onPress={ () => this.fetchAllLike( this.props.dataPayloadFromParent.endpoint ) }
+					<button style={{marginTop:50}}
+						onClick={ () => this.fetchAllLike( this.props.dataPayloadFromParent.endpoint ) }
 					>
 						<p>
 							Show All Like
@@ -176,12 +182,12 @@ class BlogPostCard extends Component {
 					/>
 				</div>
 
-				<div>
+				<div style={{marginTop:50}}>
 					{/* 4th create individual child options like comment / like */}					
-					<ConnectedCreateComment
+					<ConnectedCreateCommentForBlogpost
 						parentDetailsPayload = { this.props.dataPayloadFromParent }
 					/>					
-					<ConnectedCreateLike
+					<ConnectedCreateLikeForBlogpost
 						parentDetailsPayload = { this.props.dataPayloadFromParent }
 					/>
 				</div>

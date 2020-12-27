@@ -35,12 +35,29 @@ import {
 } from "../components/images"
 
 import {
-	CreateComment,
+	CreateCommentForBlogpost,
 } from "../components/comments"
 
 import {
-	CreateLike,
+	CreateCommentForVideo,
+} from "../components/comments"
+
+import {
+	CreateCommentForImage,
+} from "../components/comments"
+
+import {
+	CreateLikeForBlogpost,
 } from "../components/likes"
+
+import {
+	CreateLikeForVideo,
+} from "../components/likes"
+
+import {
+	CreateLikeForImage,
+} from "../components/likes"
+
 
 export const ConnectedRootRouterContainer = connect(
 	mapStateToProps,
@@ -68,15 +85,35 @@ export const ConnectedComponentForShowingBlogPost = connect(
 	mapDispatchToProps
 )(ComponentForShowingBlogPost);
 
-export const ConnectedCreateComment = connect(
+export const ConnectedCreateCommentForBlogpost = connect(
 	mapStateToProps,
 	mapDispatchToProps
-)(CreateComment);
+)(CreateCommentForBlogpost);
 
-export const ConnectedCreateLike = connect(
+export const ConnectedCreateCommentForImage = connect(
 	mapStateToProps,
 	mapDispatchToProps
-)(CreateLike);
+)(CreateCommentForImage);
+
+export const ConnectedCreateCommentForVideo = connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(CreateCommentForVideo);
+
+export const ConnectedCreateLikeForBlogpost = connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(CreateLikeForBlogpost);
+
+export const ConnectedCreateLikeForImage = connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(CreateLikeForImage);
+
+export const ConnectedCreateLikeForVideo = connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(CreateLikeForVideo);
 
 export const ConnectedCreateVideo = connect(
 	mapStateToProps,

@@ -15,11 +15,12 @@ const get_allowed_privileges_list = require("../../handy_functions/get_allowed_p
 
 
 router.get('/protected', passport.authenticate('jwt', { session: false }), isAllowedSurfing, isAllowedUploadingVideos, (req, res, next) => {
-	// payload recieved from passport.authenticate jwt middleware
-	console.log(req.user.msg)
-	console.log(req.user.user_object)
-	// payload recieved from last middleware
-	console.log(req.local)
+	// // payload recieved from passport.authenticate jwt middleware
+	// console.log(req.user.msg)
+	// console.log(req.user.user_object)
+
+	// // payload recieved from last middleware
+	// console.log(req.local)
 
 	res.status(200).json({ success: true, msg: "You are successfully authenticated to this route!", privileges: req.user.privileges});
 });

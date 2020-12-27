@@ -76,8 +76,9 @@ class CreateVideo extends Component {
 			title: '',
 			endpoint: '',
 			description: '',
-			timestamp_of_uploading: '',
-			all_tags: '',		}
+			// timestamp_of_uploading: '',
+			all_tags: '',		
+		}
 
 	}
 
@@ -183,36 +184,16 @@ class CreateVideo extends Component {
 							let setResponseInCurrentVideo = (arg) => this.props.set_current_video(arg)
 							let redirectToNewVideo = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
 
-
-							// first create parent object
-							let video_object = {
-								category: this.state.category,
-								title: this.state.title,
-								description: this.state.description,
-								all_tags: this.state.all_tags,
-								// image_thumbnail: this.state.image_thumbnail,
-								// video_filepath: this.state.video_filepath,
-								// endpoint: this.state.endpoint,
-								// timestamp_of_uploading: this.state.timestamp_of_uploading,
-							}
-
+							// in formData send individual variables and not a complete object
+							// formData.append('video_object', video_object) // THIS WILL NOT WORK, SENT VARS INDIVIDUALLY
 							const formData = new FormData()
-							formData.append('video_object', video_object)
+							formData.append('category', this.state.category)
+							formData.append('title', this.state.title)
+							formData.append('description', this.state.description)							
+							formData.append('all_tags', this.state.all_tags)
 							// formData.append('user_object', user_object) // not needed, since object will be pulled from passport js jwt token
 							formData.append('videos_uploaded_by_users', this.state.video_filepath, this.state.video_filepath.name)
 
-							// 2nd create child object from redux (linked_object_and_live_object_in_redux in schema)
-						// not needed, the user will be obtained from passport js middleware
-							// let user_object = {
-
-							// 	user_name: this.props.user_name,
-							// 	phone_number: this.props.phone_number,
-							// 	user_image: this.props.user_image,
-							// 	hash: this.props.hash,
-							// 	salt: this.props.salt,
-							// }
-
-							// 3rd send post request
 							axios.post(utils.baseUrl + '/video-uploads/protected-video-upload', formData)
 							.then(function (response) {
 								console.log(response.data) // current video screen data

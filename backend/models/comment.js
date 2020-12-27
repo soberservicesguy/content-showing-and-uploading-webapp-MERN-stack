@@ -17,4 +17,20 @@ const CommentSchema = new mongoose.Schema({
 	user:{ type: Schema.Types.ObjectId, ref: 'User', required: true},
 })
 
+CommentSchema.pre('save', function(next) {
+
+	this.commenting_timestamp = String( Date.now() )
+	
+    next();
+
+});
+
+CommentSchema.post('save', function() {
+
+	console.log('SAVED CONDITION')
+    console.log(this)
+
+});
+
+
 mongoose.model('Comment', CommentSchema);

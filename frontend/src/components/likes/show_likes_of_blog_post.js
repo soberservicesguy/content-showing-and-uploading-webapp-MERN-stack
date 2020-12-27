@@ -42,6 +42,9 @@ const styles = theme => ({
 	avatar: {
 		// backgroundColor: red[500],
 	},
+	outerContainer:{
+		marginTop:100
+	}
 });
 
 class ShowLikesOfBlogPost extends Component {

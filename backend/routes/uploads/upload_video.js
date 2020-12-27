@@ -20,7 +20,7 @@ var filename_used_to_store_video_in_assets_without_format = ''
 
 // Set The Storage Engine
 const video_storage = multer.diskStorage({
-	destination: '../assets/videos/uploads/videos_uploaded_by_users/',
+	destination: path.join(__dirname , '../../assets/videos/uploads/videos_uploaded_by_users'),
 	filename: function(req, file, cb){
 		// file name pattern fieldname-currentDate-fileformat
 		filename_used_to_store_video_in_assets_without_format = file.originalname.replace( path.extname(file.originalname), "");
@@ -58,6 +58,7 @@ function checkFileTypeForVideo(file, cb){
 router.post('/protected-video-upload', passport.authenticate('jwt', { session: false }), (req, res, next) => {
 
 	video_upload(req, res, (err) => {
+
 		if(err){
 
 			console.log(err)
@@ -70,6 +71,7 @@ router.post('/protected-video-upload', passport.authenticate('jwt', { session: f
 
 			} else {
 
+				var video_id = ''
 			// video is uploaded , NOW creating thumbnail from video using snapshot
  				ffmpeg(`./assets/videos/uploads/videos_uploaded_by_users/${filename_used_to_store_video_in_assets}`)
 				.on('end', function() {
@@ -106,16 +108,19 @@ router.post('/protected-video-upload', passport.authenticate('jwt', { session: f
 					size: '150x100', 
 					folder: './assets/videos/uploads/upload_thumbnails/',
 				})
+
+
 			// saving video in DB
+				video_id = new mongoose.Types.ObjectId()
 				const newVideo = new Video({
-					_id: new mongoose.Types.ObjectId(),
-					category: req.body.video_object.category,
-					video_filename: filename_used_to_store_video_in_assets,
-					title: req.body.video_object.title,
-					all_tags: req.body.video_object.all_tags,
+					_id: video_id,
 					image_thumbnail: `${filename_used_to_store_video_in_assets_without_format}1.png`,
-					description: req.body.video_object.description,
 					timestamp_of_uploading: String( Date.now() ),
+					video_filepath: `./assets/videos/uploads/videos_uploaded_by_users/${filename_used_to_store_video_in_assets}`,
+					category: req.body.category,
+					title: req.body.title,
+					all_tags: req.body.all_tags,
+					description: req.body.description,
 					// endpoint:String, // will be taken care at db model
 				})
 
@@ -133,34 +138,35 @@ router.post('/protected-video-upload', passport.authenticate('jwt', { session: f
 
 							newVideo.user = user
 							newVideo.save()
-
-							console.log('ENDPOINT SUPPLIED IS ')
-							console.log(newVideo.endpoint)
-							res.status(200).json({ success: true, msg: 'new user saved', video_endpoint: newVideo.endpoint});	
-
+						// finding video saved to access its endpoint since its created at model level
+							
 						} else {
 
 							res.status(200).json({ success: false, msg: "user doesnt exists, try logging in again" });
 
 						}
 					})
+					.then(() => {
+
+						Video.findOne({ _id: video_id })
+						.then((saved_video) => {
+							res.status(200).json({ success: true, msg: 'new user saved', video_endpoint: saved_video.endpoint});	
+
+						})
+
+					})
 					.catch((err) => {
 
 						next(err);
 
-					});
+					})
 
-
-					res.status(404).json({ success: false, msg: 'couldnt create video database entry',file: `uploads/${req.file.filename}`})
+					// not needed, used for multer
+					// res.status(200).json({ success: false, msg: 'couldnt create video database entry',file: `uploads/${req.file.filename}`})
 				})
-
-					// not needed anymore, was used in multer
-					// res.status(200).json({ success: true, msg: 'File Uploaded!',file: `uploads/${req.file.filename}`})
-
 			}
 		}
 	})
-
 })
 
 

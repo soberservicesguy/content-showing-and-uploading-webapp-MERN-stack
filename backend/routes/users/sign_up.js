@@ -84,7 +84,7 @@ router.post('/signup-and-get-privileges', (req, res, next) => {
 				const newImage = new Image({
 
 					_id: new mongoose.Types.ObjectId(),
-					image_source: `./assets/images/uploads/avatar_image/${filename_used_to_store_image_in_assets}`,
+					image_filepath: `./assets/images/uploads/avatar_image/${filename_used_to_store_image_in_assets}`,
 					category: req.body.category,
 					timestamp_of_uploading: String( Date.now() ),
 					// title: req.body.title,

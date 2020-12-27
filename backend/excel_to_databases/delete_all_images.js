@@ -15,7 +15,14 @@ const User = mongoose.model('User');
 const {resolve} = require('path')
 require('dotenv').config({path: resolve(__dirname,"../.env")})
 
-Image.deleteMany({}, ()=>null)
-Comment.deleteMany({}, ()=>null)
-Like.deleteMany({}, ()=>null)
-User.deleteMany({}, ()=>null)
+// Comment.deleteMany({}, ()=>null)
+// Like.deleteMany({}, ()=>null)
+// User.deleteMany({}, ()=>null)
+
+
+function bulk_delete_all_images(){
+	Image.deleteMany({}, ()=>null)
+}
+
+
+module.exports = bulk_delete_all_images

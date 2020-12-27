@@ -28,16 +28,27 @@ const VideoSchema = new mongoose.Schema({
 
 })
 
-mongoose.model('Video', VideoSchema);
-	
 VideoSchema.pre('save', function(next) {
+
+	endpoint_number += 1
 
 	this.total_comments = this.comments.length
 	this.total_likes = this.likes.length
 
-	this.endpoint = String( endpoint_number + 1 )
-	endpoint_number += 1
+	this.timestamp_of_uploading = String( Date.now() )
+	this.endpoint = String( endpoint_number )
+	// console.log('THIS')
+    // console.log(this)
 
     next();
+});
+
+VideoSchema.post('save', function() {
+
+	console.log('SAVED CONDITION')
+    console.log(this)
 
 });
+
+
+mongoose.model('Video', VideoSchema);

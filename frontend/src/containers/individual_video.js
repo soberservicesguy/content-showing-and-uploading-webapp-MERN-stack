@@ -49,6 +49,7 @@ class IndividualIndividualVideo extends Component {
 		  		// 	controls={true}
 			  	// 	url={`http://localhost:3001/video-stream/video?endpoint=${this.props.current_video}`} 
 		  		// />
+		console.log('ENDPOINT REQUEST')
 		console.log(this.props.current_video)
 	  	return (
 	  		<div>

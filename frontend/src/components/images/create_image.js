@@ -182,32 +182,16 @@ class CreateImage extends Component {
 							let setResponseInCurrentImage = (arg) => this.props.set_current_image(arg)
 							let redirectToNewImage = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
 
-							// first create parent object
-							let image_object = {
-								category: this.state.category,
-								title: this.state.title,
-								timestamp_of_uploading: Date.now(),
-								description: this.state.description,
-								all_tags: this.state.all_tags,
-								// image_source: this.state.image_source,
-								// endpoint: this.state.endpoint,
-							}
-
-							// 2nd create child object from redux (linked_object_and_live_object_in_redux in schema)
-						// not needed, the user will be obtained from passport js middleware
-							// let user_object = {
-
-							// 	user_name: this.props.user_name,
-							// 	phone_number: this.props.phone_number,
-
-							// }
-
+							// in formData send individual variables and not a complete object
+							// formData.append('video_object', video_object) // THIS WILL NOT WORK, SENT VARS INDIVIDUALLY
 							const formData = new FormData()
-							formData.append('image_object', image_object)
+							formData.append('category', this.state.category)
+							formData.append('title', this.state.title)
+							formData.append('description', this.state.description)
+							formData.append('all_tags', this.state.all_tags)
 							// formData.append('user_object', user_object) // not needed, since object will be pulled from passport js jwt token
 							formData.append('upload_images_by_user', this.state.image_source, this.state.image_source.name)
 
-							// 3rd send post request
 							axios.post(utils.baseUrl + '/image-uploads/protected-image-upload', formData)
 							.then(function (response) {
 								// console.log(this.props.user_name)

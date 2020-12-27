@@ -12,7 +12,7 @@ import withResponsiveness from "../../responsiveness_hook";
 
 const styles = theme => ({
 	outerContainer:{
-		
+		marginTop:100,
 	}
 });
 

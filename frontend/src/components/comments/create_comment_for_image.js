@@ -62,13 +62,14 @@ const styles = theme => ({
 	},
 });
 
-class CreateLike extends Component {
+class CreateCommentForImage extends Component {
 	constructor(props) {
 		super(props);
 // STATE	
 		this.state = {
 			redirectToRoute: false,
-			timestamp_of_liking: '',
+			text: '',
+			// commenting_timestamp: '',
 		}
 
 	}
@@ -89,7 +90,7 @@ class CreateLike extends Component {
 			this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))
 
 			// redirecting
-			return <Redirect to = {{ pathname: "/Individual-BlogPost" }} />
+			return <Redirect to = {{ pathname: "/Individual-Image" }} />
 
 		} else {
 
@@ -102,62 +103,35 @@ class CreateLike extends Component {
 				  	<div style={styles.textinputContainer}>
 						<form className={styles.root} noValidate autoComplete="off">
 							<TextField 
-								label="Type your timestamp_of_liking" // placeholder 
+								label="Type your text" // placeholder 
 								id="standard-basic" // "filled-basic" / "outlined-basic"
 								variant="outlined" // "filled"
 								classes={styles.textinput}
-								onChange={ (value) => this.setState( prev => ({...prev, timestamp_of_liking: value})) }
+								onChange={ (value) => this.setState( prev => ({...prev, text: value})) }
 							/>
 						</form>
 				  	</div>
+
+
 					<button style={styles.buttonWithoutBG}
 						onClick={ () => {
-							let setResponseInCurrentBlogPost = (arg) => this.props.set_current_blogpost(arg)
-							let redirectToNewBlogPost = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
 
-							// first create child object
-							let like_object = {
-								timestamp_of_liking: this.state.timestamp_of_liking,
-							}
+							let setResponseInCurrentImage = (arg) => this.props.set_current_image(arg)
+							let redirectToNewImage = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
 
-							// 2nd create linked object from redux (linked_object_and_live_object_in_redux in schema)
-							let user_object = {
-
-								user_name: this.props.user_name,
-								phone_number: this.props.phone_number,
-								user_image: this.props.user_image,
-								hash: this.props.hash,
-								salt: this.props.salt,
-								user_name: this.props.user_name,
-								phone_number: this.props.phone_number,
-								user_image: this.props.user_image,
-								hash: this.props.hash,
-								salt: this.props.salt,
-								user_name: this.props.user_name,
-								phone_number: this.props.phone_number,
-								user_image: this.props.user_image,
-								hash: this.props.hash,
-								salt: this.props.salt,
-							}
-
-							// 3rd create parent object								
-							let blogpost_object = this.props.parentDetailsPayload
-
-							// 4th making post request
-							axios.post(utils.baseUrl + '/blogposts/create-like-for-blogpost', 
+							axios.post(utils.baseUrl + '/images/create-comment-for-image', 
 								{
-									like_object: like_object,
-									blogpost_object: blogpost_object,
-									user_object: user_object,
+									comment_text: this.state.text,
+									image_endpoint: this.props.parentDetailsPayload.endpoint,
 								})
 							.then(function (response) {
-								console.log(response.data) // current blogpost screen data
+								console.log(response.data) // current image screen data
 								
 								// set to current parent object
-								setResponseInCurrentBlogPost(response.data)
+								setResponseInCurrentImage(response.data)
 
-								// change route to current_blogpost	
-								redirectToNewBlogPost()							
+								// change route to current_image	
+								redirectToNewImage()							
 
 							})
 							.catch(function (error) {
@@ -167,7 +141,7 @@ class CreateLike extends Component {
 						}}
 					>
 						<p style={styles.innerText}>
-							Press To Create Like
+							Press To Create Comment
 						</p>
 					</button>
 				</div>
@@ -176,9 +150,9 @@ class CreateLike extends Component {
 	}
 }
 	
-CreateLike.defaultProps = {
+CreateCommentForImage.defaultProps = {
 
 };
 
-// export default CreateLike;  // REMOVE withResponsiveness and withStyles as much as possible
-export default withRouter(withResponsiveness(withStyles(styles)(CreateLike)))
+// export default CreateCommentForImage;  // REMOVE withResponsiveness and withStyles as much as possible
+export default withRouter(withResponsiveness(withStyles(styles)(CreateCommentForImage)))

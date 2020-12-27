@@ -33,20 +33,28 @@ class ComponentForShowingBlogPost extends Component {
 	render() {
 
 		const data = this.props.dataPayloadFromParent // data being plugged from parent flatlist
+		var base64Image = "data:image/jpeg;base64," + data.image_main_filepath
 
 		return (
 			<div style={styles.outerContainer}>
 				<p>
 					{ data.category }
 				</p>
-				<p>
-					{ data.image_main }
-				</p>
+				
+				<div style={styles.imageContainer}>
+					<img src={base64Image} alt="" 
+						style={{
+							width:200, 
+							height:400, 
+							resizeMode: "contain"
+						}}
+					/>
+				</div>
 				<p>
 					{ data.title }
 				</p>
 				<p>
-					{ data.date_of_publishing }
+					{ data.timestamp_of_uploading }
 				</p>
 				<p>
 					{ data.initial_tags }

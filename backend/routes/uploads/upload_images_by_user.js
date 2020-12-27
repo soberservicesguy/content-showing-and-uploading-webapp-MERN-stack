@@ -80,12 +80,12 @@ router.post('/protected-image-upload', passport.authenticate('jwt', { session: f
 				const newImage = new Image({
 
 					_id: new mongoose.Types.ObjectId(),
-					category: req.body.image_object.category,
-					title: req.body.image_object.title,
-					description: req.body.image_object.description,
-					all_tags: req.body.image_object.all_tags,
-					image_source: `./assets/images/uploads/images_uploaded_by_user/${filename_used_to_store_image_in_assets}`,
-					timestamp_of_uploading: String( Date.now() ),
+					category: req.body.category,
+					title: req.body.title,
+					description: req.body.description,
+					all_tags: req.body.all_tags,
+					image_filepath: `./assets/images/uploads/images_uploaded_by_user/${filename_used_to_store_image_in_assets}`,
+					// timestamp_of_uploading: String( Date.now() ),
 					// endpoint: req.body.endpoint, // this will be taken care in db model
 
 				});
@@ -104,10 +104,8 @@ router.post('/protected-image-upload', passport.authenticate('jwt', { session: f
 							newImage.user = user
 							newImage.save()
 
-							// console.log(newImage)
-
 							// in response sending new image too with base64 encoding
-							let base64_encoded_image = base64_encode(newImage.image_source)
+							let base64_encoded_image = base64_encode(newImage.image_filepath)
 							res.status(200).json({ success: true, msg: 'new user saved', new_image: base64_encoded_image});	
 
 						} else {

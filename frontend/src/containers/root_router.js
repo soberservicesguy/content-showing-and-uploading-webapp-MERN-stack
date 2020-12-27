@@ -42,6 +42,12 @@ import {
 	ConnectedIndividualImage,
 } from "../redux_stuff/connected_components";
 
+import {
+	BulkImageUpload,
+	BulkVideoUpload,
+	BulkBlogpostUpload,
+} from "../components/"
+
 // IMPORT material-ui stuff
 import { withStyles } from '@material-ui/styles';
 import { Grid, Button } from "@material-ui/core";
@@ -386,7 +392,7 @@ class RootRouterContainer extends Component {
 
 
 
-						<Route path="/blogposts/:endpoint-param">
+						<Route path="/Individual-BlogPost">
 							<ConnectedIndividualBlogPost/>
 						</Route>
 
@@ -412,6 +418,22 @@ class RootRouterContainer extends Component {
 
 						<Route path="/Individual-Image">
 							<ConnectedIndividualImage/>
+						</Route>
+
+
+
+						<Route path="/Bulk-Upload-Image">
+							<BulkImageUpload/>
+						</Route>
+
+
+						<Route path="/Bulk-Upload-Video">
+							<BulkVideoUpload/>
+						</Route>
+
+
+						<Route path="/Bulk-Upload-Blogpost">
+							<BulkBlogpostUpload/>
 						</Route>
 
 

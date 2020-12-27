@@ -25,7 +25,7 @@ import {
 } from "../comments/"
 
 import {
-	ConnectedCreateComment,
+	ConnectedCreateCommentForVideo,
 } from "../../redux_stuff/connected_components"
 
 
@@ -35,7 +35,7 @@ import {
 } from "../likes/"
 
 import {
-	ConnectedCreateLike,
+	ConnectedCreateLikeForVideo,
 } from "../../redux_stuff/connected_components"
 
 
@@ -178,10 +178,10 @@ class VideoCard extends Component {
 
 				<div>
 					{/* 4th create individual child options like comment / like */}					
-					<ConnectedCreateComment
+					<ConnectedCreateCommentForVideo
 						parentDetailsPayload = { this.props.dataPayloadFromParent }
 					/>					
-					<ConnectedCreateLike
+					<ConnectedCreateLikeForVideo
 						parentDetailsPayload = { this.props.dataPayloadFromParent }
 					/>
 				</div>

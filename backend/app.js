@@ -69,11 +69,13 @@ app.use(require('./routes'));
  * -------------- INCLUDING REACT FRONTEND ----------------
  */
 // LOAD FRONTEND FOR ALL REQUESTS OTHER THAN BACKEND ROUTER, IE FOR REACT-ROUTER-DOM
+
+// UNCOMMENT THIS AFTER DEVELOPEMENT
 app.use(express.static(path.join(__dirname, 'build')));
 
-app.get('/*', function(req, res){
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
-});
+// app.get('/*', function(req, res){
+//   res.sendFile(path.join(__dirname, 'build', 'index.html'));
+// });
 
 
 /**

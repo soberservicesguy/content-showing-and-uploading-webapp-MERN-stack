@@ -8,9 +8,9 @@ const BlogPostSchema = new mongoose.Schema({
 	_id: Schema.Types.ObjectId,
 
 	category:String,
-	image_main:String,
+	image_main_filepath:String,
 	title:String,
-	date_of_publishing:String,
+	timestamp_of_uploading:String,
 	initial_tags:String,
 	endpoint:String,
 	first_para:String,
@@ -31,17 +31,25 @@ const BlogPostSchema = new mongoose.Schema({
 
 })
 
-mongoose.model('BlogPost', BlogPostSchema);
-
-
 BlogPostSchema.pre('save', function(next) {
+
+	endpoint_number += 1
 
 	this.total_comments = this.comments.length
 	this.total_likes = this.likes.length
 
-	this.endpoint = String( endpoint_number + 1 )
-	endpoint_number += 1
-
+	this.endpoint = String( endpoint_number )
+	this.timestamp_of_uploading = String( Date.now() )
+	
     next();
 
 });
+
+BlogPostSchema.post('save', function() {
+
+	console.log('SAVED CONDITION')
+    console.log(this)
+
+});
+
+mongoose.model('BlogPost', BlogPostSchema);

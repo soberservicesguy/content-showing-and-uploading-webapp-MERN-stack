@@ -40,8 +40,9 @@ class BlogPostContainer extends Component {
 	componentDidMount() {
 
 // FETCHING DATA FOR COMPONENT
-			axios.get(utils.baseUrl + '/blogposts/blogposts-list-with-children',)
+			axios.get(utils.baseUrl + '/blogpostings/blogposts-list-with-children',)
 			.then((response) => {
+				// console.log(response.data)
 				this.props.set_fetched_blogposts(response.data)
 			})
 			.catch((error) => {
@@ -51,7 +52,7 @@ class BlogPostContainer extends Component {
 
 	}
 	get_10_more_items() {
-		axios.get(utils.baseUrl + `/blogposts/blogposts-list-next-10-with-children`)
+		axios.get(utils.baseUrl + `/blogpostings/blogposts-list-next-10-with-children`)
 		.then((response) => {
 			this.props.set_fetched_10_more_blogpost(response.data)
 		})
@@ -88,8 +89,8 @@ class BlogPostContainer extends Component {
 							likes_quantity = { item.likes_quantity }
 							likes = { item.likes || [] }
 
-							user_quantity = { item.user_quantity }
-							user = { item.user || [] }
+							// user_quantity = { item.user_quantity }
+							// user = { item.user || [] }
 						
 						/>
 					</Grid>

@@ -9,7 +9,7 @@ const ImageSchema = new mongoose.Schema({
 	_id: Schema.Types.ObjectId,
 
 	category:String,
-	image_source:String,
+	image_filepath:String,
 	title:String,
 	endpoint:String,
 	timestamp_of_uploading:String,
@@ -27,15 +27,26 @@ const ImageSchema = new mongoose.Schema({
 
 })
 
-mongoose.model('Image', ImageSchema);
-	
 ImageSchema.pre('save', function(next) {
+
+	endpoint_number += 1
+
 	this.total_comments = this.comments.length
 	this.total_likes = this.likes.length
 
-	this.endpoint = String( endpoint_number + 1 )
-	endpoint_number += 1
+	this.timestamp_of_uploading = String( Date.now() )
+	this.endpoint = String( endpoint_number )
 
     next();
 
 });
+
+ImageSchema.post('save', function() {
+
+	console.log('SAVED CONDITION')
+    console.log(this)
+
+});
+
+
+mongoose.model('Image', ImageSchema);

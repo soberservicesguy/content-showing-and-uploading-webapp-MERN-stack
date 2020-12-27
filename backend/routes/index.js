@@ -7,7 +7,7 @@ router.use('/push_notifications', require('./push_notifications/push_notificatio
 router.use('/paypal_payments', require('./paypal_payments/paypal_payments'));
 router.use('/stripe_payments', require('./stripe_payments/stripe_payments'));
 
-router.use('/blogposts', require('./blogposts/blogposts'));
+router.use('/blogpostings', require('./blogpost/blogpost'));
 router.use('/videos', require('./videos/videos'));
 router.use('/images', require('./images/images'));
 
@@ -15,7 +15,15 @@ router.use('/images', require('./images/images'));
 router.use('/image-uploads', require('./uploads/upload_images_by_user'));
 router.use('/video-uploads', require('./uploads/upload_video'));
 
+
+router.use('/uploads', require('./uploads/bulk_blogpost_upload'));
+router.use('/uploads', require('./uploads/bulk_image_upload'));
+router.use('/uploads', require('./uploads/bulk_video_upload'));
+
+
 router.use('/users', require('./users/sign_up'));
+
+// router.use('/testing', require('./tests'))
 
 module.exports = router;
 

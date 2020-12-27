@@ -62,14 +62,14 @@ const styles = theme => ({
 	},
 });
 
-class CreateComment extends Component {
+class CreateCommentForBlogpost extends Component {
 	constructor(props) {
 		super(props);
 // STATE	
 		this.state = {
 			redirectToRoute: false,
 			text: '',
-			commenting_timestamp: '',
+			// commenting_timestamp: '',
 		}
 
 	}
@@ -90,7 +90,7 @@ class CreateComment extends Component {
 			this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))
 
 			// redirecting
-			return <Redirect to = {{ pathname: "/Individual-Image" }} />
+			return <Redirect to = {{ pathname: "/Individual-BlogPost" }} />
 
 		} else {
 
@@ -103,75 +103,35 @@ class CreateComment extends Component {
 				  	<div style={styles.textinputContainer}>
 						<form className={styles.root} noValidate autoComplete="off">
 							<TextField 
-								label="Type your text" // placeholder 
+								label="Type your comment" // placeholder 
 								id="standard-basic" // "filled-basic" / "outlined-basic"
 								variant="outlined" // "filled"
 								classes={styles.textinput}
-								onChange={ (value) => this.setState( prev => ({...prev, text: value})) }
+								onChange={ (event) => this.setState( prev => ({...prev, text: event.target.value})) }
 							/>
 						</form>
 				  	</div>
 
-				  	<div style={styles.textinputContainer}>
-						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
-								label="Type your commenting_timestamp" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
-								onChange={ (value) => this.setState( prev => ({...prev, commenting_timestamp: value})) }
-							/>
-						</form>
-				  	</div>
+
 					<button style={styles.buttonWithoutBG}
 						onClick={ () => {
-							let setResponseInCurrentImage = (arg) => this.props.set_current_image(arg)
-							let redirectToNewImage = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
+							let setResponseInCurrentBlogpost = (arg) => this.props.set_current_blogpost(arg)
+							let redirectToNewBlogpost = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
 
 							// first create child object
-							let comment_object = {
-								text: this.state.text,
-								commenting_timestamp: this.state.commenting_timestamp,
-							}
-
-							// 2nd create linked object from redux (linked_object_and_live_object_in_redux in schema)
-							let user_object = {
-
-								user_name: this.props.user_name,
-								phone_number: this.props.phone_number,
-								user_image: this.props.user_image,
-								hash: this.props.hash,
-								salt: this.props.salt,
-								user_name: this.props.user_name,
-								phone_number: this.props.phone_number,
-								user_image: this.props.user_image,
-								hash: this.props.hash,
-								salt: this.props.salt,
-								user_name: this.props.user_name,
-								phone_number: this.props.phone_number,
-								user_image: this.props.user_image,
-								hash: this.props.hash,
-								salt: this.props.salt,
-							}
-
-							// 3rd create parent object								
-							let image_object = this.props.parentDetailsPayload
-
-							// 4th making post request
-							axios.post(utils.baseUrl + '/images/create-comment-for-image', 
+							axios.post(utils.baseUrl + '/blogposts/create-comment-for-blogpost', 
 								{
-									comment_object: comment_object,
-									image_object: image_object,
-									user_object: user_object,
+									comment_text: this.state.text,
+									blogpost_endpoint: this.props.parentDetailsPayload.endpoint,
 								})
 							.then(function (response) {
 								console.log(response.data) // current image screen data
 								
 								// set to current parent object
-								setResponseInCurrentImage(response.data)
+								setResponseInCurrentBlogpost(response.data)
 
 								// change route to current_image	
-								redirectToNewImage()							
+								redirectToNewBlogpost()							
 
 							})
 							.catch(function (error) {
@@ -190,9 +150,9 @@ class CreateComment extends Component {
 	}
 }
 	
-CreateComment.defaultProps = {
+CreateCommentForBlogpost.defaultProps = {
 
 };
 
-// export default CreateComment;  // REMOVE withResponsiveness and withStyles as much as possible
-export default withRouter(withResponsiveness(withStyles(styles)(CreateComment)))
+// export default CreateCommentForBlogpost;  // REMOVE withResponsiveness and withStyles as much as possible
+export default withRouter(withResponsiveness(withStyles(styles)(CreateCommentForBlogpost)))

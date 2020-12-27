@@ -17,4 +17,19 @@ const LikeSchema = new mongoose.Schema({
 
 })
 
+LikeSchema.pre('save', function(next) {
+
+	this.timestamp_of_liking = String( Date.now() )
+    next();
+
+});
+
+LikeSchema.post('save', function() {
+
+	console.log('SAVED CONDITION')
+    console.log(this)
+
+});
+
+
 mongoose.model('Like', LikeSchema);

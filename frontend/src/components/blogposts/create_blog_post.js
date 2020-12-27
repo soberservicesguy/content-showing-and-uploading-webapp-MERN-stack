@@ -73,9 +73,9 @@ class CreateBlogPost extends Component {
 			category: '',
 			image_main: '',
 			title: '',
-			date_of_publishing: '',
+			// timestamp_of_uploading: '',
 			initial_tags: '',
-			endpoint: '',
+			// endpoint: '',
 			first_para: '',
 			second_para: '',
 			qouted_para: '',
@@ -131,6 +131,7 @@ class CreateBlogPost extends Component {
 						<form className={styles.root} noValidate autoComplete="off">
 							<input
 								name="blogpost_image_main" // name of input field or fieldName simply
+								multiple="multiple" // for selecting multiple files
 								enctype="multipart/form-data"
 								type="file"
 								onChange={(event) => {
@@ -160,37 +161,11 @@ class CreateBlogPost extends Component {
 				  	<div style={styles.textinputContainer}>
 						<form className={styles.root} noValidate autoComplete="off">
 							<TextField 
-								label="Type your date_of_publishing" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
-								onChange={ (event) => this.setState( prev => ({...prev, date_of_publishing: event.target.value})) }
-							/>
-						</form>
-				  	</div>
-
-
-				  	<div style={styles.textinputContainer}>
-						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
 								label="Type your initial_tags" // placeholder 
 								id="standard-basic" // "filled-basic" / "outlined-basic"
 								variant="outlined" // "filled"
 								classes={styles.textinput}
 								onChange={ (event) => this.setState( prev => ({...prev, initial_tags: event.target.value})) }
-							/>
-						</form>
-				  	</div>
-
-
-				  	<div style={styles.textinputContainer}>
-						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
-								label="Type your endpoint" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
-								onChange={ (event) => this.setState( prev => ({...prev, endpoint: event.target.value})) }
 							/>
 						</form>
 				  	</div>
@@ -279,39 +254,26 @@ class CreateBlogPost extends Component {
 							let setResponseInCurrentBlogPost = (arg) => this.props.set_current_blogpost(arg)
 							let redirectToNewBlogPost = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
 
-							// first create parent object
-							let blogpost_object = {
-								category: this.state.category,
-								// image_main: this.state.image_main,
-								title: this.state.title,
-								date_of_publishing: this.state.date_of_publishing,
-								initial_tags: this.state.initial_tags,
-								endpoint: this.state.endpoint,
-								first_para: this.state.first_para,
-								second_para: this.state.second_para,
-								qouted_para: this.state.qouted_para,
-								third_para: this.state.third_para,
-								fourth_para: this.state.fourth_para,
-								all_tags: this.state.all_tags,
-							}
-
-							// 2nd create child object from redux (linked_object_and_live_object_in_redux in schema)
-							let user_object = {
-								phone_number: this.props.phone_number,
-							}
-
+							// in formData send individual variables and not a complete object
+							// formData.append('video_object', video_object) // THIS WILL NOT WORK, SENT VARS INDIVIDUALLY
 							const formData = new FormData()
-							formData.append('blogpost_object', blogpost_object)
-							formData.append('user_object', user_object)
+							formData.append('category', this.state.category)
+							formData.append('title', this.state.title)
+							formData.append('initial_tags', this.state.initial_tags)
+							formData.append('first_para', this.state.first_para)
+							formData.append('second_para', this.state.second_para)
+							formData.append('qouted_para', this.state.qouted_para)
+							formData.append('third_para', this.state.third_para)
+							formData.append('fourth_para', this.state.fourth_para)
+							formData.append('all_tags', this.state.all_tags)
 							formData.append('blogpost_image_main', this.state.image_main, this.state.image_main.name)
 
-							// 3rd send post request
 							axios.post(utils.baseUrl + '/blogposts/create-blogpost-with-user', formData)
 							.then(function (response) {
 								console.log(response.data) // current blogpost screen data
 								
 								// set to current parent object
-								setResponseInCurrentBlogPost(response.data)
+								setResponseInCurrentBlogPost(response.data.new_blogpost)
 
 								// change route to current_blogpost
 								redirectToNewBlogPost()
