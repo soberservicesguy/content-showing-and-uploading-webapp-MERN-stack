@@ -109,7 +109,8 @@ class BlogPostCard extends Component {
 			    }
 			})
 		.then((response) => {
-			// console.log(response.data);
+			console.log('LIKES ACHIEVED')
+			console.log(response.data);
 			this.setState( prev => ({...prev, likes: ( prev.likes.length === 0 ) ? response.data : [] }) )
 			
 		})

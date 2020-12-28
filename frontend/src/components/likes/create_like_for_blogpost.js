@@ -68,7 +68,6 @@ class CreateLikeForBlogpost extends Component {
 // STATE	
 		this.state = {
 			redirectToRoute: false,
-			timestamp_of_liking: '',
 		}
 
 	}
@@ -98,18 +97,6 @@ class CreateLikeForBlogpost extends Component {
 
 				<div style={styles.outerContainer}>
 
-
-				  	<div style={styles.textinputContainer}>
-						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
-								label="Type your timestamp_of_liking" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
-								onChange={ (value) => this.setState( prev => ({...prev, timestamp_of_liking: value})) }
-							/>
-						</form>
-				  	</div>
 					<button style={styles.buttonWithoutBG}
 						onClick={ () => {
 

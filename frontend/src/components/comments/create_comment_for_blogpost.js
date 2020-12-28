@@ -119,7 +119,7 @@ class CreateCommentForBlogpost extends Component {
 							let redirectToNewBlogpost = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
 
 							// first create child object
-							axios.post(utils.baseUrl + '/blogposts/create-comment-for-blogpost', 
+							axios.post(utils.baseUrl + '/blogpostings/create-comment-for-blogpost', 
 								{
 									comment_text: this.state.text,
 									blogpost_endpoint: this.props.parentDetailsPayload.endpoint,

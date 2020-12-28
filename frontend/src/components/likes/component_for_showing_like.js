@@ -33,13 +33,24 @@ class ComponentForShowingLike extends Component {
 
 	render() {
 
-		const data = this.props.componentData // data being plugged from parent flatlist
+		const data = this.props.componentData // data being plugged from parent flatlist		
+		var base64Image = "data:image/jpeg;base64," + data.user_image
 
 		return (
 			<div style={styles.outerContainer}>
 				<p>
-					{ data.timestamp_of_liking }
+					{data.user_name}
 				</p>
+
+				<div style={styles.imageContainer}>
+					<img src={base64Image} alt="" 
+						style={{
+							width:100, 
+							height:100, 
+							resizeMode: "contain"
+						}}
+					/>
+				</div>
 			</div>
 		);
 	}
