@@ -107,7 +107,7 @@ class CreateCommentForVideo extends Component {
 								id="standard-basic" // "filled-basic" / "outlined-basic"
 								variant="outlined" // "filled"
 								classes={styles.textinput}
-								onChange={ (value) => this.setState( prev => ({...prev, text: value})) }
+								onChange={ (event) => this.setState( prev => ({...prev, text: event.target.value})) }
 							/>
 						</form>
 				  	</div>
@@ -125,10 +125,10 @@ class CreateCommentForVideo extends Component {
 									video_endpoint: this.props.parentDetailsPayload.endpoint,
 								})
 							.then(function (response) {
-								console.log(response.data) // current image screen data
+								console.log(response.data.endpoint) // current image screen data
 								
 								// set to current parent object
-								setResponseInCurrentVideo(response.data)
+								setResponseInCurrentVideo(response.data.endpoint)
 
 								// change route to current_image	
 								redirectToNewVideo()							

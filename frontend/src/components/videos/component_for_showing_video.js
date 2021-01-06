@@ -33,15 +33,23 @@ class ComponentForShowingVideo extends Component {
 	render() {
 
 		const data = this.props.dataPayloadFromParent // data being plugged from parent flatlist
+		var base64Image = "data:image/jpeg;base64," + data.image_thumbnail
 
 		return (
 			<div style={styles.outerContainer}>
 
+				<div style={styles.imageContainer}>
+					<img src={base64Image} alt="" 
+						style={{
+							width:200, 
+							height:400, 
+							resizeMode: "contain"
+						}}
+					/>
+				</div>
+
 				<p>
 					{ data.category }
-				</p>
-				<p>
-					{ data.image_thumbnail }
 				</p>
 				<p>
 					{ data.video_filename }

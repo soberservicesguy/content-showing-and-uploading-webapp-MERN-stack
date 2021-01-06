@@ -114,7 +114,7 @@ class CreateVideo extends Component {
 						<form className={styles.root} noValidate autoComplete="off">
 							<input
 								name="videos_uploaded_by_users" // name of input field or fieldName simply
-								enctype="multipart/form-data"
+								encType="multipart/form-data"
 								type="file"
 								onChange={(event) => {
 									// console logging selected file from menu

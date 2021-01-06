@@ -129,8 +129,8 @@ router.post('/signup-and-get-privileges', (req, res, next) => {
 							// checking what privileges to provide
 								let privileges_list = []
 
-								console.log('PRIVILEGE PAYLOAD IS BELOW')
-								console.log(req.body.privileges_selected)
+								// console.log('PRIVILEGE PAYLOAD IS BELOW')
+								// console.log(req.body.privileges_selected)
 								
 								if ( req.body.privileges_selected === 'Basic' ){
 
@@ -158,8 +158,8 @@ router.post('/signup-and-get-privileges', (req, res, next) => {
 								} else {
 								}
 
-								console.log('privileges_list IS BELOW')
-								console.log(privileges_list)
+								// console.log('privileges_list IS BELOW')
+								// console.log(privileges_list)
 								
 								privileges_list.map((privilege_name) => {
 									
@@ -197,6 +197,7 @@ router.post('/signup-and-get-privileges', (req, res, next) => {
 			
 								newImage.user = newUser
 								newImage.save()
+								console.log('SAVED IMAGE NOW!!!')
 								res.status(200).json({ success: true, msg: 'new user saved' });
 
 							})

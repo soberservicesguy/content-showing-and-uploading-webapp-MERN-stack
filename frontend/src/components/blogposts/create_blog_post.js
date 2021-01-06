@@ -70,8 +70,9 @@ class CreateBlogPost extends Component {
 		this.state = {
 			expanded:false,
 			redirectToRoute: false,
+
 			category: '',
-			image_main: '',
+			image_main_filepath: '',
 			title: '',
 			// timestamp_of_uploading: '',
 			initial_tags: '',
@@ -130,7 +131,7 @@ class CreateBlogPost extends Component {
 						</p>
 						<form className={styles.root} noValidate autoComplete="off">
 							<input
-								name="blogpost_image_main" // name of input field or fieldName simply
+								name="blogpost_image_main_filepath" // name of input field or fieldName simply
 								multiple="multiple" // for selecting multiple files
 								enctype="multipart/form-data"
 								type="file"
@@ -138,7 +139,7 @@ class CreateBlogPost extends Component {
 									// console logging selected file from menu
 									console.log( event.target.files[0] ) // gives first file
 									// setState method with event.target.files[0] as argument
-									this.setState(prev => ({...prev, image_main: event.target.files[0]}))
+									this.setState(prev => ({...prev, image_main_filepath: event.target.files[0]}))
 								}}
 							/>
 						</form>
@@ -266,7 +267,7 @@ class CreateBlogPost extends Component {
 							formData.append('third_para', this.state.third_para)
 							formData.append('fourth_para', this.state.fourth_para)
 							formData.append('all_tags', this.state.all_tags)
-							formData.append('blogpost_image_main', this.state.image_main, this.state.image_main.name)
+							formData.append('blogpost_image_main', this.state.image_main_filepath, this.state.image_main_filepath.name)
 
 							axios.post(utils.baseUrl + '/blogposts/create-blogpost-with-user', formData)
 							.then(function (response) {

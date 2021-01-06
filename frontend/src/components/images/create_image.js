@@ -70,8 +70,9 @@ class CreateImage extends Component {
 		this.state = {
 			expanded:false,
 			redirectToRoute: false,
+
 			category: '',
-			image_source: '',
+			image_filepath: '',
 			title: '',
 			// endpoint: '',
 			// timestamp_of_uploading: '',
@@ -118,7 +119,7 @@ class CreateImage extends Component {
 									// console logging selected file from menu
 									console.log( event.target.files[0] ) // gives first file
 									// setState method with event.target.files[0] as argument
-									this.setState(prev => ({...prev, image_source: event.target.files[0]}))
+									this.setState(prev => ({...prev, image_filepath: event.target.files[0]}))
 								}}
 							/>
 						</form>
@@ -190,7 +191,7 @@ class CreateImage extends Component {
 							formData.append('description', this.state.description)
 							formData.append('all_tags', this.state.all_tags)
 							// formData.append('user_object', user_object) // not needed, since object will be pulled from passport js jwt token
-							formData.append('upload_images_by_user', this.state.image_source, this.state.image_source.name)
+							formData.append('upload_images_by_user', this.state.image_filepath, this.state.image_filepath.name)
 
 							axios.post(utils.baseUrl + '/image-uploads/protected-image-upload', formData)
 							.then(function (response) {

@@ -14,14 +14,14 @@ const User = mongoose.model('User');
 
 const passport = require('passport');
 const { isAllowedSurfing } = require('../authMiddleware/isAllowedSurfing')
-const { isAllowedWritingBlogposts } = require('../authMiddleware/isAllowedWritingBlogposts')
+const { isAllowedUploadingImages } = require('../authMiddleware/isAllowedUploadingImages')
 
 const multer = require('multer');
 const path = require('path')
 
 // Set The Storage Engine
 const image_storage = multer.diskStorage({
-	destination: path.join(__dirname , '../../assets/images/uploads/blogpost_image_main'),
+	destination: path.join(__dirname , '../../assets/images/uploads/images_uploaded_by_user/'),
 	filename: function(req, file, cb){
 		// file name pattern fieldname-currentDate-fileformat
 		// filename_used_to_store_image_in_assets_without_format = file.fieldname + '-' + Date.now()
@@ -34,7 +34,7 @@ const image_storage = multer.diskStorage({
 });
 
 // Check File Type
-function checkFileTypeForBlogpostImage(file, cb){
+function checkFileTypeForImage(file, cb){
 	// Allowed ext
 	let filetypes = /jpeg|jpg|png|gif/;
 	// Check ext
@@ -50,13 +50,13 @@ function checkFileTypeForBlogpostImage(file, cb){
 }
 
 // Init Upload
-const upload_main_image_by_user_of_blog = multer({
+const upload_main_image_by_user = multer({
 	storage: image_storage,
 	limits:{fileSize: 20000000}, // 1 mb
 	fileFilter: function(req, file, cb){
-		checkFileTypeForBlogpostImage(file, cb);
+		checkFileTypeForImage(file, cb);
 	}
-}).single('blogpost_image_main'); // this is the field that will be dealt
+}).single('upload_images_by_user'); // this is the field that will be dealt
 // .array('blogpost_image_main', 12)
 
 
@@ -64,13 +64,13 @@ const upload_main_image_by_user_of_blog = multer({
 
 // create blogpost with undefined
 // USED IN CREATING BLOGPOST
-router.post('/create-blogpost-with-user', passport.authenticate('jwt', { session: false }), isAllowedWritingBlogposts, function(req, res, next){
+router.post('/create-image-with-user', passport.authenticate('jwt', { session: false }), isAllowedUploadingImages, function(req, res, next){
 	
 
 	console.log('OUTER LOG')
 	console.log(req.body)
 
-	upload_main_image_by_user_of_blog(req, res, (err) => {
+	upload_main_image_by_user(req, res, (err) => {
 		if(err){
 
 			console.log(err)
@@ -86,28 +86,23 @@ router.post('/create-blogpost-with-user', passport.authenticate('jwt', { session
 				// console.log(req.body)
 
 			// image is uploaded , now saving image in db
-				const newBlogPost = new BlogPost({
+				const newImage = new Image({
 
 					_id: new mongoose.Types.ObjectId(),
 					category: req.body.category,
+					image_filepath: `./assets/images/uploads/images_uploaded_by_user/`,
 					title: req.body.title,
-					initial_tags: req.body.initial_tags,
-					first_para: req.body.first_para,
-					second_para: req.body.second_para,
-					qouted_para: req.body.qouted_para,
-					third_para: req.body.third_para,
-					fourth_para: req.body.fourth_para,
+					description: req.body.description,
 					all_tags: req.body.all_tags,
-					image_main_filepath: `./assets/images/uploads/blogpost_image_main/${filename_used_to_store_image_in_assets}`,
 					// timestamp_of_uploading: String( Date.now() ),
 					// endpoint: req.body.endpoint, // this will be taken care in db model
 
 				});
 
-				newBlogPost.save(function (err, newBlogPost) {
+				newImage.save(function (err, newImage) {
 
 					if (err){
-						res.status(404).json({ success: false, msg: 'couldnt create blogpost database entry'})
+						res.status(404).json({ success: false, msg: 'couldnt create Image database entry'})
 						return console.log(err)
 					}
 					// assign user object then save
@@ -115,27 +110,22 @@ router.post('/create-blogpost-with-user', passport.authenticate('jwt', { session
 					.then((user) => {
 						if (user){
 
-							newBlogPost.user = user
-							newBlogPost.save()
+							newImage.user = user
+							newImage.save()
 
 
 							// in response sending new image too with base64 encoding
-							let base64_encoded_image = base64_encode(newBlogPost.image_main_filepath)
+							let base64_encoded_image = base64_encode(newImage.image_filepath)
 
-							let new_blogpost = {
-								category: newBlogPost.category,
-								title: newBlogPost.title,
-								initial_tags: newBlogPost.initial_tags,
-								first_para: newBlogPost.first_para,
-								second_para: newBlogPost.second_para,
-								qouted_para: newBlogPost.qouted_para,
-								third_para: newBlogPost.third_para,
-								fourth_para: newBlogPost.fourth_para,
-								all_tags: newBlogPost.all_tags,
-								image_main: base64_encoded_image,
+							let new_image = {
+								category: newImage.category,
+								image_filepath: base64_encoded_image,
+								title: newImage.title,
+								description: newImage.description,
+								all_tags: newImage.all_tags,
 							}
 
-							res.status(200).json({ success: true, msg: 'new user saved', new_blogpost: new_blogpost});	
+							res.status(200).json({ success: true, msg: 'new user saved', new_image: new_image});	
 
 						} else {
 
@@ -159,61 +149,180 @@ router.post('/create-blogpost-with-user', passport.authenticate('jwt', { session
 })
 
 
-// get n childs of blogpost
+// get n childs of image
 // USED 
-router.get('/get-all-comments-of-blogpost', function(req, res, next){
-	console.log('CALLED')
+router.get('/get-all-comments-of-image', async function(req, res, next){
 
-	BlogPost.findOne({endpoint:req.query.endpoint}).
+	let list_of_promises = []
+
+	var image_with_comments = await Image.findOne({endpoint:req.query.endpoint}).
 	populate('comments').
-	exec(function (err, blogpost_with_comments) {
+	then((image) => {
 
-		if (err) return console.log(err);
+		if ( image ){
 
-		if ( blogpost_with_comments ){
-
-			var comments = blogpost_with_comments.comments
-			res.status(200).json( comments );
+			return image.comments
 
 		} else {
 
-			res.status(500).json({msg: 'sorry no blogpost found'});				
-
+			null
 		}
 	})
+	.catch((err) => console.log(err))
+
+	console.log(image_with_comments)
+
+	list_of_promises.push( image_with_comments )
+
+	var users_list_who_commented = await Promise.all(image_with_comments.map(async (comment_object) => {
+	// find user from each like
+		return await User.findOne({_id:comment_object.user})
+		.then(async (user_object) => {
+
+			if (user_object){
+				console.log('USER FOUND')
+				console.log(user_object)
+				return {
+					// ...user_object, // NEVER SPREAD IN MONGOOSE, IT INCLUDES _doc and lots of other info
+					user_name:user_object.user_name,
+					user_image:user_object.user_image,
+					text:comment_object.text
+				}
+
+			} else {
+				null
+			}
+		})
+
+	}))
+
+	// console.log('PROMISE RESULT 1')
+	// console.log(users_list_who_commented)
+
+// find image from user
+	var final_comments_payload = await Promise.all(users_list_who_commented.map(async (user_object) => {
+	
+		return await Image.findOne({_id:user_object.user_image})
+		.then(async (image_object) => {
+
+			if (image_object){
+
+				return {
+					user_name:user_object.user_name,
+					user_image:base64_encode(image_object.image_filepath),
+					comment_text:user_object.text,
+				}
+
+			} else {
+				null
+			}
+
+		})
+
+	}))
+
+	// console.log('PROMISE RESULT 2')
+	// console.log(final_comments_payload)
+
+	Promise.all(list_of_promises)
+	.then(() => {
+
+		// console.log(final_comments_payload)
+		res.status(200).json( final_comments_payload );
+
+	})
+
 })
 
-// WILL BE USED
-router.get('/get-all-likes-of-blogpost', function(req, res, next){
-	console.log('CALLED')
+// USED
+router.get('/get-all-likes-of-image',async function(req, res, next){
 
-	BlogPost.findOne({endpoint:req.query.endpoint}).
+	let list_of_promises = []
+
+// find image
+	var image_with_likes = await Image.findOne({endpoint:req.query.endpoint}).
 	populate('likes').
-	exec(function (err, blogpost_with_likes) {
+	then((image_with_likes) => {
 
-		if (err) return console.log(err);
+		if ( image_with_likes ){
 
-		if ( blogpost_with_likes ){
-
-			var likes = blogpost_with_likes.likes
-			res.status(200).json( likes );
-
+			return image_with_likes.likes
+	
 		} else {
 
-			res.status(500).json({msg: 'sorry no blogpost found'});				
+			null
 
 		}
+
 	})
+
+	list_of_promises.push( image_with_likes )
+
+// find likes from blogpost
+	let users_list_who_liked = await Promise.all(image_with_likes.map(async (like_object) => {
+
+	// find user from each like
+		return await User.findOne({_id:like_object.user})
+		.then(async (user_object) => {
+
+			if (user_object){
+
+				return user_object
+
+			} else {
+				null
+			}
+		})
+		
+	}))
+
+	// console.log('PROMISE RESULT 1')
+	// console.log(users_list_who_liked)
+
+// find image from user
+	let final_liked_payload = await Promise.all(users_list_who_liked.map(async (user_object) => {
+	
+		return await Image.findOne({_id:user_object.user_image})
+		.then(async (image_object) => {
+
+			if (image_object){
+
+				return {
+					user_name:user_object.user_name,
+					user_image:base64_encode(image_object.image_filepath),
+				}
+
+			} else {
+				null
+			}
+
+		})
+
+	}))
+
+	// console.log('PROMISE RESULT 2')
+	// console.log(final_liked_payload)
+
+	Promise.all(list_of_promises)
+	.then(() => {
+
+		// console.log(final_liked_payload)
+		res.status(200).json( final_liked_payload );
+
+	})
+
 })
+
 
 
 
 
 // USED FOR CREATING COMMENT
-router.post('/create-comment-for-blogpost', passport.authenticate('jwt', { session: false }), isAllowedSurfing, function(req, res, next){
+router.post('/create-comment-for-image', passport.authenticate('jwt', { session: false }), isAllowedSurfing, function(req, res, next){
 
+	console.log('CALLED')
 	var comment_text = req.body.comment_text	
-	var blogpost_endpoint = req.body.blogpost_endpoint
+	var image_endpoint = req.body.image_endpoint
 
 	var newComment = new Comment({
 		_id: new mongoose.Types.ObjectId(),
@@ -226,16 +335,16 @@ router.post('/create-comment-for-blogpost', passport.authenticate('jwt', { sessi
 		newComment.user = user
 
 	// finding BlogPost object
-		BlogPost.findOne({endpoint: blogpost_endpoint})
-		.then((blogpost) => {
+		Image.findOne({endpoint: image_endpoint})
+		.then((image) => {
 
-			blogpost.comments.push( newComment )
+			image.comments.push( newComment )
 			
 			newComment.save(function (err, newComment) {
 				if (err) return console.log(err);
 			})
 
-			blogpost.save((err, blogpost) => res.status(200).json(blogpost) )
+			image.save((err, image) => res.status(200).json(image) )
 		})
 		.catch((err1) => {
 			console.log(err1)
@@ -250,9 +359,9 @@ router.post('/create-comment-for-blogpost', passport.authenticate('jwt', { sessi
 
 
 // will be used for creating like
-router.post('/create-like-for-blogpost', function(req, res, next){
+router.post('/create-like-for-image', passport.authenticate('jwt', { session: false }), isAllowedSurfing, function(req, res, next){
 
-	var blogpost_endpoint = req.body.blogpost_endpoint
+	var image_endpoint = req.body.image_endpoint
 
 	var newLike = new Like({
 		_id: new mongoose.Types.ObjectId(),
@@ -263,17 +372,17 @@ router.post('/create-like-for-blogpost', function(req, res, next){
 					
 		newLike.user = user
 
-	// finding BlogPost object
-		BlogPost.findOne({endpoint: blogpost_endpoint})
-		.then((blogpost) => {
+	// finding image object
+		Image.findOne({endpoint: image_endpoint})
+		.then((image) => {
 
-			blogpost.likes.push( newLike )
+			image.likes.push( newLike )
 
 			newLike.save(function (err, newLike) {
 				if (err) return console.log(err);
 			})
-				
-			blogpost.save((err, blogpost) => res.status(200).json(blogpost) )
+			console.log('LIKE CREATED FOR IMAGE')	
+			image.save((err, image) => res.status(200).json(image) )
 		})
 		.catch((err1) => {
 			console.log(err1)
@@ -291,42 +400,40 @@ router.post('/create-like-for-blogpost', function(req, res, next){
 
 // get blogposts_list_with_children
 // USED
-router.get('/blogposts-list-with-children', function(req, res, next){
+router.get('/images-list-with-children', function(req, res, next){
 	console.log('called')
 
-	BlogPost.
+	Image.
 	find().
 	limit(10).
 	populate('comments').
 	populate('likes').
 	// populate('user').
-	then((blogposts)=>{
-		var newBlogPosts_list = []
-		blogposts.map((blogpost, index)=>{
-			var newBlogPost = {}
+	then((images)=>{
+		var newImages_list = []
+		images.map((image, index)=>{
+			var newImage = {}
 
-			newBlogPost.category = blogpost[ 'category' ]
-			newBlogPost.image_main_filepath = base64_encode( blogpost[ 'image_main_filepath' ] )
-			newBlogPost.title = blogpost[ 'title' ]
-			newBlogPost.timestamp_of_uploading = blogpost[ 'timestamp_of_uploading' ]
-			newBlogPost.initial_tags = blogpost[ 'initial_tags' ]
-			newBlogPost.endpoint = blogpost[ 'endpoint' ]
+			newImage.category = image['category']
+			newImage.image_filepath = base64_encode( image['image_filepath'] )
+			newImage.title = image['title']
+			newImage.endpoint = image['endpoint']
 
-			newBlogPosts_list.push({...newBlogPost})
-			newBlogPost = {}
+			newImages_list.push({...newImage})
+			newImage = {}
 		});
 
-		return newBlogPosts_list
+		return newImages_list
 	})
-	.then((newBlogPosts_list) => {
+	.then((newImages_list) => {
 
-		if (!newBlogPosts_list) {
+		if (!newImages_list) {
 
-			res.status(401).json({ success: false, msg: "could not find BlogPosts_list" });
+			res.status(401).json({ success: false, msg: "could not find Images_list" });
 
 		} else {
 
-			res.status(200).json(newBlogPosts_list);
+			res.status(200).json(newImages_list);
 
 		}
 

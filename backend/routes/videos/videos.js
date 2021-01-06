@@ -1,4 +1,5 @@
 require('../../models/video');
+require('../../models/image');
 require('../../models/comment');
 require('../../models/like');
 require('../../models/user');
@@ -8,20 +9,21 @@ const base64_encode = require('../../lib/image_to_base64')
 const mongoose = require('mongoose');
 const router = require('express').Router();
 const Video = mongoose.model('Video');
+const Image = mongoose.model('Image');
 const Comment = mongoose.model('Comment');
 const Like = mongoose.model('Like');
 const User = mongoose.model('User');
 
 const passport = require('passport');
 const { isAllowedSurfing } = require('../authMiddleware/isAllowedSurfing')
-const { isAllowedWritingBlogposts } = require('../authMiddleware/isAllowedWritingBlogposts')
+const { isAllowedUploadingVideos } = require('../authMiddleware/isAllowedUploadingVideos')
 
 const multer = require('multer');
 const path = require('path')
 
 // Set The Storage Engine
-const image_storage = multer.diskStorage({
-	destination: path.join(__dirname , '../../assets/images/uploads/blogpost_image_main'),
+const video_storage = multer.diskStorage({
+	destination: path.join(__dirname , '../../assets/videos/uploads/videos_uploaded_by_users'),
 	filename: function(req, file, cb){
 		// file name pattern fieldname-currentDate-fileformat
 		// filename_used_to_store_image_in_assets_without_format = file.fieldname + '-' + Date.now()
@@ -34,9 +36,9 @@ const image_storage = multer.diskStorage({
 });
 
 // Check File Type
-function checkFileTypeForBlogpostImage(file, cb){
+function checkFileTypeForVideo(file, cb){
 	// Allowed ext
-	let filetypes = /jpeg|jpg|png|gif/;
+	let filetypes = /mp4|avi|flv/;
 	// Check ext
 	let extname = filetypes.test(path.extname(file.originalname).toLowerCase());
 	// Check mime
@@ -45,32 +47,31 @@ function checkFileTypeForBlogpostImage(file, cb){
 	if(mimetype && extname){
 		return cb(null,true);
 	} else {
-		cb('Error: jpeg, jpg, png, gif Images Only!');
+		cb('Error: mp4, avi,flv Videos Only!');
 	}
 }
 
 // Init Upload
-const upload_main_image_by_user_of_blog = multer({
-	storage: image_storage,
+const upload_video_by_user = multer({
+	storage: video_storage,
 	limits:{fileSize: 20000000}, // 1 mb
 	fileFilter: function(req, file, cb){
-		checkFileTypeForBlogpostImage(file, cb);
+		checkFileTypeForVideo(file, cb);
 	}
-}).single('blogpost_image_main'); // this is the field that will be dealt
+}).single('videos_uploaded_by_users'); // this is the field that will be dealt
 // .array('blogpost_image_main', 12)
 
 
 
 
-// create blogpost with undefined
-// USED IN CREATING BLOGPOST
-router.post('/create-blogpost-with-user', passport.authenticate('jwt', { session: false }), isAllowedWritingBlogposts, function(req, res, next){
+// create video with undefined
+// USED IN CREATING Video
+router.post('/create-video-with-user', passport.authenticate('jwt', { session: false }), isAllowedUploadingVideos, function(req, res, next){
 	
-
 	console.log('OUTER LOG')
 	console.log(req.body)
 
-	upload_main_image_by_user_of_blog(req, res, (err) => {
+	upload_video_by_user(req, res, (err) => {
 		if(err){
 
 			console.log(err)
@@ -82,77 +83,100 @@ router.post('/create-blogpost-with-user', passport.authenticate('jwt', { session
 				res.status(404).json({ success: false, msg: 'File is undefined!',file: `uploads/${req.file.filename}`})
 
 			} else {
-				// console.log('INNER LOG')
-				// console.log(req.body)
 
-			// image is uploaded , now saving image in db
-				const newBlogPost = new BlogPost({
+				var video_id = ''
+			// video is uploaded , NOW creating thumbnail from video using snapshot
+ 				ffmpeg(`./assets/videos/uploads/videos_uploaded_by_users/${filename_used_to_store_video_in_assets}`)
+				.on('end', function() {
+					console.log('Screenshots taken');
+				})
+				.on('error', function(err) {
+					console.error(err);
+				})
+				.on('filenames', function(filenames) {
+					console.log('screenshots are ' + filenames.join(', '));
+				})
+				// screenshots at mentioned times
+				// .takeScreenshots({ 
+				// 	count: 2, 
+				// 	timemarks: [ '00:00:02.000', '6' ], 
+				// 	filenames: [
+				// 		`${filename_used_to_store_video_in_assets_without_format}1.png`, 
+				// 		`${filename_used_to_store_video_in_assets_without_format}2.png`, 
+				// 	],
+				// 	size: '150x100', 
+				// }, '../assets/videos/uploads/upload_thumbnails/')
+				// screenshots at % completion ie 20%, 40%, 60%, 80%
+				.screenshots({
+					// filename: 'name-of-file.png', // if single snapshot is needed
+					// timemarks: [ '00:00:02.000', '6' ], 
+					// Will take screenshots at 20%, 40%, 60% and 80% of the video
+					count: 4,
+					filenames: [
+						`${filename_used_to_store_video_in_assets_without_format}1.png`, 
+						`${filename_used_to_store_video_in_assets_without_format}2.png`, 
+						`${filename_used_to_store_video_in_assets_without_format}3.png`, 
+						`${filename_used_to_store_video_in_assets_without_format}4.png`,
+					],
+					size: '150x100', 
+					folder: './assets/videos/uploads/upload_thumbnails/',
+				})
 
-					_id: new mongoose.Types.ObjectId(),
+
+			// saving video in DB
+				video_id = new mongoose.Types.ObjectId()
+				const newVideo = new Video({
+					_id: video_id,
+					image_thumbnail: `${filename_used_to_store_video_in_assets_without_format}1.png`,
+					timestamp_of_uploading: String( Date.now() ),
+					video_filepath: `./assets/videos/uploads/videos_uploaded_by_users/${filename_used_to_store_video_in_assets}`,
 					category: req.body.category,
 					title: req.body.title,
-					initial_tags: req.body.initial_tags,
-					first_para: req.body.first_para,
-					second_para: req.body.second_para,
-					qouted_para: req.body.qouted_para,
-					third_para: req.body.third_para,
-					fourth_para: req.body.fourth_para,
 					all_tags: req.body.all_tags,
-					image_main_filepath: `./assets/images/uploads/blogpost_image_main/${filename_used_to_store_image_in_assets}`,
-					// timestamp_of_uploading: String( Date.now() ),
-					// endpoint: req.body.endpoint, // this will be taken care in db model
+					description: req.body.description,
+					// endpoint:String, // will be taken care at db model
+				})
 
-				});
-
-				newBlogPost.save(function (err, newBlogPost) {
+				newVideo.save(function (err, newVideo) {
 
 					if (err){
-						res.status(404).json({ success: false, msg: 'couldnt create blogpost database entry'})
+						res.status(404).json({ success: false, msg: 'couldnt create video database entry'})
 						return console.log(err)
 					}
+
 					// assign user object then save
 					User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
 					.then((user) => {
 						if (user){
 
-							newBlogPost.user = user
-							newBlogPost.save()
-
-
-							// in response sending new image too with base64 encoding
-							let base64_encoded_image = base64_encode(newBlogPost.image_main_filepath)
-
-							let new_blogpost = {
-								category: newBlogPost.category,
-								title: newBlogPost.title,
-								initial_tags: newBlogPost.initial_tags,
-								first_para: newBlogPost.first_para,
-								second_para: newBlogPost.second_para,
-								qouted_para: newBlogPost.qouted_para,
-								third_para: newBlogPost.third_para,
-								fourth_para: newBlogPost.fourth_para,
-								all_tags: newBlogPost.all_tags,
-								image_main: base64_encoded_image,
-							}
-
-							res.status(200).json({ success: true, msg: 'new user saved', new_blogpost: new_blogpost});	
-
+							newVideo.user = user
+							newVideo.save()
+						// finding video saved to access its endpoint since its created at model level
+							
 						} else {
 
 							res.status(200).json({ success: false, msg: "user doesnt exists, try logging in again" });
 
 						}
 					})
+					.then(() => {
+
+						Video.findOne({ _id: video_id })
+						.then((saved_video) => {
+							res.status(200).json({ success: true, msg: 'new user saved', video_endpoint: saved_video.endpoint});	
+
+						})
+
+					})
 					.catch((err) => {
 
 						next(err);
 
-					});
+					})
 
+					// not needed, used for multer
+					// res.status(200).json({ success: false, msg: 'couldnt create video database entry',file: `uploads/${req.file.filename}`})
 				})
-
-				// not needed, this is used only in multer
-				// res.status(200).json({ success: true, msg: 'File Uploaded!',file: `uploads/${req.file.filename}`})
 			}
 		}
 	})
@@ -161,59 +185,183 @@ router.post('/create-blogpost-with-user', passport.authenticate('jwt', { session
 
 // get n childs of blogpost
 // USED 
-router.get('/get-all-comments-of-blogpost', function(req, res, next){
-	console.log('CALLED')
+router.get('/get-all-comments-of-video', async function(req, res, next){
 
-	BlogPost.findOne({endpoint:req.query.endpoint}).
+	let list_of_promises = []
+
+	var video_with_comments = await Video.findOne({endpoint:req.query.endpoint}).
 	populate('comments').
-	exec(function (err, blogpost_with_comments) {
+	then((video) => {
 
-		if (err) return console.log(err);
+		if ( video ){
 
-		if ( blogpost_with_comments ){
-
-			var comments = blogpost_with_comments.comments
-			res.status(200).json( comments );
+			return video.comments
 
 		} else {
 
-			res.status(500).json({msg: 'sorry no blogpost found'});				
-
+			null
 		}
 	})
+	.catch((err) => console.log(err))
+
+	// console.log('COMMENTS FOUND')
+	// console.log(video_with_comments)
+
+	list_of_promises.push( video_with_comments )
+
+	var users_list_who_commented = await Promise.all(video_with_comments.map(async (comment_object) => {
+	// find user from each like
+		return await User.findOne({_id:comment_object.user})
+		.then(async (user_object) => {
+
+			if (user_object){
+				console.log('USER FOUND')
+				console.log(user_object)
+				return {
+					// ...user_object, // NEVER SPREAD IN MONGOOSE, IT INCLUDES _doc and lots of other info
+					user_name:user_object.user_name,
+					user_image:user_object.user_image,
+					text:comment_object.text
+				}
+
+			} else {
+				null
+			}
+		})
+
+	}))
+
+	// console.log('PROMISE RESULT 1')
+	// console.log(users_list_who_commented)
+
+// find image from user
+	var final_comments_payload = await Promise.all(users_list_who_commented.map(async (user_object) => {
+		console.log('QUERY')
+		console.log(user_object.user_image)
+		return await Image.findOne({_id:user_object.user_image})
+		.then(async (image_object) => {
+			console.log(image_object)
+
+			if (image_object){
+				console.log('IMAGE FOUND')
+				// console.log(image_object)
+
+				return {
+					user_name:user_object.user_name,
+					user_image:base64_encode(image_object.image_filepath),
+					comment_text:user_object.text,
+				}
+
+			} else {
+				console.log('IMAGE NOT FOUND')
+				null
+			}
+
+		})
+
+	}))
+
+	// console.log('PROMISE RESULT 2')
+	// console.log(final_comments_payload)
+
+	Promise.all(list_of_promises)
+	.then(() => {
+
+		// console.log('COMMENTS SENT')
+		// console.log(final_comments_payload)
+		res.status(200).json( final_comments_payload );
+
+	})
+
 })
 
-// WILL BE USED
-router.get('/get-all-likes-of-blogpost', function(req, res, next){
-	console.log('CALLED')
+// USED
+router.get('/get-all-likes-of-video',async function(req, res, next){
 
-	BlogPost.findOne({endpoint:req.query.endpoint}).
+	let list_of_promises = []
+
+// find video
+	var video_with_likes = await Video.findOne({endpoint:req.query.endpoint}).
 	populate('likes').
-	exec(function (err, blogpost_with_likes) {
+	then((video_with_likes) => {
 
-		if (err) return console.log(err);
+		if ( video_with_likes ){
 
-		if ( blogpost_with_likes ){
-
-			var likes = blogpost_with_likes.likes
-			res.status(200).json( likes );
-
+			return video_with_likes.likes
+	
 		} else {
 
-			res.status(500).json({msg: 'sorry no blogpost found'});				
+			null
 
 		}
+
 	})
+
+	list_of_promises.push( video_with_likes )
+
+// find likes from video
+	let users_list_who_liked = await Promise.all(video_with_likes.map(async (like_object) => {
+
+	// find user from each like
+		return await User.findOne({_id:like_object.user})
+		.then(async (user_object) => {
+
+			if (user_object){
+
+				return user_object
+
+			} else {
+				null
+			}
+		})
+		
+	}))
+
+	// console.log('PROMISE RESULT 1')
+	// console.log(users_list_who_liked)
+
+// find image from user
+	let final_liked_payload = await Promise.all(users_list_who_liked.map(async (user_object) => {
+	
+		return await Image.findOne({_id:user_object.user_image})
+		.then(async (image_object) => {
+
+			if (image_object){
+
+				return {
+					user_name:user_object.user_name,
+					user_image:base64_encode(image_object.image_filepath),
+				}
+
+			} else {
+				null
+			}
+
+		})
+
+	}))
+
+	// console.log('PROMISE RESULT 2')
+	// console.log(final_liked_payload)
+
+	Promise.all(list_of_promises)
+	.then(() => {
+
+		// console.log(final_liked_payload)
+		res.status(200).json( final_liked_payload );
+
+	})
+
 })
 
 
 
 
 // USED FOR CREATING COMMENT
-router.post('/create-comment-for-blogpost', passport.authenticate('jwt', { session: false }), isAllowedSurfing, function(req, res, next){
+router.post('/create-comment-for-video', passport.authenticate('jwt', { session: false }), isAllowedSurfing, function(req, res, next){
 
 	var comment_text = req.body.comment_text	
-	var blogpost_endpoint = req.body.blogpost_endpoint
+	var video_endpoint = req.body.video_endpoint
 
 	var newComment = new Comment({
 		_id: new mongoose.Types.ObjectId(),
@@ -225,17 +373,19 @@ router.post('/create-comment-for-blogpost', passport.authenticate('jwt', { sessi
 					
 		newComment.user = user
 
-	// finding BlogPost object
-		BlogPost.findOne({endpoint: blogpost_endpoint})
-		.then((blogpost) => {
+	// finding video object
+		Video.findOne({endpoint: video_endpoint})
+		.then((video) => {
 
-			blogpost.comments.push( newComment )
+			video.comments.push( newComment )
+
+			newComment.video = video
 			
 			newComment.save(function (err, newComment) {
 				if (err) return console.log(err);
 			})
 
-			blogpost.save((err, blogpost) => res.status(200).json(blogpost) )
+			video.save((err, video) => res.status(200).json(video) )
 		})
 		.catch((err1) => {
 			console.log(err1)
@@ -250,30 +400,37 @@ router.post('/create-comment-for-blogpost', passport.authenticate('jwt', { sessi
 
 
 // will be used for creating like
-router.post('/create-like-for-blogpost', function(req, res, next){
+router.post('/create-like-for-video', passport.authenticate('jwt', { session: false }), isAllowedSurfing, function(req, res, next){
 
-	var blogpost_endpoint = req.body.blogpost_endpoint
+	var video_endpoint = req.body.video_endpoint
 
 	var newLike = new Like({
 		_id: new mongoose.Types.ObjectId(),
 	})
+
+	// // check if
+	// if (req.user){
+
+	// } else {
+	// 	res.status(200).json({ msg: "user unprivileged, get privileges or try logging in again" });
+	// }
 
 	User.findOne({ phone_number: req.user.user_object.phone_number })
 	.then((user) => {
 					
 		newLike.user = user
 
-	// finding BlogPost object
-		BlogPost.findOne({endpoint: blogpost_endpoint})
-		.then((blogpost) => {
+	// finding video object
+		Video.findOne({endpoint: video_endpoint})
+		.then((video) => {
 
-			blogpost.likes.push( newLike )
+			video.likes.push( newLike )
 
 			newLike.save(function (err, newLike) {
 				if (err) return console.log(err);
 			})
 				
-			blogpost.save((err, blogpost) => res.status(200).json(blogpost) )
+			video.save((err, video) => res.status(200).json(video) )
 		})
 		.catch((err1) => {
 			console.log(err1)
@@ -291,42 +448,42 @@ router.post('/create-like-for-blogpost', function(req, res, next){
 
 // get blogposts_list_with_children
 // USED
-router.get('/blogposts-list-with-children', function(req, res, next){
+router.get('/videos-list-with-children', function(req, res, next){
 	console.log('called')
 
-	BlogPost.
+	Video.
 	find().
 	limit(10).
 	populate('comments').
 	populate('likes').
 	// populate('user').
-	then((blogposts)=>{
-		var newBlogPosts_list = []
-		blogposts.map((blogpost, index)=>{
-			var newBlogPost = {}
+	then((videos)=>{
+		var newVideos_list = []
+		videos.map((video, index)=>{
+			var newVideo = {}
 
-			newBlogPost.category = blogpost[ 'category' ]
-			newBlogPost.image_main_filepath = base64_encode( blogpost[ 'image_main_filepath' ] )
-			newBlogPost.title = blogpost[ 'title' ]
-			newBlogPost.timestamp_of_uploading = blogpost[ 'timestamp_of_uploading' ]
-			newBlogPost.initial_tags = blogpost[ 'initial_tags' ]
-			newBlogPost.endpoint = blogpost[ 'endpoint' ]
+			newVideo.category = video[ 'category' ]
+			newVideo.image_thumbnail = base64_encode( video[ 'image_thumbnail' ] )
+			newVideo.title = video[ 'title' ]
+			newVideo.all_tags = video[ 'all_tags' ]
+			newVideo.description = video[ 'description' ]
+			newVideo.endpoint = video[ 'endpoint' ]
 
-			newBlogPosts_list.push({...newBlogPost})
-			newBlogPost = {}
+			newVideos_list.push({...newVideo})
+			newVideo = {}
 		});
 
-		return newBlogPosts_list
+		return newVideos_list
 	})
-	.then((newBlogPosts_list) => {
+	.then((newVideos_list) => {
 
-		if (!newBlogPosts_list) {
+		if (!newVideos_list) {
 
-			res.status(401).json({ success: false, msg: "could not find BlogPosts_list" });
+			res.status(401).json({ success: false, msg: "could not find video_list" });
 
 		} else {
 
-			res.status(200).json(newBlogPosts_list);
+			res.status(200).json(newVideos_list);
 
 		}
 

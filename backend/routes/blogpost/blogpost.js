@@ -237,7 +237,7 @@ router.get('/get-all-comments-of-blogpost', async function(req, res, next){
 
 	Promise.all(list_of_promises)
 	.then(() => {
-
+		// console.log('COMMENTS SENT BELOW')
 		// console.log(final_comments_payload)
 		res.status(200).json( final_comments_payload );
 
@@ -348,6 +348,8 @@ router.post('/create-comment-for-blogpost', passport.authenticate('jwt', { sessi
 		.then((blogpost) => {
 
 			blogpost.comments.push( newComment )
+
+			newComment.blogpost = blogpost
 			
 			newComment.save(function (err, newComment) {
 				if (err) return console.log(err);
@@ -386,6 +388,8 @@ router.post('/create-like-for-blogpost', passport.authenticate('jwt', { session:
 		.then((blogpost) => {
 
 			blogpost.likes.push( newLike )
+
+			newLike.blogpost = blogpost
 
 			newLike.save(function (err, newLike) {
 				if (err) return console.log(err);

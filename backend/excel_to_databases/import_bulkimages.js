@@ -8,12 +8,12 @@ var base64_encode = require('../lib/image_to_base64');
 const {resolve} = require('path')
 const mongoose = require('mongoose');
 
-require('../models/blogpost');
+require('../models/image');
 require('../models/comment');
 require('../models/like');
 require('../models/user');
 
-const BlogPost = mongoose.model('BlogPost');
+const Image = mongoose.model('Image');
 const Comment = mongoose.model('Comment');
 
 const Like = mongoose.model('Like');
@@ -26,9 +26,9 @@ const file_name = excel_file || '/home/arsalan/Work_stuff/Full_stack_apps/REACT_
 // const file_name = 'all_images.xlsx';
 
 const sheet_to_class_mapper = (sheet_name, db_object) => {
-	if (sheet_name === 'all_blogposts'){
+	if (sheet_name === 'all_images'){
 
-		return new BlogPost(db_object)
+		return new Image(db_object)
 	
 	} else if (sheet_name === 'comments'){
 
@@ -67,9 +67,9 @@ const save_parent_and_children_in_db = (parent_children_rows_dict, sheet_to_clas
 
 		} 
 
-		const blogpost = sheet_to_class_mapper(parent_sheet, {...parent_db_object_dict, _id: new mongoose.Types.ObjectId()})
+		const image = sheet_to_class_mapper(parent_sheet, {...parent_db_object_dict, _id: new mongoose.Types.ObjectId()})
 
-		blogpost.save(function (err, blogpost) {
+		image.save(function (err, image) {
 
 			if (err) return handleError(err);
 
@@ -97,7 +97,7 @@ const save_parent_and_children_in_db = (parent_children_rows_dict, sheet_to_clas
 							child_db_object_dict[ child_header[m] ] = parent_row[m]
 						} 
 
-						const related_child = sheet_to_class_mapper(child_sheet, {...child_db_object_dict, blogpost: blogpost._id})
+						const related_child = sheet_to_class_mapper(child_sheet, {...child_db_object_dict, image: image._id})
 
 						related_child.save(function (err) {
 						  if (err) return handleError(err);
@@ -106,17 +106,17 @@ const save_parent_and_children_in_db = (parent_children_rows_dict, sheet_to_clas
 	
 						if (child_sheet === 'comments'){
 
-							blogpost.comments.push(related_child._id)
+							image.comments.push(related_child._id)
 
 		
 						} else if (child_sheet === 'likes'){
 
-							blogpost.likes.push(related_child._id)
+							image.likes.push(related_child._id)
 
 		
 						} else if (child_sheet === 'users'){
 
-							blogpost.users.push(related_child._id)
+							image.users.push(related_child._id)
 
 	
 						}
@@ -124,7 +124,7 @@ const save_parent_and_children_in_db = (parent_children_rows_dict, sheet_to_clas
 				} 
 				// saving parent object after assigning child objects to it
  
- 				blogpost.save()
+ 				image.save()
 
 			}			
 		})

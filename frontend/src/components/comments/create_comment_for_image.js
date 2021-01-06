@@ -107,7 +107,7 @@ class CreateCommentForImage extends Component {
 								id="standard-basic" // "filled-basic" / "outlined-basic"
 								variant="outlined" // "filled"
 								classes={styles.textinput}
-								onChange={ (value) => this.setState( prev => ({...prev, text: value})) }
+								onChange={ (event) => this.setState( prev => ({...prev, text: event.target.value})) }
 							/>
 						</form>
 				  	</div>

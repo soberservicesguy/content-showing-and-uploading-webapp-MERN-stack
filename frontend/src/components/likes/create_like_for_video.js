@@ -108,10 +108,10 @@ class CreateLikeForVideo extends Component {
 									video_endpoint: this.props.parentDetailsPayload.endpoint,
 								})
 							.then(function (response) {
-								console.log(response.data) // current blogpost screen data
+								console.log(response.data.endpoint) // current blogpost screen data
 								
 								// set to current parent object
-								setResponseInCurrentVideo(response.data)
+								setResponseInCurrentVideo(response.data.endpoint)
 
 								// change route to current_blogpost	
 								redirectToNewVideo()							

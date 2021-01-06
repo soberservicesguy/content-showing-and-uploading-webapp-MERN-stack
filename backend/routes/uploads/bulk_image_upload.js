@@ -107,7 +107,7 @@ const bulk_upload_images = multer({
 		checkFileTypeForImageAndExcelSheet(file, cb);
 	}
 }).fields([
-	{ name: 'excel_sheet_for_blogpost', maxCount: 1 }, 
+	{ name: 'excel_sheet_for_images', maxCount: 1 }, 
 	{ name: 'just_images_upload', maxCount: 1000 }
 ])  // these are the fields that will be dealt
 // .single('just_images_upload'); 
@@ -133,7 +133,7 @@ router.post('/bulk-upload-images', function(req, res, next){
 			try {
 				// console.log( req.files['excel_sheet_for_blogpost'][0] )
 				// give path
-				let uploaded_excel_sheet = path.join(__dirname , `../../assets/bulk_images/${currentDate}_${currentTime}/${req.files['excel_sheet_for_blogpost'][0].filename}`) 
+				let uploaded_excel_sheet = path.join(__dirname , `../../assets/bulk_images/${currentDate}_${currentTime}/${req.files['excel_sheet_for_images'][0].filename}`) 
 				sheet_to_class( uploaded_excel_sheet )
 				res.status(200).json({ success: true, msg: 'new images created'});	
 

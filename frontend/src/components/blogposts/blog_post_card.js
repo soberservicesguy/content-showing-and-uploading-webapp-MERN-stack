@@ -90,6 +90,7 @@ class BlogPostCard extends Component {
 		.then((response) => {
 			// console.log(response.data);
 			this.setState( prev => ({...prev, comments: ( prev.comments.length === 0 ) ? response.data : [] }) )
+			console.log('COMMENTS OBTAINED ARE BELOW')
 			console.log(this.state.comments)
 		})
 		.catch((error) => {

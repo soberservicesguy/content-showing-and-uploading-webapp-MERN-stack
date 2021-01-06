@@ -76,7 +76,7 @@ class VideoCard extends Component {
 
 	fetchAllComment(endpoint) {
 
-		axios.get(utils.baseUrl + '/images/get-all-comments-of-image', 
+		axios.get(utils.baseUrl + '/videos/get-all-comments-of-video', 
 			{
 			    params: {
 					endpoint: endpoint,
@@ -97,7 +97,7 @@ class VideoCard extends Component {
 
 	fetchAllLike(endpoint) {
 
-		axios.get(utils.baseUrl + '/images/get-all-likes-of-image', 
+		axios.get(utils.baseUrl + '/videos/get-all-likes-of-video', 
 			{
 			    params: {
 					endpoint: endpoint,
@@ -134,7 +134,7 @@ class VideoCard extends Component {
 			  		/>
 		  		</div>
 
-				<div>
+				<div style={{marginTop:50}}>
 					{/* 2nd show individual summary of childs */}
 					<SummarizeCommentsOfVideo
 						showOnlyQuantity= { false }
@@ -151,8 +151,8 @@ class VideoCard extends Component {
 				<div>
 					{/* 3rd show individual button for showing childs */}
 
-					<button style={styles.buttonWithoutBG}
-						onPress={ () => this.fetchAllComment( this.props.dataPayloadFromParent.endpoint ) }
+					<button
+						onClick={ () => this.fetchAllComment( this.props.dataPayloadFromParent.endpoint ) }
 					>
 						<p>
 							Show All Comment
@@ -163,8 +163,8 @@ class VideoCard extends Component {
 						dataPayloadFromParent = { this.state.comments }
 					/>
 
-					<button style={styles.buttonWithoutBG}
-						onPress={ () => this.fetchAllLike( this.props.dataPayloadFromParent.endpoint ) }
+					<button style={{marginTop:50}}
+						onClick={ () => this.fetchAllLike( this.props.dataPayloadFromParent.endpoint ) }
 					>
 						<p>
 							Show All Like
@@ -176,7 +176,7 @@ class VideoCard extends Component {
 					/>
 				</div>
 
-				<div>
+				<div style={{marginTop:50}}>
 					{/* 4th create individual child options like comment / like */}					
 					<ConnectedCreateCommentForVideo
 						parentDetailsPayload = { this.props.dataPayloadFromParent }

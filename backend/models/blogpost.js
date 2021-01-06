@@ -12,13 +12,13 @@ const BlogPostSchema = new mongoose.Schema({
 	title:String,
 	timestamp_of_uploading:String,
 	initial_tags:String,
-	endpoint:String,
 	first_para:String,
 	second_para:String,
 	qouted_para:String,
 	third_para:String,
 	fourth_para:String,
 	all_tags:String,
+	endpoint:String,
 
 // other model links
 	comments:[{ type: Schema.Types.ObjectId, ref: 'Comment' }],

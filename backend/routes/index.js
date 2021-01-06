@@ -17,8 +17,8 @@ router.use('/video-uploads', require('./uploads/upload_video'));
 
 
 router.use('/uploads', require('./uploads/bulk_blogpost_upload'));
-router.use('/uploads', require('./uploads/bulk_image_upload'));
 router.use('/uploads', require('./uploads/bulk_video_upload'));
+router.use('/uploads', require('./uploads/bulk_image_upload'));
 
 
 router.use('/users', require('./users/sign_up'));

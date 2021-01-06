@@ -20,6 +20,9 @@ const path = require('path')
 
 const fs = require('fs')
 
+var ffmpeg = require('fluent-ffmpeg') // for setting thumbnail of video upload using snapshot
+
+
 // bulk importing script
 const sheet_to_class = require('../../excel_to_databases/import_bulkvideos')
 const bulk_delete_all_videos = require('../../excel_to_databases/delete_all_videos')
@@ -35,12 +38,8 @@ const bulk_videos_storage = multer.diskStorage({
 		currentDate = new Date().toLocaleDateString("en-US").split("/").join(" | ");
 		currentTime = new Date().toLocaleTimeString("en-US").split("/").join(" | ");
 
-		if (file.fieldname === "image_thumbnails") {
 
-			let file_path = path.join(__dirname , '../../assets/bulk_videos/thumbnails_images')
-			cb(null, file_path)	
-
-		} else if (file.fieldname === "videos_to_upload") {
+		if (file.fieldname === "videos_to_upload") {
 
 			let file_path = path.join(__dirname , '../../assets/bulk_videos/videos')
 			cb(null, file_path)	
@@ -87,15 +86,7 @@ function checkFileTypeForImageAndExcelSheet(file, cb){
 	let mimetype_for_video = filetypes_for_video.test( file.mimetype );
 	let mimetype_for_excelsheet = filetypes_for_excelsheet.test( file.mimetype );
 
-	if (file.fieldname === "image_thumbnails") { // if uploading resume
-		
-		if (mimetype_for_image && extname_for_image) {
-			cb(null, true);
-		} else {
-			cb('Error: jpeg, jpg, png, gif Images Only!');
-		}
-
-	} else if (file.fieldname === "videos_to_upload") {
+	if (file.fieldname === "videos_to_upload") {
 
 		if (mimetype_for_video && extname_for_video) {
 			cb(null, true);
@@ -123,9 +114,8 @@ const bulk_upload_videos = multer({
 		checkFileTypeForImageAndExcelSheet(file, cb);
 	}
 }).fields([
-	{ name: 'excel_sheet_for_blogpost', maxCount: 1 }, 
-	{ name: 'image_thumbnails', maxCount: 1000 }, 
-	{ name: 'videos_to_upload', maxCount: 1000 }
+	{ name: 'videos_to_upload', maxCount: 1000 },
+	{ name: 'excel_sheet_for_videos', maxCount: 1 }, 
 ])  // these are the fields that will be dealt
 // .single('image_thumbnails'); 
 // .array('photos', 12)
@@ -133,32 +123,144 @@ const bulk_upload_videos = multer({
 
 // create blogpost with undefined
 // USED IN CREATING BLOGPOST
-router.post('/bulk-upload-videos', function(req, res, next){
+router.post('/bulk-upload-videos', async function(req, res, next){
 	
 	// console.log('OUTER LOG')
 	// console.log(req.body)
 
-	bulk_upload_videos(req, res, (err) => {
+	bulk_upload_videos(req, res, async (err) => {
 		if(err){
 
 			console.log(err)
 
 		} else {
 
+			var uploaded_videos = req.files['videos_to_upload']
+
+			let create_all_snapshot = await Promise.all(uploaded_videos.map((uploaded_video) => {
+				if(uploaded_video == undefined){
+
+					res.status(404).json({ success: false, msg: 'File is undefined!',file: `uploads/${uploaded_video.filename}`})
+
+				} else {
+					console.log('FILE NAME IS BELOW')
+					console.log( path.extname(uploaded_video.filename) )
+					var video_id = ''
+				// video is uploaded , NOW creating thumbnail from video using snapshot
+	 				ffmpeg(`./assets/bulk_videos/videos/${uploaded_video.filename}`)
+					// screenshots at mentioned times
+					// .takeScreenshots({ 
+					// 	count: 2, 
+					// 	timemarks: [ '00:00:02.000', '6' ], 
+					// 	filenames: [
+					// 		`${filename_used_to_store_video_in_assets_without_format}1.png`, 
+					// 		`${filename_used_to_store_video_in_assets_without_format}2.png`, 
+					// 	],
+					// 	size: '150x100', 
+					// }, '../assets/videos/uploads/upload_thumbnails/')
+					// screenshots at % completion ie 20%, 40%, 60%, 80%
+					.screenshots({
+						// filename: 'name-of-file.png', // if single snapshot is needed
+						// timemarks: [ '00:00:02.000', '6' ], 
+						// Will take screenshots at 20%, 40%, 60% and 80% of the video
+						filename:`${uploaded_video.filename.replace( path.extname(uploaded_video.filename), "")}.png`,
+						// filenames: [
+						// 	`${uploaded_video.filename}1.png`, 
+						// 	`${uploaded_video.filename}2.png`, 
+						// 	`${uploaded_video.filename}3.png`, 
+						// 	`${uploaded_video.filename}4.png`,
+						// ],
+						count: 4,
+						size: '150x100', 
+						folder: './assets/bulk_videos/thumbnails_images/',
+					})
+					.on('end', function() {
+						console.log('Screenshots taken');
+					})
+					.on('error', function(err) {
+						console.error(err);
+					})
+					.on('filenames', function(filenames) {
+						console.log('screenshots are ' + filenames.join(', '));
+					})
+
+				// // saving video in DB
+				// 	video_id = new mongoose.Types.ObjectId()
+				// 	const newVideo = new Video({
+				// 		_id: video_id,
+				// 		image_thumbnail: `${filename_used_to_store_video_in_assets_without_format}1.png`,
+				// 		timestamp_of_uploading: String( Date.now() ),
+				// 		video_filepath: `./assets/videos/uploads/videos_uploaded_by_users/${filename_used_to_store_video_in_assets}`,
+				// 		category: req.body.category,
+				// 		title: req.body.title,
+				// 		all_tags: req.body.all_tags,
+				// 		description: req.body.description,
+				// 		// endpoint:String, // will be taken care at db model
+				// 	})
+
+				// 	newVideo.save(function (err, newVideo) {
+
+				// 		if (err){
+				// 			res.status(404).json({ success: false, msg: 'couldnt create video database entry'})
+				// 			return console.log(err)
+				// 		}
+
+				// 		// assign user object then save
+				// 		User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
+				// 		.then((user) => {
+				// 			if (user){
+
+				// 				newVideo.user = user
+				// 				newVideo.save()
+				// 			// finding video saved to access its endpoint since its created at model level
+								
+				// 			} else {
+
+				// 				res.status(200).json({ success: false, msg: "user doesnt exists, try logging in again" });
+
+				// 			}
+				// 		})
+				// 		.then(() => {
+
+				// 			Video.findOne({ _id: video_id })
+				// 			.then((saved_video) => {
+				// 				res.status(200).json({ success: true, msg: 'new user saved', video_endpoint: saved_video.endpoint});	
+
+				// 			})
+
+				// 		})
+				// 		.catch((err) => {
+
+				// 			next(err);
+
+				// 		})
+
+				// 		// not needed, used for multer
+				// 		// res.status(200).json({ success: false, msg: 'couldnt create video database entry',file: `uploads/${req.file.filename}`})
+				// 	})
+
+				}
+
+			}))
+			.then(() => {
+
+				try {
+					// console.log( req.files['excel_sheet_for_videos'][0] )
+					// give path
+					let uploaded_excel_sheet = path.join(__dirname , `../../assets/bulk_videos/${currentDate}_${currentTime}/${req.files['excel_sheet_for_videos'][0].filename}`) 
+					sheet_to_class( uploaded_excel_sheet )
+					res.status(200).json({ success: true, msg: 'new videos created'});	
+
+				} catch (error){
+
+					res.status(200).json({ success: false, msg: "new videos NOT created, try again" });
+
+				}
+
+			})
+
 			// give excel file name and run bulk import function
-			// req.files['excel_sheet_for_blogpost'][0] // pull data from it and create blogposts
-			try {
-				// console.log( req.files['excel_sheet_for_blogpost'][0] )
-				// give path
-				let uploaded_excel_sheet = path.join(__dirname , `../../assets/bulk_videos/${currentDate}_${currentTime}/${req.files['excel_sheet_for_blogpost'][0].filename}`) 
-				sheet_to_class( uploaded_excel_sheet )
-				res.status(200).json({ success: true, msg: 'new videos created'});	
-
-			} catch (error){
-
-				res.status(200).json({ success: false, msg: "new videos NOT created, try again" });
-
-			}
+			// req.files['excel_sheet_for_videos'][0] // pull data from it and create blogposts
 
 		}
 	})

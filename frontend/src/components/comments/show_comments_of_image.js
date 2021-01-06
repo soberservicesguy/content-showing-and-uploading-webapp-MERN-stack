@@ -106,7 +106,7 @@ class ShowCommentsOfImage extends Component {
 		
 						<button onClick={() => this.toggle_comment_modal()} 
 							style={{
-								// height:windowHeight * 0.1
+									// height:windowHeight * 0.1
 							}}>
 						</button>
 						

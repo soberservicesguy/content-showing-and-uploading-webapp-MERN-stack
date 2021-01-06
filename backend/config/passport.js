@@ -91,6 +91,7 @@ module.exports = (passport) => {
 				// return done(null, payload); // this wont work, since user is the only possible payload with done, so just overwrite it 
 
 			} else {
+				console.log('REQUEST REJECTED BY PASSPORT JS')
 				return done(null, false);
 			}
 			

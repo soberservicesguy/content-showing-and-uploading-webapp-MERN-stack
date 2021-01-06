@@ -148,11 +148,11 @@ class ImageCard extends Component {
 					/>
 				</div>
 
-				<div>
+				<div style={{marginTop:50}}>
 					{/* 3rd show individual button for showing childs */}
 
 					<button style={styles.buttonWithoutBG}
-						onPress={ () => this.fetchAllComment( this.props.dataPayloadFromParent.endpoint ) }
+						onClick={ () => this.fetchAllComment( this.props.dataPayloadFromParent.endpoint ) }
 					>
 						<p>
 							Show All Comment
@@ -163,8 +163,8 @@ class ImageCard extends Component {
 						dataPayloadFromParent = { this.state.comments }
 					/>
 
-					<button style={styles.buttonWithoutBG}
-						onPress={ () => this.fetchAllLike( this.props.dataPayloadFromParent.endpoint ) }
+					<button style={{marginTop:50}}
+						onClick={ () => this.fetchAllLike( this.props.dataPayloadFromParent.endpoint ) }
 					>
 						<p>
 							Show All Like
@@ -176,7 +176,7 @@ class ImageCard extends Component {
 					/>
 				</div>
 
-				<div>
+				<div style={{marginTop: 50}}>
 					{/* 4th create individual child options like comment / like */}					
 					<ConnectedCreateCommentForImage
 						parentDetailsPayload = { this.props.dataPayloadFromParent }
