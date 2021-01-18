@@ -123,7 +123,7 @@ const bulk_upload_videos = multer({
 
 // create blogpost with undefined
 // USED IN CREATING BLOGPOST
-router.post('/bulk-upload-videos', async function(req, res, next){
+router.post('/bulk-upload-videos', passport.authenticate('jwt', { session: false }), isAllowedUploadingVideos, async function(req, res, next){
 	
 	// console.log('OUTER LOG')
 	// console.log(req.body)
@@ -244,30 +244,36 @@ router.post('/bulk-upload-videos', async function(req, res, next){
 			}))
 			.then(() => {
 
-				try {
-					// console.log( req.files['excel_sheet_for_videos'][0] )
-					// give path
-					let uploaded_excel_sheet = path.join(__dirname , `../../assets/bulk_videos/${currentDate}_${currentTime}/${req.files['excel_sheet_for_videos'][0].filename}`) 
-					sheet_to_class( uploaded_excel_sheet )
-					res.status(200).json({ success: true, msg: 'new videos created'});	
+				let user_id = ''
+			// finding the user who is uploading so that it can be passed to sheet_to_class for assignment on posts
+				User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
+				.then((user) => {
+					if (user){
 
-				} catch (error){
+						user_id = user._id
 
+						let uploaded_excel_sheet = path.join(__dirname , `../../assets/bulk_videos/${currentDate}_${currentTime}/${req.files['excel_sheet_for_videos'][0].filename}`) 
+						sheet_to_class( uploaded_excel_sheet, user_id )
+						res.status(200).json({ success: true, msg: 'new videos created'});	
+
+					} else {
+						res.status(200).json({ success: false, msg: "new videos NOT created, try again" });
+					}
+				})
+				.catch((error) => {
 					res.status(200).json({ success: false, msg: "new videos NOT created, try again" });
-
-				}
+				})
 
 			})
 
 			// give excel file name and run bulk import function
 			// req.files['excel_sheet_for_videos'][0] // pull data from it and create blogposts
-
 		}
 	})
 })
 
 
-router.get('/bulk-delete-videos', function(req, res, next){
+router.get('/bulk-delete-videos', passport.authenticate('jwt', { session: false }), isAllowedUploadingVideos, function(req, res, next){
 	try{
 
 		bulk_delete_all_videos()

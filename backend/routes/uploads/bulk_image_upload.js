@@ -116,7 +116,7 @@ const bulk_upload_images = multer({
 
 // create blogpost with undefined
 // USED IN CREATING BLOGPOST
-router.post('/bulk-upload-images', function(req, res, next){
+router.post('/bulk-upload-images', passport.authenticate('jwt', { session: false }), isAllowedUploadingImages, function(req, res, next){
 	
 	// console.log('OUTER LOG')
 	// console.log(req.body)
@@ -130,25 +130,34 @@ router.post('/bulk-upload-images', function(req, res, next){
 
 			// give excel file name and run bulk import function
 			// req.files['excel_sheet_for_blogpost'][0] // pull data from it and create blogposts
-			try {
-				// console.log( req.files['excel_sheet_for_blogpost'][0] )
-				// give path
-				let uploaded_excel_sheet = path.join(__dirname , `../../assets/bulk_images/${currentDate}_${currentTime}/${req.files['excel_sheet_for_images'][0].filename}`) 
-				sheet_to_class( uploaded_excel_sheet )
-				res.status(200).json({ success: true, msg: 'new images created'});	
 
-			} catch (error){
+			let user_id = ''
+		// finding the user who is uploading so that it can be passed to sheet_to_class for assignment on posts
+			User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
+			.then((user) => {
+				if (user){
 
+					user_id = user._id
+
+					let uploaded_excel_sheet = path.join(__dirname , `../../assets/bulk_images/${currentDate}_${currentTime}/${req.files['excel_sheet_for_images'][0].filename}`) 
+					sheet_to_class( uploaded_excel_sheet, user_id )
+					res.status(200).json({ success: true, msg: 'new images created'});	
+
+				} else {
+					res.status(200).json({ success: false, msg: "new images NOT created, try again" });
+				}
+			})
+			.catch((error) => {
 				res.status(200).json({ success: false, msg: "new images NOT created, try again" });
+			})
 
-			}
 
 		}
 	})
 })
 
 
-router.get('/bulk-delete-images', function(req, res, next){
+router.get('/bulk-delete-images', passport.authenticate('jwt', { session: false }), isAllowedUploadingImages, function(req, res, next){
 	try{
 
 		bulk_delete_all_images()
