@@ -18,16 +18,6 @@ import {
 } from '../redux_stuff/connected_components';
 
 
-const styles = theme => ({
-  root: {
-    height: 48,
-//    color: props => (props.cool) ? 'red' : 'black',
-    [theme.breakpoints.up('sm')]:{
-    	paddingLeft:100
-    },
-  },
-});
-
 class VideoContainer extends Component {
 	constructor(props) {
 		super(props);
@@ -65,12 +55,15 @@ class VideoContainer extends Component {
 			
 		const total_videos = this.props.total_videos
 
-		const { classes } = this.props;
 	  	const {_xs, _sm, _md, _lg, _xl} = this.props
+
+	  	const styles ={
+
+	  	}
 
 		return (
 
-			<Grid container direction="row" spacing={4} style={{backgroundColor: '#eee'}} >
+			<Grid container direction="row">
 				
 				<Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
 		  			<ConnectedCreateVideo/>
@@ -106,5 +99,4 @@ VideoContainer.defaultProps = {
 	// : ,
 };
 
-export default withResponsiveness(withStyles(styles)(VideoContainer));
-
+export default withResponsiveness(VideoContainer);

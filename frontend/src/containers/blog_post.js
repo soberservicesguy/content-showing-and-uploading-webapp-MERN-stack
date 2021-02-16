@@ -17,17 +17,6 @@ import {
 	ConnectedCreateBlogPost,
 } from '../redux_stuff/connected_components';
 
-
-const styles = theme => ({
-  root: {
-    height: 48,
-//    color: props => (props.cool) ? 'red' : 'black',
-    [theme.breakpoints.up('sm')]:{
-    	paddingLeft:100
-    },
-  },
-});
-
 class BlogPostContainer extends Component {
 	constructor(props) {
 		super(props);
@@ -66,12 +55,15 @@ class BlogPostContainer extends Component {
 			
 		const total_blogposts = this.props.total_blogposts
 
-		const { classes } = this.props;
 	  	const {_xs, _sm, _md, _lg, _xl} = this.props
+
+	  	const styles ={
+
+	  	}
 
 		return (
 
-			<Grid container direction="row" spacing={4} style={{backgroundColor: '#eee'}} >
+			<Grid container direction="row">
 				
 				<Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
 		  			<ConnectedCreateBlogPost/>
@@ -107,5 +99,5 @@ BlogPostContainer.defaultProps = {
 	// : ,
 };
 
-export default withResponsiveness(withStyles(styles)(BlogPostContainer));
+export default withResponsiveness(BlogPostContainer);
 

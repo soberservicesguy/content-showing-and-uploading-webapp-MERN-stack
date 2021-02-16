@@ -17,16 +17,10 @@ import {
 	ConnectedCreateImage,
 } from '../redux_stuff/connected_components';
 
+import {
+	VerticalMasonriesContainer,
+} from "./"
 
-const styles = theme => ({
-  root: {
-    height: 48,
-//    color: props => (props.cool) ? 'red' : 'black',
-    [theme.breakpoints.up('sm')]:{
-    	paddingLeft:100
-    },
-  },
-});
 
 class ImageContainer extends Component {
 	constructor(props) {
@@ -66,36 +60,46 @@ class ImageContainer extends Component {
 			
 		const total_images = this.props.total_images
 
-		const { classes } = this.props;
 	  	const {_xs, _sm, _md, _lg, _xl} = this.props
 
+	  	const styles ={
+
+	  	}
+	  	
 		return (
 
-			<Grid container direction="row" spacing={4} style={{backgroundColor: '#eee'}} >
+			<Grid container direction="row">
 				
 				<Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
 		  			<ConnectedCreateImage/>
 		  		</Grid>
 
-				{total_images.map((item, index)=>(
+		  		<VerticalMasonriesContainer>
+		  			{[1,2,3,4,5,6,7,8,9,10,11,12,13, 14].map((item, index) => {
 
-					<Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-						<ConnectedImageCard
-							dataPayloadFromParent = { item }
+		  				return(
+		  					<div style={{backgroundColor: 'blue', height:'100%'}}>
+		  						<p>
+		  							this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this {index}
+		  						</p>
+		  					</div>
+		  					// <ConnectedImageCard
+		  					// 	dataPayloadFromParent = { item }
 
-							comments_quantity = { item.comments_quantity }
-							comments = { item.comments || [] }
+		  					// 	comments_quantity = { item.comments_quantity }
+		  					// 	comments = { item.comments || [] }
 
-							likes_quantity = { item.likes_quantity }
-							likes = { item.likes || [] }
+		  					// 	likes_quantity = { item.likes_quantity }
+		  					// 	likes = { item.likes || [] }
 
-							user_quantity = { item.user_quantity }
-							user = { item.user || [] }
-						
-						/>
-					</Grid>
+		  					// 	user_quantity = { item.user_quantity }
+		  					// 	user = { item.user || [] }
+		  					
+		  					// />
+			  			)
 
-				))}
+		  			})}
+		  		</VerticalMasonriesContainer>
 
 			</Grid>
 
@@ -103,9 +107,57 @@ class ImageContainer extends Component {
 	}
 }
 
+
+
+
+				// {total_images.map((item, index)=>(
+
+				// 	<Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+				// 		<ConnectedImageCard
+				// 			dataPayloadFromParent = { item }
+
+				// 			comments_quantity = { item.comments_quantity }
+				// 			comments = { item.comments || [] }
+
+				// 			likes_quantity = { item.likes_quantity }
+				// 			likes = { item.likes || [] }
+
+				// 			user_quantity = { item.user_quantity }
+				// 			user = { item.user || [] }
+						
+				// 		/>
+				// 	</Grid>
+
+				// ))}
+
+
 ImageContainer.defaultProps = {
 	// : ,
 };
 
-export default withResponsiveness(withStyles(styles)(ImageContainer));
+export default withResponsiveness(ImageContainer);
 
+
+
+		  			// <div style={{backgroundColor: '#000000'}}>
+		  			// 	<p>this</p>
+		  			// </div>
+
+		  			// <div style={{backgroundColor: 'grey'}}>
+		  			// 	<p>this</p>
+		  			// </div>
+
+		  			// <div 
+		  			// 	style={{backgroundColor: 'red'}}
+	  				// >
+		  			// 	<p>this</p>
+		  			// </div>
+
+
+		  			// <div style={{backgroundColor: '#000000'}}>
+		  			// 	<p>this</p>
+		  			// </div>
+
+		  			// <div style={{backgroundColor: 'grey'}}>
+		  			// 	<p>this</p>
+		  			// </div>
