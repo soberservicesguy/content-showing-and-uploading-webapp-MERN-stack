@@ -30,64 +30,31 @@ class VerticalMasonriesContainer extends Component {
 		let children_assigned = 0
 		let {_xs, _sm, _md, _lg, _xl} = this.props;
 
-		// finding max number of children in pattern
-		let children_counts = []
 
-		let total_columns_list = Object.keys(this.props.child_addition_pattern)
+		let total_columns_list = Object.keys(this.props.column_wise_details_list)
 		let child_list
-
-		for (let i = 0; i < total_columns_list.length; i++) {
-			child_list = this.props.child_addition_pattern[ total_columns_list[i] ]
-			children_counts.push( child_list.length )
-		}
 
 		// generating list of child heights in child placement sequence
 		let child_heights_list = []
-		let max_children_count = Math.max.apply(Math, children_counts)
-		let total_iterations = new Array(max_children_count)
-		for (let j = 0; j < this.props.children.length / total_iterations.length; j++) {
-			// child_addition_pattern:{
-			// 	0:[ {height:100}, {height:300} ], 
-			// 	1:[ {height:200}, ], 
-			// 	2:[ {height:100}, ], 
-			// 	3:[ {height:100}, ],
-			// }, 
-			Object.keys(this.props.child_addition_pattern).map((key, key_index) => {
-				this.props.child_addition_pattern[ key_index ].map((height_object, height_object_index) => {
-
-					if (height_object_index === j){
-						child_heights_list.push(height_object.height)
-					}
-
-				})
-			})
+		for (let j = 0; j < this.props.children.length; j++) {
+			if (this.props.child_addition_pattern_heights[j]){
+				child_heights_list.push( this.props.child_addition_pattern_heights[j] )
+			}
 		}		
 
-		console.log('HEIGHTS')
-		console.log(child_heights_list)
 		while (child_heights_list.length < this.props.children.length){
 			child_heights_list = [...child_heights_list, ...child_heights_list]
-
 		}
-		console.log('INITIAL LENGTH')
-		console.log(child_heights_list.length)
+
 		if (this.props.children.length < child_heights_list.length){
 			let number_of_additional = child_heights_list.length - this.props.children.length
-			console.log('number_of_additional')
-			console.log(number_of_additional)
 
-			child_heights_list.splice(this.props.children.length-number_of_additional, number_of_additional)
+			child_heights_list.splice(this.props.children.length, number_of_additional)
 		}
-
-		console.log('FINALLY')
-		console.log(child_heights_list.length)
-
-		console.log('HEIGHTS')
-		console.log(child_heights_list)
 
 		let column_dict = {}
 
-		for (let j = 0; j < this.props.children.length / total_iterations.length; j++) {
+		for (let j = 0; j < this.props.children.length / this.props.child_addition_pattern_heights.length; j++) {
 
 			let iteration_index = j
 
@@ -97,9 +64,6 @@ class VerticalMasonriesContainer extends Component {
 					column_dict[i] = []
 				}
 
-				// children_assigned < this.props.children.length 
-
-				// if ( iteration_index <= this.props.child_addition_pattern[i].length - 1 ){
 				if ( children_assigned < this.props.children.length ){
 
 					if ( _xs || _sm || _md ){
@@ -107,12 +71,10 @@ class VerticalMasonriesContainer extends Component {
 						component = (
 							<Grid item
 								style={{
-									height: child_heights_list[i],
+									height: child_heights_list[children_assigned],
 									marginBottom: this.props.column_wise_details_list[i].bottom_spacing,
 									// marginLeft: this.props.column_wise_details_list[i].leftGap,
 								}}
-
-								// { this.props.children[i + iteration_index * this.props.column_wise_details_list.length] }
 							>
 								{ this.props.children[ children_assigned ] }
 							</Grid>
@@ -124,17 +86,13 @@ class VerticalMasonriesContainer extends Component {
 
 					} else {
 
-						// console.log(iteration_index)
-						console.log(this.props.child_addition_pattern[i])
 						component = (
 							<Grid item
 								style={{
-									// height: ( this.props.child_addition_pattern[i][iteration_index] ) ? this.props.child_addition_pattern[i][iteration_index].height : this.props.child_addition_pattern[i][iteration_index - 1].height,
 									height: child_heights_list[children_assigned],
 									marginBottom: this.props.column_wise_details_list[i].bottom_spacing,
 									marginLeft: this.props.column_wise_details_list[i].leftGap,
 								}}
-								// { this.props.children[i + iteration_index * this.props.column_wise_details_list.length] }
 							>	
 								{ this.props.children[ children_assigned ] }
 							</Grid>
@@ -158,7 +116,6 @@ class VerticalMasonriesContainer extends Component {
 			all_columns.push(
 			
 				<Grid item container direction="column" 
-					// spacing={grid_detail_item.bottom_spacing}
 					xs={12} sm={12} 
 					md={column_detail.width_in_grids} 
 					lg={column_detail.width_in_grids}
@@ -193,55 +150,6 @@ class VerticalMasonriesContainer extends Component {
 				<Grid container direction="row" style={{backgroundColor: 'none',}}>
 					{this.generate_grid()}			
 
-{/* deprecated */}
-{/*					{
-						this.props.column_wise_details_list.map((grid_detail_item, outer_index) => {
-
-
-							let count_to_use = count
-							count += this.props.child_addition_pattern[outer_index].length
-
-							return(
-
-								<Grid item container direction="column" 
-									// spacing={grid_detail_item.bottom_spacing}
-									xs={12} sm={12} 
-									md={grid_detail_item.width_in_grids} 
-									lg={grid_detail_item.width_in_grids}
-								>
-									{this.props.child_addition_pattern[outer_index].map(
-
-										(masonry_detail_item, inner_index) => (
-
-										( _xs | _sm | _md ) 
-											?
-												<Grid item
-													style={{
-														height:masonry_detail_item.height,
-														marginBottom:grid_detail_item.bottom_spacing,
-														// marginLeft:grid_detail_item.leftGap,
-													}}
-
-												>
-													{ this.props.children[ count_to_use + inner_index ] }
-												</Grid>
-											:
-												<Grid item
-													style={{
-														height:masonry_detail_item.height,
-														marginBottom:grid_detail_item.bottom_spacing,
-														marginLeft:grid_detail_item.leftGap,
-													}}
-												>	
-													{ this.props.children[ count_to_use + inner_index ] }
-												</Grid>
-										)
-									)}
-								</Grid>
-								)
-
-						}
-					)}*/}
 				</Grid>
 
 
@@ -255,18 +163,14 @@ class VerticalMasonriesContainer extends Component {
 
 VerticalMasonriesContainer.defaultProps = {
 	column_wise_details_list:[ 
-		{ width_in_grids:4, bottom_spacing:10, leftGap:0 },
-		{ width_in_grids:2, bottom_spacing:10, leftGap:10 },
+		{ width_in_grids:3, bottom_spacing:10, leftGap:0 },
+		{ width_in_grids:3, bottom_spacing:10, leftGap:10 },
 		{ width_in_grids:3, bottom_spacing:10, leftGap:10 },
 		{ width_in_grids:3, bottom_spacing:10, leftGap:10 },
 	],
 
-	child_addition_pattern:{
-		0:[ {height:100}, {height:200} ], 
-		1:[ {height:100}, ], 
-		2:[ {height:100}, ], 
-		3:[ {height:100}, ],
-	}, 
+
+	child_addition_pattern_heights:[200, 200, 300, 200, 100, 200,],
 
 	leftMargin:(1) * 8 / 2 ,
 	// containerBGcolor:'blue',
