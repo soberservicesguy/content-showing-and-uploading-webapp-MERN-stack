@@ -22,45 +22,8 @@ import {
 	Redirect,
 } from "react-router-dom";
 
-const styles = theme => ({
-	root: {
-		height: 48,
-		color: props => (props.cool) ? 'red' : 'black',
-		[theme.breakpoints.up('sm')]:{
-			paddingLeft:100
-		},
-	},
-	buttonWithoutBG:{
-		marginTop:50,
-		marginBottom:50,
-	},
-	innerText:{
+import Comment from '@material-ui/icons/Comment';
 
-	},
-	textinputContainer:{
-		// marginTop: windowHeight * 0.05, // or 30  gap
-		// height: windowHeight * 0.1, // or 100
-		width: '80%',
-		justifyContent: 'center', // vertically centered
-		alignSelf: 'center', // horizontally centered
-		// backgroundColor: utils.lightGreen,
-	},
-	textinput:{
-		marginTop:20,
-		textAlign:'left',
-		borderWidth:1,
-		borderColor:(utils.lightGrey),
-		borderStyle:'solid',
-		paddingLeft:20,
-		paddingTop:15,
-		paddingBottom:15,
-		fontSize:18,
-	},
-	outerContainer: {
-	},
-	bigBlue: {
-	},
-});
 
 class CreateCommentForImage extends Component {
 	constructor(props) {
@@ -70,19 +33,104 @@ class CreateCommentForImage extends Component {
 			redirectToRoute: false,
 			text: '',
 			// commenting_timestamp: '',
+
+			tracked_width1: 0,
+			tracked_height1: 0,
+			tracked_width2: 0,
+			tracked_height2: 0,
+
 		}
+		this.resizeHandler = this.resizeHandler.bind(this);
 
 	}
 
-// COMPONENT DID MOUNT
 	componentDidMount() {
+		this.resizeHandler();
+		window.addEventListener('resize', this.resizeHandler);
+	}
 
+	componentWillUnmount(){
+		window.removeEventListener('resize', this.resizeHandler);
+	}
+
+
+	resizeHandler() {
+		this.setState(prev => ({
+			...prev, 
+			tracked_width1:this.divElement1.clientWidth, 
+			tracked_height1:this.divElement1.clientHeight,
+			tracked_width2:this.divElement2.clientWidth,
+			tracked_height2:this.divElement2.clientHeight,
+		}))
 	}
 
 	render() {
 
 		// parameters being passed from previous route
 		const endpoint_params_passed = this.props.match.params
+
+		const styles = {
+			buttonWithoutBG:{
+				outline:'none',
+				borderStyle:'solid',
+				borderColor:'white',
+				backgroundColor:'white',
+
+				position:'relative',
+				top:-30, // self_height
+				left: 200, // width_of_Textinput - self_width
+			},
+
+
+		// round text input
+			roundTextInputContainer:{
+				width:'100%', 
+				height:40,
+				margin:'auto',
+				// marginBottom:0,
+				// backgroundColor: '#000000',
+			},
+
+			roundTextInput:{
+				outline:'none', 
+				width:'100%', 
+				height:50, 
+				paddingLeft:20,
+				paddingRight:100, 
+				color:'black', 
+				borderRadius:30,
+				borderWidth:1, 
+				borderStyle:'solid',
+				borderColor:'#eee', 
+				backgroundColor: '#eee',
+			},
+
+		// roundButtonInsideTextInput
+			roundButtonInsideTextInputContainer:{
+				width: '15%',
+				// width: 100,
+				height: 30,
+				// backgroundColor: utils.maroonColor,
+				// borderRadius: this.state.tracked_height2 / 2,
+				// borderWidth: 1, 
+				// borderStyle: 'solid',
+				// borderColor: utils.maroonColor, 
+
+				position: 'relative',
+				bottom: (this.state.tracked_height2 + 2) + (this.state.tracked_height1 + 2 - this.state.tracked_height2 - 2)/2, // self_height_including_border_thickness + difference in heights of both / 2
+				left: this.state.tracked_width1 + 2 - this.state.tracked_width2 - 10, // tracked_width - self_width - some_gap 
+			},
+			roundButtonInsideTextInput:{
+				width:'100%',
+				height:'100%',
+				border:'none',
+				background: 'none',
+				outline:'none',
+				color:'white',
+				fontWeight:'bold',
+			},
+
+		}
 
 		if ( this.state.redirectToRoute !== false ){
 
@@ -99,51 +147,58 @@ class CreateCommentForImage extends Component {
 
 				<div style={styles.outerContainer}>
 
-
-				  	<div style={styles.textinputContainer}>
-						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
-								label="Type your text" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
+				{/* round text input */}
+					<div style={styles.roundTextInputContainer}>
+						<form>
+							<input 
+								ref={ (divElement) => { this.divElement1 = divElement } }
+								placeholder="Type your comment" 
+								type="text" 
+								name="post_text"
+								multiline={true}
 								onChange={ (event) => this.setState( prev => ({...prev, text: event.target.value})) }
+								style={styles.roundTextInput} 
 							/>
 						</form>
-				  	</div>
 
+				{/* round button inside round text input */}
+						<div 
+							ref={ (divElement) => { this.divElement2 = divElement } }
+							style={styles.roundButtonInsideTextInputContainer}
+						>
+							<button style={styles.roundButtonInsideTextInput}
+								onClick={ () => {
 
-					<button style={styles.buttonWithoutBG}
-						onClick={ () => {
+									let setResponseInCurrentImage = (arg) => this.props.set_current_image(arg)
+									let redirectToNewImage = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
 
-							let setResponseInCurrentImage = (arg) => this.props.set_current_image(arg)
-							let redirectToNewImage = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
+									axios.post(utils.baseUrl + '/images/create-comment-for-image', 
+										{
+											comment_text: this.state.text,
+											image_endpoint: this.props.parentDetailsPayload.endpoint,
+										})
+									.then(function (response) {
+										console.log(response.data) // current image screen data
+										
+										// set to current parent object
+										setResponseInCurrentImage(response.data)
 
-							axios.post(utils.baseUrl + '/images/create-comment-for-image', 
-								{
-									comment_text: this.state.text,
-									image_endpoint: this.props.parentDetailsPayload.endpoint,
-								})
-							.then(function (response) {
-								console.log(response.data) // current image screen data
-								
-								// set to current parent object
-								setResponseInCurrentImage(response.data)
+										// change route to current_image	
+										redirectToNewImage()							
 
-								// change route to current_image	
-								redirectToNewImage()							
+									})
+									.catch(function (error) {
+										console.log(error)
+									});						
 
-							})
-							.catch(function (error) {
-								console.log(error)
-							});						
+								}}
+							>
+								<Comment style={{color:'grey', fontSize:30, marginRight:40,}}/>
+							</button>
 
-						}}
-					>
-						<p style={styles.innerText}>
-							Press To Create Comment
-						</p>
-					</button>
+						</div>
+					</div>
+
 				</div>
 			);
 		}
@@ -155,4 +210,4 @@ CreateCommentForImage.defaultProps = {
 };
 
 // export default CreateCommentForImage;  // REMOVE withResponsiveness and withStyles as much as possible
-export default withRouter(withResponsiveness(withStyles(styles)(CreateCommentForImage)))
+export default withRouter(withResponsiveness(CreateCommentForImage))

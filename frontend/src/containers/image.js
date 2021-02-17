@@ -74,28 +74,40 @@ class ImageContainer extends Component {
 		  			<ConnectedCreateImage/>
 		  		</Grid>
 
-		  		<VerticalMasonriesContainer>
-		  			{[1,2,3,4,5,6,7,8,9,10,11,12,13, 14, 15, 16, 17, 18].map((item, index) => {
+		  		<VerticalMasonriesContainer
+		  			child_addition_pattern_heights={[400, 200, 400, 200, 400, 200, ]}
+		  			containerBGcolor={'none'}
+		  			containerWidth={'100%'}
+		  			column_wise_details_list={[ 
+		  				{ width_in_grids:4, bottom_spacing:10, leftGap:0 },
+		  				{ width_in_grids:4, bottom_spacing:10, leftGap:10 },
+		  				{ width_in_grids:4, bottom_spacing:10, leftGap:10 },
+		  				// { width_in_grids:3, bottom_spacing:10, leftGap:10 },
+		  			]}
+
+
+		  		>
+		  			{total_images.map((item, index) => {
 
 		  				return(
-		  					<div style={{backgroundColor: 'blue', height:'100%'}}>
+/*		  					<div style={{backgroundColor: 'blue', height:'100%'}}>
 		  						<p>
 		  							this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this {index}
 		  						</p>
-		  					</div>
-		  					// <ConnectedImageCard
-		  					// 	dataPayloadFromParent = { item }
+		  					</div>*/
+		  					<ConnectedImageCard
+		  						dataPayloadFromParent = { item }
 
-		  					// 	comments_quantity = { item.comments_quantity }
-		  					// 	comments = { item.comments || [] }
+		  						comments_quantity = { item.comments_quantity }
+		  						comments = { item.comments || [] }
 
-		  					// 	likes_quantity = { item.likes_quantity }
-		  					// 	likes = { item.likes || [] }
+		  						likes_quantity = { item.likes_quantity }
+		  						likes = { item.likes || [] }
 
-		  					// 	user_quantity = { item.user_quantity }
-		  					// 	user = { item.user || [] }
+		  						user_quantity = { item.user_quantity }
+		  						user = { item.user || [] }
 		  					
-		  					// />
+		  					/>
 			  			)
 
 		  			})}

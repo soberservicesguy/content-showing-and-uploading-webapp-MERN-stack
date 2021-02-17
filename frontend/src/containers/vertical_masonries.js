@@ -173,6 +173,7 @@ VerticalMasonriesContainer.defaultProps = {
 
 	// NOTE FOR FILLING child_addition_pattern_heights
 	// fill so that the last one falls on the right most block, if it falls before right most block, then try repeating the entire grid so that pattern executes onces, best is to make the last element of pattern to render the right most block
+	// the logic is that you need to fill the pattern properly, and then let it repeat to continue filling properly
 	child_addition_pattern_heights:[400, 200, 400, 200, 400, 200, ],
 	containerBGcolor:'black',
 	containerWidth:'100%',
