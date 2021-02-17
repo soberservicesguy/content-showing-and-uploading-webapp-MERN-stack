@@ -24,6 +24,29 @@ class VerticalMasonriesContainer extends Component {
 		this.generate_masonry()
 	}
 
+	get_height_of_nth_child_in_masonry_through_pattern(children_props, child_addition_pattern_heights){
+		// generating list of child heights in child placement sequence
+		let child_heights_list = []
+		for (let j = 0; j < children_props.length; j++) {
+			if (child_addition_pattern_heights[j]){
+				child_heights_list.push( child_addition_pattern_heights[j] )
+			}
+		}		
+
+		while (child_heights_list.length < children_props.length){
+			child_heights_list = [...child_heights_list, ...child_heights_list]
+		}
+
+		if (children_props.length < child_heights_list.length){
+			let number_of_additional = child_heights_list.length - children_props.length
+
+			child_heights_list.splice(children_props.length, number_of_additional)
+		}
+		
+		return child_heights_list
+
+	}
+
 	generate_masonry(){
 
 		let component
@@ -34,23 +57,7 @@ class VerticalMasonriesContainer extends Component {
 		let total_columns_list = Object.keys(this.props.column_wise_details_list)
 		let child_list
 
-		// generating list of child heights in child placement sequence
-		let child_heights_list = []
-		for (let j = 0; j < this.props.children.length; j++) {
-			if (this.props.child_addition_pattern_heights[j]){
-				child_heights_list.push( this.props.child_addition_pattern_heights[j] )
-			}
-		}		
-
-		while (child_heights_list.length < this.props.children.length){
-			child_heights_list = [...child_heights_list, ...child_heights_list]
-		}
-
-		if (this.props.children.length < child_heights_list.length){
-			let number_of_additional = child_heights_list.length - this.props.children.length
-
-			child_heights_list.splice(this.props.children.length, number_of_additional)
-		}
+		let child_heights_list = this.get_height_of_nth_child_in_masonry_through_pattern(this.props.children, this.props.child_addition_pattern_heights)
 
 		let column_dict = {}
 
@@ -72,7 +79,8 @@ class VerticalMasonriesContainer extends Component {
 						component = (
 							<Grid item
 								style={{
-									height: child_heights_list[children_assigned],
+									// height: child_heights_list[children_assigned],
+									height: this.get_height_of_nth_child_in_masonry_through_pattern(this.props.children, this.props.child_addition_pattern_heights)[children_assigned],
 									marginBottom: this.props.column_wise_details_list[i].bottom_spacing,
 									// marginLeft: this.props.column_wise_details_list[i].leftGap,
 								}}
@@ -90,8 +98,8 @@ class VerticalMasonriesContainer extends Component {
 						component = (
 							<Grid item
 								style={{
-									height: child_heights_list[children_assigned],
-									marginBottom: this.props.column_wise_details_list[i].bottom_spacing,
+									// height: child_heights_list[children_assigned],
+									height: this.get_height_of_nth_child_in_masonry_through_pattern(this.props.children, this.props.child_addition_pattern_heights)[children_assigned],									marginBottom: this.props.column_wise_details_list[i].bottom_spacing,
 									marginLeft: this.props.column_wise_details_list[i].leftGap,
 								}}
 							>	

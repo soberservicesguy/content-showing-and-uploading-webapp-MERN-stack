@@ -34,14 +34,14 @@ class ImageContainer extends Component {
 	componentDidMount() {
 
 // FETCHING DATA FOR COMPONENT
-			axios.get(utils.baseUrl + '/images/images-list-with-children',)
-			.then((response) => {
-				// console.log(response.data)
-				this.props.set_fetched_images(response.data)
-			})
-			.catch((error) => {
-				console.log(error);
-			})
+		axios.get(utils.baseUrl + '/images/images-list-with-children',)
+		.then((response) => {
+			// console.log(response.data)
+			this.props.set_fetched_images(response.data)
+		})
+		.catch((error) => {
+			console.log(error);
+		})
 
 
 	}
@@ -55,6 +55,31 @@ class ImageContainer extends Component {
 		})		
 	}
 
+
+// copied from vertical masonries file
+	get_height_of_nth_child_in_masonry_through_pattern(children_props, child_addition_pattern_heights){
+		// generating list of child heights in child placement sequence
+		let child_heights_list = []
+		for (let j = 0; j < children_props.length; j++) {
+			if (child_addition_pattern_heights[j]){
+				child_heights_list.push( child_addition_pattern_heights[j] )
+			}
+		}		
+
+		while (child_heights_list.length < children_props.length){
+			child_heights_list = [...child_heights_list, ...child_heights_list]
+		}
+
+		if (children_props.length < child_heights_list.length){
+			let number_of_additional = child_heights_list.length - children_props.length
+
+			child_heights_list.splice(children_props.length, number_of_additional)
+		}
+		
+		return child_heights_list
+
+	}
+
 // RENDER METHOD
 	render() {
 			
@@ -62,10 +87,33 @@ class ImageContainer extends Component {
 
 	  	const {_xs, _sm, _md, _lg, _xl} = this.props
 
-	  	const styles ={
+	  	const styles = {
 
 	  	}
-	  	
+
+	// copying same children being passed to VerticalMasonriesContainer below but without local_height prop
+		let total_children = [...total_images, 1, 2].map((item, index) => {
+
+			return(
+				<ConnectedImageCard
+					dataPayloadFromParent = { item }
+
+					comments_quantity = { item.comments_quantity }
+					comments = { item.comments || [] }
+
+					likes_quantity = { item.likes_quantity }
+					likes = { item.likes || [] }
+
+					user_quantity = { item.user_quantity }
+					user = { item.user || [] }
+				/>
+  			)
+
+		})
+
+	// copying same child_addition_pattern_heights from child_addition_pattern_heights prop to VerticalMasonriesContainer
+		let child_addition_pattern_heights = [400, 200, 400, 200, 400, 200, ]
+
 		return (
 
 			<Grid container direction="row">
@@ -84,10 +132,8 @@ class ImageContainer extends Component {
 		  				{ width_in_grids:4, bottom_spacing:10, leftGap:10 },
 		  				// { width_in_grids:3, bottom_spacing:10, leftGap:10 },
 		  			]}
-
-
 		  		>
-		  			{total_images.map((item, index) => {
+		  			{[...total_images, 1, 2].map((item, index) => {
 
 		  				return(
 /*		  					<div style={{backgroundColor: 'blue', height:'100%'}}>
@@ -95,19 +141,23 @@ class ImageContainer extends Component {
 		  							this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this {index}
 		  						</p>
 		  					</div>*/
-		  					<ConnectedImageCard
-		  						dataPayloadFromParent = { item }
+		  					<div>
+			  					<ConnectedImageCard
+			  						dataPayloadFromParent = { item }
 
-		  						comments_quantity = { item.comments_quantity }
-		  						comments = { item.comments || [] }
+			  						comments_quantity = { item.comments_quantity }
+			  						comments = { item.comments || [] }
 
-		  						likes_quantity = { item.likes_quantity }
-		  						likes = { item.likes || [] }
+			  						likes_quantity = { item.likes_quantity }
+			  						likes = { item.likes || [] }
 
-		  						user_quantity = { item.user_quantity }
-		  						user = { item.user || [] }
-		  					
-		  					/>
+			  						user_quantity = { item.user_quantity }
+			  						user = { item.user || [] }
+
+			  						index={index}
+			  						local_height = {this.get_height_of_nth_child_in_masonry_through_pattern(total_children, child_addition_pattern_heights)[index]}						  			
+			  					/>
+		  					</div>
 			  			)
 
 		  			})}

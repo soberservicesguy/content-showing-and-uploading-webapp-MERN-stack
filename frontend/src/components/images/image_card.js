@@ -55,8 +55,7 @@ class ImageCard extends Component {
 			showOnlyQuantityForComment:true,
 			showOnlyQuantityForLike:true,
 
-		}	
-
+		}
 	}
 
 	fetchAllComment(endpoint) {
@@ -99,8 +98,6 @@ class ImageCard extends Component {
 		})
 		
 	}
-
-
 
 // COMPONENT DID MOUNT
 	componentDidMount() {
@@ -150,6 +147,9 @@ class ImageCard extends Component {
 			},
 		}
 
+		console.log('LOCAL HEIGHT')
+		console.log(this.props.index)
+		console.log(this.props.local_height)
 		return (
 		  	<div>
 
@@ -159,13 +159,19 @@ class ImageCard extends Component {
 			
 			  		<ComponentForShowingImage
 						dataPayloadFromParent = { this.props.dataPayloadFromParent }
+						local_height = { this.props.local_height } // being passed so that heights can be assigned to each image backgorund
 			  		>
 
-			  			<div style={{
-			  				position:'relative',
-			  				// top:100,
-			  			}}>
-							<div style={styles.showSocialsContainer}>
+			  			<div 
+			  				style={{
+				  				position:'relative',
+				  				top:(this.props.local_height === 400) ? 190 : 0,
+				  				// top:this.props.wrapper_height - 70 - this.state.tracked_height2 * 2, // total_height - 70(height_of_title_&_Category) - self_height
+				  			}}
+			  			>
+							<div
+								style={styles.showSocialsContainer}
+							>
 								{/* 2nd show individual summary of childs */}
 
 								<div>

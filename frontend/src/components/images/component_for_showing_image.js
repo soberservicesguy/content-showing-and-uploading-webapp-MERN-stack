@@ -41,7 +41,7 @@ class ComponentForShowingImage extends Component {
 				backgroundRepeat: 'no-repeat',
 				backgroundSize: 'cover',
 				width:'100%',
-				height:400, // this is max height given to any element in masonry, the real height will be assigned automatically			
+				height:this.props.local_height,
 			},
 
 			innerContentContainer:{
@@ -77,12 +77,14 @@ class ComponentForShowingImage extends Component {
 				onMouseLeave={ () => this.setState(prev => ({...prev, hovered:false})) }
 			>
 				<div style={(this.state.hovered) ? styles.innerContentContainer : styles.innerContentHiddenContainer}>
-					<p style={styles.titleText}>
-						Title { data.title }
-					</p>						
-					<p style={styles.categoryText}>
-						Category { data.category }
-					</p>
+					<div style={{height:70,}}>
+						<p style={styles.titleText}>
+							Title { data.title }
+						</p>						
+						<p style={styles.categoryText}>
+							Category { data.category }
+						</p>
+					</div>
 					{this.props.children}
 				</div>
 			</div>
