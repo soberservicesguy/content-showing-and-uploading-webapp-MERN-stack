@@ -75,7 +75,7 @@ class ImageContainer extends Component {
 		  		</Grid>
 
 		  		<VerticalMasonriesContainer>
-		  			{[1,2,3,4,5,6,7,8,9,10,11,12,13, 14].map((item, index) => {
+		  			{[1,2,3,4,5,6,7,8,9,10,11,12,13, 14, 15, 16, 17, 18].map((item, index) => {
 
 		  				return(
 		  					<div style={{backgroundColor: 'blue', height:'100%'}}>
