@@ -147,9 +147,6 @@ class ImageCard extends Component {
 			},
 		}
 
-		console.log('LOCAL HEIGHT')
-		console.log(this.props.index)
-		console.log(this.props.local_height)
 		return (
 		  	<div>
 
@@ -165,8 +162,7 @@ class ImageCard extends Component {
 			  			<div 
 			  				style={{
 				  				position:'relative',
-				  				top:(this.props.local_height === 400) ? 190 : 0,
-				  				// top:this.props.wrapper_height - 70 - this.state.tracked_height2 * 2, // total_height - 70(height_of_title_&_Category) - self_height
+				  				top:(this.props.local_height === 400) ? 190 : -10,
 				  			}}
 			  			>
 							<div

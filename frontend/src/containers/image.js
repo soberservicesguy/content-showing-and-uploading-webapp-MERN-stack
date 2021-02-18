@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
@@ -170,56 +169,8 @@ class ImageContainer extends Component {
 }
 
 
-
-
-				// {total_images.map((item, index)=>(
-
-				// 	<Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-				// 		<ConnectedImageCard
-				// 			dataPayloadFromParent = { item }
-
-				// 			comments_quantity = { item.comments_quantity }
-				// 			comments = { item.comments || [] }
-
-				// 			likes_quantity = { item.likes_quantity }
-				// 			likes = { item.likes || [] }
-
-				// 			user_quantity = { item.user_quantity }
-				// 			user = { item.user || [] }
-						
-				// 		/>
-				// 	</Grid>
-
-				// ))}
-
-
 ImageContainer.defaultProps = {
 	// : ,
 };
 
 export default withResponsiveness(ImageContainer);
-
-
-
-		  			// <div style={{backgroundColor: '#000000'}}>
-		  			// 	<p>this</p>
-		  			// </div>
-
-		  			// <div style={{backgroundColor: 'grey'}}>
-		  			// 	<p>this</p>
-		  			// </div>
-
-		  			// <div 
-		  			// 	style={{backgroundColor: 'red'}}
-	  				// >
-		  			// 	<p>this</p>
-		  			// </div>
-
-
-		  			// <div style={{backgroundColor: '#000000'}}>
-		  			// 	<p>this</p>
-		  			// </div>
-
-		  			// <div style={{backgroundColor: 'grey'}}>
-		  			// 	<p>this</p>
-		  			// </div>
