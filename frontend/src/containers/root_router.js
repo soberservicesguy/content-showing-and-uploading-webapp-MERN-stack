@@ -48,6 +48,10 @@ import {
 	BulkBlogpostUpload,
 } from "../components/"
 
+import {
+	FooterContainer,
+} from "./"
+
 // IMPORT material-ui stuff
 import { withStyles } from '@material-ui/styles';
 import { Grid, Button } from "@material-ui/core";
@@ -441,6 +445,8 @@ class RootRouterContainer extends Component {
 							<HomeContainer/>
 						</Route>*/}
 					</Switch>
+
+					<FooterContainer/>
 				</div>
 			</Router>
 		);

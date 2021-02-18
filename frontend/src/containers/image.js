@@ -12,6 +12,10 @@ import {
 import withResponsiveness from "../responsiveness_hook";
 
 import {
+	FooterContainer,
+} from "./"
+
+import {
 	ConnectedImageCard,
 	ConnectedCreateImage,
 } from '../redux_stuff/connected_components';
