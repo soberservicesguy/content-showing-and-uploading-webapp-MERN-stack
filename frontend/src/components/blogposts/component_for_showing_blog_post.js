@@ -29,16 +29,17 @@ class ComponentForShowingBlogPost extends Component {
 
 		const styles = {
 			outerContainer:{
-				marginLeft:5,
-				marginRight:5,
+				// height:this.props.local_height,
+				marginLeft:15,
+				marginRight:15,
 			},
 			imageContainer:{
-
+				// height:this.props.local_height/2, 
 			},
 			imageStyle:{
 				width:'100%', 
+				resizeMode: "stretch",
 				height:this.props.local_height, 
-				resizeMode: "contain"
 			},
 
 			titleText:{
@@ -61,7 +62,7 @@ class ComponentForShowingBlogPost extends Component {
 				width:'90%',
 				margin:'auto',
 				marginTop:20,
-				marginBottom:20,				
+				// marginBottom:20,				
 			}
 		}
 

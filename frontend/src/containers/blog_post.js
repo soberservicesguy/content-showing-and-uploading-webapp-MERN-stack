@@ -17,6 +17,10 @@ import {
 	ConnectedCreateBlogPost,
 } from '../redux_stuff/connected_components';
 
+import {
+	VerticalMasonriesContainer,
+} from "./"
+
 class BlogPostContainer extends Component {
 	constructor(props) {
 		super(props);
@@ -50,6 +54,30 @@ class BlogPostContainer extends Component {
 		})		
 	}
 
+// copied from vertical masonries file
+	get_height_of_nth_child_in_masonry_through_pattern(children_props, child_addition_pattern_heights){
+		// generating list of child heights in child placement sequence
+		let child_heights_list = []
+		for (let j = 0; j < children_props.length; j++) {
+			if (child_addition_pattern_heights[j]){
+				child_heights_list.push( child_addition_pattern_heights[j] )
+			}
+		}		
+
+		while (child_heights_list.length < children_props.length){
+			child_heights_list = [...child_heights_list, ...child_heights_list]
+		}
+
+		if (children_props.length < child_heights_list.length){
+			let number_of_additional = child_heights_list.length - children_props.length
+
+			child_heights_list.splice(children_props.length, number_of_additional)
+		}
+		
+		return child_heights_list
+
+	}
+
 // RENDER METHOD
 	render() {
 			
@@ -61,6 +89,33 @@ class BlogPostContainer extends Component {
 
 	  	}
 
+	// copying EXACT same children being passed to VerticalMasonriesContainer below but without local_height prop
+	  	let total_children = [...total_blogposts,1,2].map((item, index) => {
+
+			return(
+
+		  		<Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+		  			<ConnectedBlogPostCard
+		  				dataPayloadFromParent = { item }
+
+		  				comments_quantity = { item.comments_quantity }
+		  				comments = { item.comments || [] }
+
+		  				likes_quantity = { item.likes_quantity }
+		  				likes = { item.likes || [] }
+
+		  				// user_quantity = { item.user_quantity }
+		  				// user = { item.user || [] }
+		  			
+		  			/>
+		  		</Grid>
+  			)
+	  	})
+
+	// copying same child_addition_pattern_heights from child_addition_pattern_heights prop to VerticalMasonriesContainer
+		let child_addition_pattern_heights = [400, 200, 400, 200, 400, 200, ]
+
+
 		return (
 
 			<Grid container direction="row">
@@ -69,28 +124,48 @@ class BlogPostContainer extends Component {
 		  			<ConnectedCreateBlogPost/>
 		  		</Grid>
 
-				{total_blogposts.map((item, index)=>(
+		  		<VerticalMasonriesContainer
+		  			child_addition_pattern_heights={[800, 400+200, 800, 400+200, 800, 400+200, ]}
+		  			containerBGcolor={'none'}
+		  			containerWidth={'95%'}
+		  			column_wise_details_list={[ 
+		  				{ width_in_grids:4, bottom_spacing:20, leftGap:0 },
+		  				{ width_in_grids:4, bottom_spacing:20, leftGap:10 },
+		  				{ width_in_grids:4, bottom_spacing:20, leftGap:10 },
+		  				// { width_in_grids:3, bottom_spacing:10, leftGap:10 },
+		  			]}
+		  		>
+					{[...total_blogposts,1,2].map((item, index) => {
 
-					<Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-						<ConnectedBlogPostCard
-							dataPayloadFromParent = { item }
+		  				return(
+/*  test component for masonry
+							<div style={{backgroundColor: 'blue', height:'100%'}}>
+		  						<p>
+		  							this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this {index}
+		  						</p>
+		  					</div>*/
+		  					<div>
+								<ConnectedBlogPostCard
+									dataPayloadFromParent = { item }
 
-							comments_quantity = { item.comments_quantity }
-							comments = { item.comments || [] }
+									comments_quantity = { item.comments_quantity }
+									comments = { item.comments || [] }
 
-							likes_quantity = { item.likes_quantity }
-							likes = { item.likes || [] }
+									likes_quantity = { item.likes_quantity }
+									likes = { item.likes || [] }
 
-							// user_quantity = { item.user_quantity }
-							// user = { item.user || [] }
-						
-						/>
-					</Grid>
+									// user_quantity = { item.user_quantity }
+									// user = { item.user || [] }
 
-				))}
+			  						local_height = {this.get_height_of_nth_child_in_masonry_through_pattern(total_children, child_addition_pattern_heights)[index]}
+								/>
+		  					</div>
+			  			)
+
+		  			})}
+		  		</VerticalMasonriesContainer>
 
 			</Grid>
-
 		);
 	}
 }
@@ -100,4 +175,3 @@ BlogPostContainer.defaultProps = {
 };
 
 export default withResponsiveness(BlogPostContainer);
-

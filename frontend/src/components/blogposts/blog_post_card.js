@@ -154,7 +154,7 @@ class BlogPostCard extends Component {
 	  			<div 
 	  				style={{
 		  				position:'relative',
-		  				top:(this.props.local_height === 400) ? 190 : -10,
+		  				// top:(this.props.local_height === 400) ? 190 : -10,
 		  				width:'90%',
 		  				margin:'auto',
 		  			}}

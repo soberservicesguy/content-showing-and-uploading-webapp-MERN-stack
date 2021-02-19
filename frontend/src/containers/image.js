@@ -94,7 +94,7 @@ class ImageContainer extends Component {
 
 	  	}
 
-	// copying same children being passed to VerticalMasonriesContainer below but without local_height prop
+	// copying EXACT same children being passed to VerticalMasonriesContainer below but without local_height prop
 		let total_children = [...total_images, 1, 2].map((item, index) => {
 
 			return(
@@ -139,7 +139,8 @@ class ImageContainer extends Component {
 		  			{[...total_images, 1, 2].map((item, index) => {
 
 		  				return(
-/*		  					<div style={{backgroundColor: 'blue', height:'100%'}}>
+/*  test component for masonry
+							<div style={{backgroundColor: 'blue', height:'100%'}}>
 		  						<p>
 		  							this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this this {index}
 		  						</p>
