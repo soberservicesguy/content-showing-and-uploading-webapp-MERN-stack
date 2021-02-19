@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 					
@@ -11,56 +10,11 @@ import { withStyles } from '@material-ui/styles';
 import withResponsiveness from "../../responsiveness_hook";
 
 import {
-	TextField,
-	Grid, 
-	// Modal, 
-	// Button 
-} from "@material-ui/core";
-
-import {
 	withRouter,
 	Redirect,
 } from "react-router-dom";
 
-const styles = theme => ({
-	root: {
-		height: 48,
-		color: props => (props.cool) ? 'red' : 'black',
-		[theme.breakpoints.up('sm')]:{
-			paddingLeft:100
-		},
-	},
-	buttonWithoutBG:{
-		marginTop:50,
-		marginBottom:50,
-	},
-	innerText:{
-
-	},
-	textinputContainer:{
-		// marginTop: windowHeight * 0.05, // or 30  gap
-		// height: windowHeight * 0.1, // or 100
-		width: '80%',
-		justifyContent: 'center', // vertically centered
-		alignSelf: 'center', // horizontally centered
-		// backgroundColor: utils.lightGreen,
-	},
-	textinput:{
-		marginTop:20,
-		textAlign:'left',
-		borderWidth:1,
-		borderColor:(utils.lightGrey),
-		borderStyle:'solid',
-		paddingLeft:20,
-		paddingTop:15,
-		paddingBottom:15,
-		fontSize:18,
-	},
-	outerContainer: {
-	},
-	bigBlue: {
-	},
-});
+import ThumbUp from '@material-ui/icons/ThumbUp';
 
 class CreateLikeForVideo extends Component {
 	constructor(props) {
@@ -81,6 +35,17 @@ class CreateLikeForVideo extends Component {
 
 		// parameters being passed from previous route
 		const endpoint_params_passed = this.props.match.params
+
+		const styles = {
+			buttonWithoutBG:{
+				outline:'none',
+				background:'none',
+				borderWidth:0,
+				// borderStyle:'solid',
+				// borderColor:'white',
+				// backgroundColor:'white'
+			}
+		}
 
 		if ( this.state.redirectToRoute !== false ){
 
@@ -123,9 +88,7 @@ class CreateLikeForVideo extends Component {
 
 						}}
 					>
-						<p style={styles.innerText}>
-							Press To Create Like
-						</p>
+						<ThumbUp style={{color:'grey', fontSize:30,}}/>
 					</button>
 				</div>
 			);
@@ -138,4 +101,4 @@ CreateLikeForVideo.defaultProps = {
 };
 
 // export default CreateLikeForVideo;  // REMOVE withResponsiveness and withStyles as much as possible
-export default withRouter(withResponsiveness(withStyles(styles)(CreateLikeForVideo)))
+export default withRouter(withResponsiveness(CreateLikeForVideo))

@@ -10,57 +10,14 @@ import utils from "../../utilities";
 import { withStyles } from '@material-ui/styles';
 import withResponsiveness from "../../responsiveness_hook";
 
-import {
-	TextField,
-	Grid, 
-	// Modal, 
-	// Button 
-} from "@material-ui/core";
 
 import {
 	withRouter,
 	Redirect,
 } from "react-router-dom";
 
-const styles = theme => ({
-	root: {
-		height: 48,
-		color: props => (props.cool) ? 'red' : 'black',
-		[theme.breakpoints.up('sm')]:{
-			paddingLeft:100
-		},
-	},
-	buttonWithoutBG:{
-		marginTop:50,
-		marginBottom:50,
-	},
-	innerText:{
+import Comment from '@material-ui/icons/Comment';
 
-	},
-	textinputContainer:{
-		// marginTop: windowHeight * 0.05, // or 30  gap
-		// height: windowHeight * 0.1, // or 100
-		width: '80%',
-		justifyContent: 'center', // vertically centered
-		alignSelf: 'center', // horizontally centered
-		// backgroundColor: utils.lightGreen,
-	},
-	textinput:{
-		marginTop:20,
-		textAlign:'left',
-		borderWidth:1,
-		borderColor:(utils.lightGrey),
-		borderStyle:'solid',
-		paddingLeft:20,
-		paddingTop:15,
-		paddingBottom:15,
-		fontSize:18,
-	},
-	outerContainer: {
-	},
-	bigBlue: {
-	},
-});
 
 class CreateCommentForVideo extends Component {
 	constructor(props) {
@@ -70,19 +27,102 @@ class CreateCommentForVideo extends Component {
 			redirectToRoute: false,
 			text: '',
 			// commenting_timestamp: '',
-		}
 
+			tracked_width1: 0,
+			tracked_height1: 0,
+			tracked_width2: 0,
+			tracked_height2: 0,
+		}
+		this.resizeHandler = this.resizeHandler.bind(this);
 	}
 
-// COMPONENT DID MOUNT
 	componentDidMount() {
+		this.resizeHandler();
+		window.addEventListener('resize', this.resizeHandler);
+	}
 
+	componentWillUnmount(){
+		window.removeEventListener('resize', this.resizeHandler);
+	}
+
+	resizeHandler() {
+		this.setState(prev => ({
+			...prev, 
+			tracked_width1:this.divElement1.clientWidth, 
+			tracked_height1:this.divElement1.clientHeight,
+			tracked_width2:this.divElement2.clientWidth,
+			tracked_height2:this.divElement2.clientHeight,
+		}))
 	}
 
 	render() {
 
 		// parameters being passed from previous route
 		const endpoint_params_passed = this.props.match.params
+
+		const styles = {
+			buttonWithoutBG:{
+				outline:'none',
+				borderStyle:'solid',
+				borderColor:'white',
+				backgroundColor:'white',
+
+				position:'relative',
+				top:-30, // self_height
+				left: 200, // width_of_Textinput - self_width
+			},
+
+
+		// round text input
+			roundTextInputContainer:{
+				width:'100%', 
+				height:40,
+				margin:'auto',
+				// marginBottom:0,
+				// backgroundColor: '#000000',
+			},
+
+			roundTextInput:{
+				outline:'none', 
+				width:'100%', 
+				height:50, 
+				paddingLeft:20,
+				paddingRight:100, 
+				color:'black', 
+				borderRadius:30,
+				borderWidth:1, 
+				borderStyle:'solid',
+				borderColor:'#eee', 
+				backgroundColor: '#eee',
+			},
+
+		// roundButtonInsideTextInput
+			roundButtonInsideTextInputContainer:{
+				width: '15%',
+				// width: 100,
+				height: 30,
+				// backgroundColor: utils.maroonColor,
+				// borderRadius: this.state.tracked_height2 / 2,
+				// borderWidth: 1, 
+				// borderStyle: 'solid',
+				// borderColor: utils.maroonColor, 
+
+				position: 'relative',
+				bottom: (this.state.tracked_height2 + 2) + (this.state.tracked_height1 + 2 - this.state.tracked_height2 - 2)/2, // self_height_including_border_thickness + difference in heights of both / 2
+				left: this.state.tracked_width1 + 2 - this.state.tracked_width2 - 10, // tracked_width - self_width - some_gap 
+			},
+			roundButtonInsideTextInput:{
+				width:'100%',
+				height:'100%',
+				border:'none',
+				background: 'none',
+				outline:'none',
+				color:'white',
+				fontWeight:'bold',
+			},
+
+		}
+
 
 		if ( this.state.redirectToRoute !== false ){
 
@@ -99,51 +139,60 @@ class CreateCommentForVideo extends Component {
 
 				<div style={styles.outerContainer}>
 
-
-				  	<div style={styles.textinputContainer}>
-						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
-								label="Type your text" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
+				{/* round text input */}
+					<div style={styles.roundTextInputContainer}>
+						<form>
+							<input 
+								ref={ (divElement) => { this.divElement1 = divElement } }
+								placeholder="Type your comment" 
+								type="text" 
+								name="post_text"
+								multiline={true}
 								onChange={ (event) => this.setState( prev => ({...prev, text: event.target.value})) }
+								style={styles.roundTextInput} 
 							/>
 						</form>
-				  	</div>
 
 
-					<button style={styles.buttonWithoutBG}
-						onClick={ () => {
+				{/* round button inside round text input */}
+						<div 
+							ref={ (divElement) => { this.divElement2 = divElement } }
+							style={styles.roundButtonInsideTextInputContainer}
+						>
 
-							let setResponseInCurrentVideo = (arg) => this.props.set_current_video(arg)
-							let redirectToNewVideo = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
 
-							axios.post(utils.baseUrl + '/videos/create-comment-for-video', 
-								{
-									comment_text: this.state.text,
-									video_endpoint: this.props.parentDetailsPayload.endpoint,
-								})
-							.then(function (response) {
-								console.log(response.data.endpoint) // current image screen data
-								
-								// set to current parent object
-								setResponseInCurrentVideo(response.data.endpoint)
+							<button style={styles.roundButtonInsideTextInput}
+								onClick={ () => {
 
-								// change route to current_image	
-								redirectToNewVideo()							
+									let setResponseInCurrentVideo = (arg) => this.props.set_current_video(arg)
+									let redirectToNewVideo = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
 
-							})
-							.catch(function (error) {
-								console.log(error)
-							});						
+									axios.post(utils.baseUrl + '/videos/create-comment-for-video', 
+										{
+											comment_text: this.state.text,
+											video_endpoint: this.props.parentDetailsPayload.endpoint,
+										})
+									.then(function (response) {
+										console.log(response.data.endpoint) // current image screen data
+										
+										// set to current parent object
+										setResponseInCurrentVideo(response.data.endpoint)
 
-						}}
-					>
-						<p style={styles.innerText}>
-							Press To Create Comment
-						</p>
-					</button>
+										// change route to current_image	
+										redirectToNewVideo()							
+
+									})
+									.catch(function (error) {
+										console.log(error)
+									});						
+
+								}}
+							>
+								<Comment style={{color:'grey', fontSize:30, marginRight:40,}}/>
+							</button>
+						</div>
+					</div>
+
 				</div>
 			);
 		}
@@ -155,4 +204,4 @@ CreateCommentForVideo.defaultProps = {
 };
 
 // export default CreateCommentForVideo;  // REMOVE withResponsiveness and withStyles as much as possible
-export default withRouter(withResponsiveness(withStyles(styles)(CreateCommentForVideo)))
+export default withRouter(withResponsiveness(CreateCommentForVideo))

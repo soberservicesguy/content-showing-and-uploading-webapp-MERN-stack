@@ -10,13 +10,6 @@ import { withStyles } from '@material-ui/styles';
 import withResponsiveness from "../../responsiveness_hook";
 
 import {
-	TextField,
-	Grid, 
-	// Modal, 
-	// Button 
-} from "@material-ui/core";
-
-import {
 	withRouter,
 	Redirect,
 } from "react-router-dom";

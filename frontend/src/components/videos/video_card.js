@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
@@ -38,28 +37,8 @@ import {
 	ConnectedCreateLikeForVideo,
 } from "../../redux_stuff/connected_components"
 
-
-
-const styles = theme => ({
-	root: {
-		maxWidth: 380,
-	},
-	media: {
-		height: 0,
-		paddingTop: '56.25%', // 16:9
-	},
-	expand: {
-		transform: 'rotate(0deg)',
-		marginLeft: 'auto',
-		transition: theme.transitions.create('transform', {
-			duration: theme.transitions.duration.shortest,
-		}),
-	},
-	expandOpen: {
-		transform: 'rotate(180deg)',
-	},
-
-});
+import Comment from '@material-ui/icons/Comment';
+import ThumbUp from '@material-ui/icons/ThumbUp';
 
 class VideoCard extends Component {
 	constructor(props) {
@@ -124,6 +103,43 @@ class VideoCard extends Component {
 
 	render() {
 
+		const styles = {
+			showSocialsContainer:{
+				display:'flex',
+				flexDirection:'row',
+				justifyContent: 'space-between',
+				width:'100%',
+				margin:'auto',
+				marginTop:10,
+			},
+			showSocialsButton:{
+				outline:'none',
+				background:'none',
+				borderWidth:0,
+				// borderStyle:'solid',
+				// borderColor:'white',
+				// backgroundColor:'white'
+			},
+			createSocialObjectsContainer:{
+				width:'90%',
+				margin:'auto',
+				display:'flex',
+				flexDirection:'row',
+				justifyContent: 'space-between',
+				alignItems: 'center',
+				marginTop:20,
+				paddingBottom:20,
+
+				borderWidth:0,
+				borderTopWidth:1,
+				borderStyle:'solid',
+				borderColor:'#eee',
+				paddingTop:10,
+			},
+		}
+
+
+
 		return (
 		  	<div>
 
@@ -131,61 +147,68 @@ class VideoCard extends Component {
 					{/* first the parent / card component */}
 			  		<ComponentForShowingVideo
 						dataPayloadFromParent = { this.props.dataPayloadFromParent }
+						local_height = { this.props.local_height } // being passed so that heights can be assigned to each image backgorund
 			  		/>
+
+		  			<div 
+		  				style={{
+			  				position:'relative',
+			  				top:(this.props.local_height === 400) ? 190 : -10,
+			  			}}
+		  			>
+						<div
+							style={styles.showSocialsContainer}
+						>
+							{/* 2nd show individual summary of childs */}
+
+							<div>
+								<button 
+									style={styles.showSocialsButton}
+									onClick={ () => this.fetchAllLike( this.props.dataPayloadFromParent.endpoint ) }
+								>
+									<ThumbUp style={{color:'grey', fontSize:30, marginRight:20,}}/> {this.props.likes_quantity} likes							
+								</button>
+							</div>
+
+							<div>
+								<button 
+									style={styles.showSocialsButton}
+									onClick={ () => this.fetchAllComment( this.props.dataPayloadFromParent.endpoint ) }
+								>
+									<Comment style={{color:'grey', fontSize:30, marginRight:20,}}/> {this.props.comments_quantity} likes
+								</button>
+							</div>
+
+			  			</div>
+
+						<div style={{
+							marginBottom: 25,
+						}}>
+							<ShowLikesOfVideo
+								dataPayloadFromParent = { this.state.likes }
+							/>
+
+							<ShowCommentsOfVideo
+								dataPayloadFromParent = { this.state.comments }
+							/>
+
+						</div>
+
+						<div style={styles.createSocialObjectsContainer}>
+							{/* 4th create individual child options like comment / like */}					
+
+							<ConnectedCreateCommentForVideo
+								parentDetailsPayload = { this.props.dataPayloadFromParent }
+							/>					
+							<ConnectedCreateLikeForVideo
+								parentDetailsPayload = { this.props.dataPayloadFromParent }
+							/>
+
+			  			</div>
+
+			  		</div>
+
 		  		</div>
-
-				<div style={{marginTop:50}}>
-					{/* 2nd show individual summary of childs */}
-					<SummarizeCommentsOfVideo
-						showOnlyQuantity= { false }
-						child_quantity = { this.props.comments_quantity }
-						dataPayloadFromParent = { this.props.comments }
-					/>
-					<SummarizeLikesOfVideo
-						showOnlyQuantity= { false }
-						child_quantity = { this.props.likes_quantity }
-						dataPayloadFromParent = { this.props.likes }
-					/>
-				</div>
-
-				<div>
-					{/* 3rd show individual button for showing childs */}
-
-					<button
-						onClick={ () => this.fetchAllComment( this.props.dataPayloadFromParent.endpoint ) }
-					>
-						<p>
-							Show All Comment
-						</p>
-					</button>
-					
-					<ShowCommentsOfVideo
-						dataPayloadFromParent = { this.state.comments }
-					/>
-
-					<button style={{marginTop:50}}
-						onClick={ () => this.fetchAllLike( this.props.dataPayloadFromParent.endpoint ) }
-					>
-						<p>
-							Show All Like
-						</p>
-					</button>
-					
-					<ShowLikesOfVideo
-						dataPayloadFromParent = { this.state.likes }
-					/>
-				</div>
-
-				<div style={{marginTop:50}}>
-					{/* 4th create individual child options like comment / like */}					
-					<ConnectedCreateCommentForVideo
-						parentDetailsPayload = { this.props.dataPayloadFromParent }
-					/>					
-					<ConnectedCreateLikeForVideo
-						parentDetailsPayload = { this.props.dataPayloadFromParent }
-					/>
-				</div>
-
 		  	</div>
 		);
 	}
@@ -196,4 +219,50 @@ VideoCard.defaultProps = {
 };
 
 // export default VideoCard; // REMOVE withResponsiveness and withStyles as much as possible
-export default withResponsiveness(withStyles(styles)(VideoCard));
+export default withResponsiveness(VideoCard);
+
+
+
+
+
+
+				// <div style={{marginTop:50}}>
+				// 	{/* 2nd show individual summary of childs */}
+				// 	<SummarizeCommentsOfVideo
+				// 		showOnlyQuantity= { false }
+				// 		child_quantity = { this.props.comments_quantity }
+				// 		dataPayloadFromParent = { this.props.comments }
+				// 	/>
+				// 	<SummarizeLikesOfVideo
+				// 		showOnlyQuantity= { false }
+				// 		child_quantity = { this.props.likes_quantity }
+				// 		dataPayloadFromParent = { this.props.likes }
+				// 	/>
+				// </div>
+
+				// <div>
+				// 	{/* 3rd show individual button for showing childs */}
+
+				// 	<button
+				// 		onClick={ () => this.fetchAllComment( this.props.dataPayloadFromParent.endpoint ) }
+				// 	>
+				// 		<p>
+				// 			Show All Comment
+				// 		</p>
+				// 	</button>
+					
+
+				// 	<button style={{marginTop:50}}
+				// 		onClick={ () => this.fetchAllLike( this.props.dataPayloadFromParent.endpoint ) }
+				// 	>
+				// 		<p>
+				// 			Show All Like
+				// 		</p>
+				// 	</button>
+					
+				// </div>
+
+				// <div style={{marginTop:50}}>
+				// 	{/* 4th create individual child options like comment / like */}					
+				// </div>
+
