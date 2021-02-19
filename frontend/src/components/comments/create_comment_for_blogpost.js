@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 					
@@ -11,56 +10,11 @@ import { withStyles } from '@material-ui/styles';
 import withResponsiveness from "../../responsiveness_hook";
 
 import {
-	TextField,
-	Grid, 
-	// Modal, 
-	// Button 
-} from "@material-ui/core";
-
-import {
 	withRouter,
 	Redirect,
 } from "react-router-dom";
 
-const styles = theme => ({
-	root: {
-		height: 48,
-		color: props => (props.cool) ? 'red' : 'black',
-		[theme.breakpoints.up('sm')]:{
-			paddingLeft:100
-		},
-	},
-	buttonWithoutBG:{
-		marginTop:50,
-		marginBottom:50,
-	},
-	innerText:{
-
-	},
-	textinputContainer:{
-		// marginTop: windowHeight * 0.05, // or 30  gap
-		// height: windowHeight * 0.1, // or 100
-		width: '80%',
-		justifyContent: 'center', // vertically centered
-		alignSelf: 'center', // horizontally centered
-		// backgroundColor: utils.lightGreen,
-	},
-	textinput:{
-		marginTop:20,
-		textAlign:'left',
-		borderWidth:1,
-		borderColor:(utils.lightGrey),
-		borderStyle:'solid',
-		paddingLeft:20,
-		paddingTop:15,
-		paddingBottom:15,
-		fontSize:18,
-	},
-	outerContainer: {
-	},
-	bigBlue: {
-	},
-});
+import Comment from '@material-ui/icons/Comment';
 
 class CreateCommentForBlogpost extends Component {
 	constructor(props) {
@@ -70,16 +24,99 @@ class CreateCommentForBlogpost extends Component {
 			redirectToRoute: false,
 			text: '',
 			// commenting_timestamp: '',
-		}
 
+			tracked_width1: 0,
+			tracked_height1: 0,
+			tracked_width2: 0,
+			tracked_height2: 0,
+		}
+		this.resizeHandler = this.resizeHandler.bind(this);
 	}
 
 // COMPONENT DID MOUNT
 	componentDidMount() {
+		this.resizeHandler();
+		window.addEventListener('resize', this.resizeHandler);
+	}
 
+	componentWillUnmount(){
+		window.removeEventListener('resize', this.resizeHandler);
+	}
+
+	resizeHandler() {
+		this.setState(prev => ({
+			...prev, 
+			tracked_width1:this.divElement1.clientWidth, 
+			tracked_height1:this.divElement1.clientHeight,
+			tracked_width2:this.divElement2.clientWidth,
+			tracked_height2:this.divElement2.clientHeight,
+		}))
 	}
 
 	render() {
+
+		const styles = {
+			buttonWithoutBG:{
+				outline:'none',
+				borderStyle:'solid',
+				borderColor:'white',
+				backgroundColor:'white',
+
+				position:'relative',
+				top:-30, // self_height
+				left: 200, // width_of_Textinput - self_width
+			},
+
+
+		// round text input
+			roundTextInputContainer:{
+				width:'100%', 
+				height:40,
+				margin:'auto',
+				// marginBottom:0,
+				// backgroundColor: '#000000',
+			},
+
+			roundTextInput:{
+				outline:'none', 
+				width:'100%', 
+				height:50, 
+				paddingLeft:20,
+				paddingRight:100, 
+				color:'black', 
+				borderRadius:30,
+				borderWidth:1, 
+				borderStyle:'solid',
+				borderColor:'#eee', 
+				backgroundColor: '#eee',
+			},
+
+		// roundButtonInsideTextInput
+			roundButtonInsideTextInputContainer:{
+				width: '15%',
+				// width: 100,
+				height: 30,
+				// backgroundColor: utils.maroonColor,
+				// borderRadius: this.state.tracked_height2 / 2,
+				// borderWidth: 1, 
+				// borderStyle: 'solid',
+				// borderColor: utils.maroonColor, 
+
+				position: 'relative',
+				bottom: (this.state.tracked_height2 + 2) + (this.state.tracked_height1 + 2 - this.state.tracked_height2 - 2)/2, // self_height_including_border_thickness + difference in heights of both / 2
+				left: this.state.tracked_width1 + 2 - this.state.tracked_width2 - 10, // tracked_width - self_width - some_gap 
+			},
+			roundButtonInsideTextInput:{
+				width:'100%',
+				height:'100%',
+				border:'none',
+				background: 'none',
+				outline:'none',
+				color:'white',
+				fontWeight:'bold',
+			},
+
+		}
 
 		// parameters being passed from previous route
 		const endpoint_params_passed = this.props.match.params
@@ -100,50 +137,57 @@ class CreateCommentForBlogpost extends Component {
 				<div style={styles.outerContainer}>
 
 
-				  	<div style={styles.textinputContainer}>
-						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
-								label="Type your comment" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
+					<div style={styles.roundTextInputContainer}>
+						<form>
+							<input 
+								ref={ (divElement) => { this.divElement1 = divElement } }
+								placeholder="Type your comment" 
+								type="text" 
+								name="post_text"
+								multiline={true}
 								onChange={ (event) => this.setState( prev => ({...prev, text: event.target.value})) }
+								style={styles.roundTextInput} 
 							/>
 						</form>
-				  	</div>
 
 
-					<button style={styles.buttonWithoutBG}
-						onClick={ () => {
-							let setResponseInCurrentBlogpost = (arg) => this.props.set_current_blogpost(arg)
-							let redirectToNewBlogpost = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
+				{/* round button inside round text input */}
+						<div 
+							ref={ (divElement) => { this.divElement2 = divElement } }
+							style={styles.roundButtonInsideTextInputContainer}
+						>
+							<button style={styles.roundButtonInsideTextInput}
+								onClick={ () => {
+									let setResponseInCurrentBlogpost = (arg) => this.props.set_current_blogpost(arg)
+									let redirectToNewBlogpost = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
 
-							// first create child object
-							axios.post(utils.baseUrl + '/blogpostings/create-comment-for-blogpost', 
-								{
-									comment_text: this.state.text,
-									blogpost_endpoint: this.props.parentDetailsPayload.endpoint,
-								})
-							.then(function (response) {
-								console.log(response.data) // current image screen data
-								
-								// set to current parent object
-								setResponseInCurrentBlogpost(response.data)
+									// first create child object
+									axios.post(utils.baseUrl + '/blogpostings/create-comment-for-blogpost', 
+										{
+											comment_text: this.state.text,
+											blogpost_endpoint: this.props.parentDetailsPayload.endpoint,
+										})
+									.then(function (response) {
+										console.log(response.data) // current image screen data
+										
+										// set to current parent object
+										setResponseInCurrentBlogpost(response.data)
 
-								// change route to current_image	
-								redirectToNewBlogpost()							
+										// change route to current_image	
+										redirectToNewBlogpost()							
 
-							})
-							.catch(function (error) {
-								console.log(error)
-							});						
+									})
+									.catch(function (error) {
+										console.log(error)
+									});						
 
-						}}
-					>
-						<p style={styles.innerText}>
-							Press To Create Comment
-						</p>
-					</button>
+								}}
+							>
+								<Comment style={{color:'grey', fontSize:30, marginRight:40,}}/>
+							</button>
+						</div>
+
+					</div>
 				</div>
 			);
 		}
@@ -155,4 +199,4 @@ CreateCommentForBlogpost.defaultProps = {
 };
 
 // export default CreateCommentForBlogpost;  // REMOVE withResponsiveness and withStyles as much as possible
-export default withRouter(withResponsiveness(withStyles(styles)(CreateCommentForBlogpost)))
+export default withRouter(withResponsiveness(CreateCommentForBlogpost))

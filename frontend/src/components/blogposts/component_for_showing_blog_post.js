@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 					
@@ -10,10 +9,6 @@ import utils from "../../utilities";
 import { withStyles } from '@material-ui/styles';
 import withResponsiveness from "../../responsiveness_hook";
 
-const styles = theme => ({
-	outerContainer: {
-	},
-});
 
 class ComponentForShowingBlogPost extends Component {
 	constructor(props) {
@@ -32,53 +27,68 @@ class ComponentForShowingBlogPost extends Component {
 
 	render() {
 
+		const styles = {
+			outerContainer:{
+				marginLeft:5,
+				marginRight:5,
+			},
+			imageContainer:{
+
+			},
+			imageStyle:{
+				width:'100%', 
+				height:this.props.local_height, 
+				resizeMode: "contain"
+			},
+
+			titleText:{
+				fontWeight:'bold',
+				fontSize:18,
+				width:'90%',
+				margin:'auto',
+				marginTop:40,
+				marginBottom:10,
+			},
+			categoryText:{
+				fontSize:16,
+				width:'90%',
+				margin:'auto',
+				marginBottom:10,
+			},
+
+			paraText:{
+				fontSize:15,
+				width:'90%',
+				margin:'auto',
+				marginTop:20,
+				marginBottom:20,				
+			}
+		}
+
 		const data = this.props.dataPayloadFromParent // data being plugged from parent flatlist
 		var base64Image = "data:image/jpeg;base64," + data.image_main_filepath
 
 		return (
 			<div style={styles.outerContainer}>
-				<p>
-					{ data.category }
-				</p>
 				
 				<div style={styles.imageContainer}>
-					<img src={base64Image} alt="" 
-						style={{
-							width:200, 
-							height:400, 
-							resizeMode: "contain"
-						}}
+					<img 
+						// src={base64Image} 
+						src={utils.image}
+						alt="" 
+						style={styles.imageStyle}
 					/>
 				</div>
-				<p>
-					{ data.title }
+
+				<p style={styles.titleText}>
+					Title{ data.title }
 				</p>
-				<p>
-					{ data.timestamp_of_uploading }
+				<p style={styles.categoryText}>
+					Category{ data.category }
 				</p>
-				<p>
-					{ data.initial_tags }
-				</p>
-				<p>
-					{ data.endpoint }
-				</p>
-				<p>
+				<p style={styles.paraText}>
+					Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum 
 					{ data.first_para }
-				</p>
-				<p>
-					{ data.second_para }
-				</p>
-				<p>
-					{ data.qouted_para }
-				</p>
-				<p>
-					{ data.third_para }
-				</p>
-				<p>
-					{ data.fourth_para }
-				</p>
-				<p>
-					{ data.all_tags }
 				</p>
 			</div>
 		);
@@ -90,4 +100,29 @@ ComponentForShowingBlogPost.defaultProps = {
 };
 
 // export default ComponentForShowingBlogPost;  // REMOVE withResponsiveness and withStyles as much as possible
-export default withResponsiveness(withStyles(styles)(ComponentForShowingBlogPost))
+export default withResponsiveness(ComponentForShowingBlogPost)
+
+				// <p>
+				// 	{ data.timestamp_of_uploading }
+				// </p>
+				// <p>
+				// 	{ data.initial_tags }
+				// </p>
+				// <p>
+				// 	{ data.endpoint }
+				// </p>
+				// <p>
+				// 	{ data.second_para }
+				// </p>
+				// <p>
+				// 	{ data.qouted_para }
+				// </p>
+				// <p>
+				// 	{ data.third_para }
+				// </p>
+				// <p>
+				// 	{ data.fourth_para }
+				// </p>
+				// <p>
+				// 	{ data.all_tags }
+				// </p>

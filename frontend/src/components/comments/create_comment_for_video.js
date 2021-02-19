@@ -159,8 +159,6 @@ class CreateCommentForVideo extends Component {
 							ref={ (divElement) => { this.divElement2 = divElement } }
 							style={styles.roundButtonInsideTextInputContainer}
 						>
-
-
 							<button style={styles.roundButtonInsideTextInput}
 								onClick={ () => {
 
