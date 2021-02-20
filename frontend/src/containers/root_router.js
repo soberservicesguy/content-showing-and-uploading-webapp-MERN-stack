@@ -389,33 +389,22 @@ class RootRouterContainer extends Component {
 						</Route>
 
 
-
-						<Route exact path="/blogposts/:id">
-							<ConnectedIndividualBlogPost/>
-						</Route>
-
 						<Route exact path="/blogposts">
 							<ConnectedBlogPostContainer/>
 						</Route>
 
-
-
-						<Route path="/Individual-BlogPost">
+						<Route exact path="/blogposts/:id">
 							<ConnectedIndividualBlogPost/>
 						</Route>
-
 
 
 						<Route exact path="/videos">
 							<ConnectedVideoContainer/>
 						</Route>
 
-
-
-						<Route path="/Individual-Video">
+						<Route exact path="/videos/:id">
 							<ConnectedIndividualVideo/>
 						</Route>
-
 
 
 						<Route exact path="/images">
@@ -423,11 +412,9 @@ class RootRouterContainer extends Component {
 						</Route>
 
 
-
-						<Route path="/Individual-Image">
+						<Route exact path="/images/:id">
 							<ConnectedIndividualImage/>
 						</Route>
-
 
 
 						<Route path="/Bulk-Upload-Image">

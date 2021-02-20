@@ -1,3 +1,7 @@
+import { 
+	withRouter,
+	Link,
+} from "react-router-dom";
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
@@ -76,16 +80,24 @@ class ComponentForShowingImage extends Component {
 				onMouseEnter={ () => this.setState(prev => ({...prev, hovered:true})) }
 				onMouseLeave={ () => this.setState(prev => ({...prev, hovered:false})) }
 			>
+
 				<div style={(this.state.hovered) ? styles.innerContentContainer : styles.innerContentHiddenContainer}>
-					<div style={{height:70,}}>
-						<p style={styles.titleText}>
-							Title { data.title }
-						</p>						
-						<p style={styles.categoryText}>
-							Category { data.category }
-						</p>
-					</div>
+			  		<Link 
+			  			to={`/images/:id=${this.props.dataPayloadFromParent.endpoint}`} 
+			  			style={{color: 'inherit', textDecoration: 'inherit'}}
+					>
+						<div style={{height:70,}}>
+							<p style={styles.titleText}>
+								Title { data.title }
+							</p>						
+							<p style={styles.categoryText}>
+								Category { data.category }
+							</p>
+						</div>
+					</Link>
+
 					{this.props.children}
+
 				</div>
 			</div>
 

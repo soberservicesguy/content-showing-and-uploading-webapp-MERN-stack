@@ -1,4 +1,3 @@
-
 import React, {Component} from 'react';
 import axios from 'axios';
 
@@ -163,7 +162,9 @@ class SignUpContainer extends Component {
 		formData.append('phone_number', this.state.phone_number)
 		formData.append('privileges_selected', this.state.privileges_selected)
 		formData.append('category', 'avatar')
-		formData.append('avatar_image', this.state.user_image, this.state.user_image.name)
+		if(this.state.user_image !== ''){
+			formData.append('avatar_image', this.state.user_image, this.state.user_image.name)
+		}
 
 
 		axios.post(utils.baseUrl + '/users/signup-and-get-privileges', formData, {

@@ -41,14 +41,14 @@ class BlogPostContainer extends Component {
 	componentDidMount() {
 
 // FETCHING DATA FOR COMPONENT
-			axios.get(utils.baseUrl + '/blogpostings/blogposts-list-with-children',)
-			.then((response) => {
-				// console.log(response.data)
-				this.props.set_fetched_blogposts(response.data)
-			})
-			.catch((error) => {
-				console.log(error);
-			})
+		axios.get(utils.baseUrl + '/blogpostings/blogposts-list-with-children',)
+		.then((response) => {
+			// console.log(response.data)
+			this.props.set_fetched_blogposts(response.data)
+		})
+		.catch((error) => {
+			console.log(error);
+		})
 
 
 	}

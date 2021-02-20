@@ -8,6 +8,11 @@ import utils from "../../utilities";
 
 import withResponsiveness from "../../responsiveness_hook";
 
+import { 
+	withRouter,
+	Link,
+} from "react-router-dom";
+
 
 class ComponentForShowingVideo extends Component {
 	constructor(props) {
@@ -89,10 +94,15 @@ class ComponentForShowingVideo extends Component {
 					/>
 				</div>
 
-				<p style={styles.descriptionText}>
-					Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum 
-					{ data.description }
-				</p>
+		  		<Link 
+		  			to={`/videos/:id=${this.props.dataPayloadFromParent.endpoint}`} 
+		  			style={{color: 'inherit', textDecoration: 'inherit'}}
+				>
+					<p style={styles.descriptionText}>
+						Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum 
+						{ data.description }
+					</p>
+				</Link>
 			</div>
 		);
 	}
@@ -103,7 +113,7 @@ ComponentForShowingVideo.defaultProps = {
 };
 
 // export default ComponentForShowingVideo;  // REMOVE withResponsiveness and withStyles as much as possible
-export default withResponsiveness(ComponentForShowingVideo)
+export default withRouter(withResponsiveness(ComponentForShowingVideo))
 
 
 				// <p>
