@@ -9,6 +9,14 @@ import utils from "../../utilities";
 import { withStyles } from '@material-ui/styles';
 import withResponsiveness from "../../responsiveness_hook";
 
+import {
+  // BrowserRouter as Router,
+  // Switch,
+  // Route,
+  // Link,
+	withRouter,
+} from "react-router-dom";
+
 
 class ComponentForShowingBlogPost extends Component {
 	constructor(props) {
@@ -101,7 +109,7 @@ ComponentForShowingBlogPost.defaultProps = {
 };
 
 // export default ComponentForShowingBlogPost;  // REMOVE withResponsiveness and withStyles as much as possible
-export default withResponsiveness(ComponentForShowingBlogPost)
+export default withRouter(withResponsiveness(ComponentForShowingBlogPost))
 
 				// <p>
 				// 	{ data.timestamp_of_uploading }

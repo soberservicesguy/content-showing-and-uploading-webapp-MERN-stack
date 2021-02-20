@@ -146,10 +146,15 @@ class BlogPostCard extends Component {
 		return (
 		  	<div>
 
-		  		<ComponentForShowingBlogPost
-					dataPayloadFromParent = { this.props.dataPayloadFromParent }
-					local_height = { this.props.local_height } // being passed so that heights can be assigned to each image backgorund
-		  		/>
+		  		<Link 
+		  			to={`/blogposts/:id=${this.props.dataPayloadFromParent.endpoint}`} 
+		  			style={{color: 'inherit', textDecoration: 'inherit'}}
+				>
+			  		<ComponentForShowingBlogPost
+						dataPayloadFromParent = { this.props.dataPayloadFromParent }
+						local_height = { this.props.local_height } // being passed so that heights can be assigned to each image backgorund
+			  		/>
+		  		</Link>
 
 	  			<div 
 	  				style={{

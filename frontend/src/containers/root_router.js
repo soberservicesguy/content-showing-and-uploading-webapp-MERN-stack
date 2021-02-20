@@ -390,6 +390,10 @@ class RootRouterContainer extends Component {
 
 
 
+						<Route exact path="/blogposts/:id">
+							<ConnectedIndividualBlogPost/>
+						</Route>
+
 						<Route exact path="/blogposts">
 							<ConnectedBlogPostContainer/>
 						</Route>
