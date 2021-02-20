@@ -138,7 +138,13 @@ class RootRouterContainer extends Component {
 
 	render() {
 
-	    const { classes } = this.props;
+		const styles = {
+
+		}
+
+		const classes = {
+
+		}
 
 		const handleProfileMenuOpen = (event) => {
 			this.setState(
@@ -383,7 +389,6 @@ class RootRouterContainer extends Component {
 							<ConnectedSignUpContainer/>
 						</Route>
 
-
 						<Route exact path="/login">
 							<ConnectedLoginContainer/>
 						</Route>
@@ -432,9 +437,11 @@ class RootRouterContainer extends Component {
 						</Route>
 
 
-						{/*<Route path="/home">
-							<HomeContainer/>
-						</Route>*/}
+				{/* if no match was made with endpoint then redirect to sign up */}
+						<Route path="/*">
+							<ConnectedSignUpContainer/>
+						</Route>
+
 					</Switch>
 
 					<FooterContainer/>
@@ -445,5 +452,5 @@ class RootRouterContainer extends Component {
 }
 
 
-export default withResponsiveness(withStyles(styles)(RootRouterContainer));
+export default withResponsiveness(RootRouterContainer);
 // export default RootRouterContainer;

@@ -128,9 +128,17 @@ class BlogPostContainer extends Component {
 
 			<Grid container direction="row">
 				
-				<Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-		  			<ConnectedCreateBlogPost/>
-		  		</Grid>
+				{(this.props.isAllowedBlogpostsControl) ? (
+
+					<Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+			  			<ConnectedCreateBlogPost/>
+			  		</Grid>
+
+					) : (
+						null
+					)
+				}
+
 
 		  		<VerticalMasonriesContainer
 		  			child_addition_pattern_heights={[800, 400+200, 800, 400+200, 800, 400+200, ]}

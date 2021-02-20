@@ -64,10 +64,17 @@ class VideoContainer extends Component {
 		return (
 
 			<Grid container direction="row">
+
+				{(this.props.isAllowedVideosControl) ? (
 				
-				<Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-		  			<ConnectedCreateVideo/>
-		  		</Grid>
+					<Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+			  			<ConnectedCreateVideo/>
+			  		</Grid>
+
+					) : (
+						null
+					)
+				}
 
 				{total_videos.map((item, index)=>(
 

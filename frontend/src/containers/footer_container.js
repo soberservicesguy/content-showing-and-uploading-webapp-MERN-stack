@@ -191,30 +191,50 @@ class FooterContainer extends Component {
 									</Link>
 								</div>
 
+								{(this.props.isAllowedImagesControl) ? (
 
-								<div style={{marginTop:10,}}>
-									<Link to="/Bulk-Upload-Image">
-										<p style={styles.secondColumnLinkText}>
-											UPLOAD BULK IMAGES
-										</p>
-									</Link>
-								</div>
+									<div style={{marginTop:10,}}>
+										<Link to="/Bulk-Upload-Image">
+											<p style={styles.secondColumnLinkText}>
+												UPLOAD BULK IMAGES
+											</p>
+										</Link>
+									</div>
 
-								<div style={{marginTop:10,}}>
-									<Link to="/Bulk-Upload-Video">
-										<p style={styles.secondColumnLinkText}>
-											UPLOAD BULK VIDEOS
-										</p>
-									</Link>
-								</div>
+									) : (
+										null
+									)
+								}
 
-								<div style={{marginTop:10,}}>
-									<Link to="/Bulk-Upload-Blogpost">
-										<p style={styles.secondColumnLinkText}>
-											UPLOAD BULK BLOGPOSTS
-										</p>
-									</Link>
-								</div>
+								{(this.props.isAllowedVideosControl) ? (
+
+									<div style={{marginTop:10,}}>
+										<Link to="/Bulk-Upload-Video">
+											<p style={styles.secondColumnLinkText}>
+												UPLOAD BULK VIDEOS
+											</p>
+										</Link>
+									</div>
+
+									) : (
+										null
+									)
+								}
+
+								{(this.props.isAllowedBlogpostsControl) ? (
+
+									<div style={{marginTop:10,}}>
+										<Link to="/Bulk-Upload-Blogpost">
+											<p style={styles.secondColumnLinkText}>
+												UPLOAD BULK BLOGPOSTS
+											</p>
+										</Link>
+									</div>
+
+									) : (
+										null
+									)
+								}
 
 
 								{/*<div style={{marginTop:10,}}>

@@ -120,10 +120,17 @@ class ImageContainer extends Component {
 		return (
 
 			<Grid container direction="row">
+
+				{(this.props.isAllowedImagesControl) ? (
 				
-				<Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-		  			<ConnectedCreateImage/>
-		  		</Grid>
+					<Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+			  			<ConnectedCreateImage/>
+			  		</Grid>
+
+					) : (
+						null
+					)
+				}
 
 		  		<VerticalMasonriesContainer
 		  			child_addition_pattern_heights={[400, 200, 400, 200, 400, 200, ]}
