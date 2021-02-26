@@ -206,6 +206,8 @@ class FooterContainer extends Component {
 									)
 								}
 
+								{console.log(this.props.isAllowedVideosControl)}
+
 								{(this.props.isAllowedVideosControl) ? (
 
 									<div style={{marginTop:10,}}>

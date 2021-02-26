@@ -13,6 +13,7 @@ import {
 	IndividualImage,	
 	LoginContainer,
 	SignUpContainer,
+	FooterContainer,
 } from "../containers";
 
 
@@ -57,6 +58,11 @@ import {
 import {
 	CreateLikeForImage,
 } from "../components/likes"
+
+export const ConnectedFooterContainer = connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(FooterContainer);
 
 
 export const ConnectedRootRouterContainer = connect(

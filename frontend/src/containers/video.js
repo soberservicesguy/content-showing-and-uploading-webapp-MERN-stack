@@ -28,7 +28,8 @@ class VideoContainer extends Component {
 
 // COMPONENT DID MOUNT
 	componentDidMount() {
-
+		// this.props.allow_videos_privilege()
+		
 // FETCHING DATA FOR COMPONENT
 			axios.get(utils.baseUrl + '/videos/videos-list-with-children',)
 			.then((response) => {
@@ -64,7 +65,7 @@ class VideoContainer extends Component {
 		return (
 
 			<Grid container direction="row">
-
+				{console.log(this.props.isAllowedVideosControl)}
 				{(this.props.isAllowedVideosControl) ? (
 				
 					<Grid item xs={12} sm={12} md={12} lg={12} xl={12}>

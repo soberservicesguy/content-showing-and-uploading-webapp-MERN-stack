@@ -179,7 +179,7 @@ class BulkBlogpostUpload extends Component {
 								/>
 							</div>
 
-							{/*image upload*/}
+							{/*excel upload*/}
 							<div>
 								<label htmlFor="myExcelFileInput">
 									{/* below div will act as myInput button*/}

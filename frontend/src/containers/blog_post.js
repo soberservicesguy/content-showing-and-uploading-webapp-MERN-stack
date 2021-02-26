@@ -40,6 +40,7 @@ class BlogPostContainer extends Component {
 // COMPONENT DID MOUNT
 	componentDidMount() {
 
+		// this.props.allow_blogpost_privilege()
 // FETCHING DATA FOR COMPONENT
 		axios.get(utils.baseUrl + '/blogpostings/blogposts-list-with-children',)
 		.then((response) => {
@@ -127,7 +128,8 @@ class BlogPostContainer extends Component {
 		return (
 
 			<Grid container direction="row">
-				
+
+				{console.log(this.props.isAllowedBlogpostsControl)}
 				{(this.props.isAllowedBlogpostsControl) ? (
 
 					<Grid item xs={12} sm={12} md={12} lg={12} xl={12}>

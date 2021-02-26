@@ -317,7 +317,7 @@ class SignUpContainer extends Component {
 										Uploading Blogposts
 									</MenuItem>
 									<MenuItem value={'Total control'}>
-										All Privileges
+										Total control
 									</MenuItem>
 								</Select>
 							</FormControl>
@@ -327,7 +327,7 @@ class SignUpContainer extends Component {
 
 
 					<div style={{
-						width:'90%',
+						width:'70%',
 						margin:'auto',
 						display:'flex',
 						flexDirection:'row',

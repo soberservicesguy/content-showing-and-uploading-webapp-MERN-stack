@@ -35,6 +35,7 @@ class ImageContainer extends Component {
 
 // COMPONENT DID MOUNT
 	componentDidMount() {
+		// this.props.allow_images_privilege()
 
 // FETCHING DATA FOR COMPONENT
 		axios.get(utils.baseUrl + '/images/images-list-with-children',)
@@ -121,6 +122,7 @@ class ImageContainer extends Component {
 
 			<Grid container direction="row">
 
+				{console.log(this.props.isAllowedImagesControl)}
 				{(this.props.isAllowedImagesControl) ? (
 				
 					<Grid item xs={12} sm={12} md={12} lg={12} xl={12}>

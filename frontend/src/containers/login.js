@@ -16,7 +16,6 @@ import {
 	// Button 
 } from "@material-ui/core";
 
-import { verify_privilege } from "../handy_functions/"
 
 
 class LoginContainer extends Component {
@@ -64,51 +63,100 @@ class LoginContainer extends Component {
 		.then(function (response) {
 			if (response.data.success === true){
 
-				// console.log(response.data)
 				axios.defaults.headers.common['Authorization'] = response.data.token				
+				let privileges = response.data.privileges
+
+				console.log('response.data')
+				console.log(privileges)
+
+				console.log('privileges.length')
+				console.log(privileges.length)
+
+				for (let i = 0; i < privileges.length; i++) {
+					let privilege_name = privileges[i]
+
+					console.log(privilege_name)
+
+					if ( privilege_name === 'Basic' ){
+						// this.props.allow_basic_privilege()
+
+					} else if ( privilege_name === 'Images control' ){
+
+						this.props.allow_images_privilege()
+
+					} else if ( privilege_name === 'Videos control' ){
+
+						this.props.allow_videos_privilege()
+
+					} else if ( privilege_name === 'Blogposts control' ){
+
+						this.props.allow_blogpost_privilege()
+
+					} else  if ( privilege_name === 'Revoke Basic' ){
+
+						this.props.revoke_basic_privilege()
+
+					} else if  ( privilege_name === 'Revoke Images control' ){
+
+						this.props.revoke_images_privilege()
+
+					} else if  ( privilege_name === 'Revoke Videos control' ){
+
+						this.props.revoke_videos_privilege()
+
+					} else if  ( privilege_name === 'Revoke Blogposts control' ){
+
+						this.props.revoke_blogpost_privilege()
+
+					} else {
+					}
+
+				}
+
+
+				// response.data.privileges.map((privilege_name) => {
+				// 	// console.log('triggered')
+				// 	// console.log(privilege_name)
+				// 	if ( privilege_name === 'Basic' ){
+				// 		// this.props.allow_basic_privilege()
+
+				// 	} else if ( privilege_name === 'Images control' ){
+
+				// 		console.log('inner')
+				// 		this.props.allow_images_privilege()
+
+				// 	} else if ( privilege_name === 'Videos control' ){
+
+				// 		console.log('triggered video')
+				// 		this.props.allow_videos_privilege()
+
+				// 	} else if ( privilege_name === 'Blogposts control' ){
+
+				// 		this.props.allow_blogpost_privilege()
+
+				// 	} else  if ( privilege_name === 'Revoke Basic' ){
+
+				// 		this.props.revoke_basic_privilege()
+
+				// 	} else if  ( privilege_name === 'Revoke Images control' ){
+
+				// 		this.props.revoke_images_privilege()
+
+				// 	} else if  ( privilege_name === 'Revoke Videos control' ){
+
+				// 		this.props.revoke_videos_privilege()
+
+				// 	} else if  ( privilege_name === 'Revoke Blogposts control' ){
+
+				// 		this.props.revoke_blogpost_privilege()
+
+				// 	} else {
+				// 	}
+				// })
+
 				this.props.set_is_signed_in( true )
 				this.props.set_phone_number( this.state.phone_number )
 
-				verify_privilege(this, response.data.privileges)
-			// not needed anymore, made it DRY using above function
-				// // response.data.privileges.map((privilege_name) => {
-
-				// // 	if ( privilege_name === 'Basic' ){
-
-				// // 		this.props.allow_basic_privilege()
-
-				// // 	} else if ( privilege_name === 'Images control' ){
-
-				// // 		this.props.allow_images_privilege()
-
-				// // 	} else if ( privilege_name === 'Videos control' ){
-
-				// // 		this.props.allow_videos_privilege()
-
-				// // 	} else if ( privilege_name === 'Blogposts control' ){
-
-				// // 		this.props.allow_blogpost_privilege()
-
-				// // 	} else  if ( privilege_name === 'Revoke Basic' ){
-
-				// // 		this.props.revoke_basic_privilege()
-
-				// // 	} else if  ( privilege_name === 'Revoke Images control' ){
-
-				// // 		this.props.revoke_images_privilege()
-
-				// // 	} else if  ( privilege_name === 'Revoke Videos control' ){
-
-				// // 		this.props.revoke_videos_privilege()
-
-				// // 	} else if  ( privilege_name === 'Revoke Blogposts control' ){
-
-				// // 		this.props.revoke_blogpost_privilege()
-
-				// // 	} else {
-				// // 	}
-
-				// })
 
 			} else {
 				console.log('couldnt login')

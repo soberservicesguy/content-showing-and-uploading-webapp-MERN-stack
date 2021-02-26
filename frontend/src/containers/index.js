@@ -11,3 +11,5 @@ export {default as SignUpContainer } from "./sign_up.js";
 
 export {default as VerticalMasonriesContainer} from "./vertical_masonries"
 export {default as FooterContainer} from "./footer_container"
+
+export {default as MyResponsiveNavigation} from "./my_responsive_navigation"

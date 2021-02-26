@@ -42,48 +42,6 @@ module.exports = (passport) => {
 
 			// adding privileges payload to req.user so that every request on protected route is privilege protected
 				let privileges_list = get_allowed_privileges_list(user)
-			// not needed anymore, made DRY with above function
-			// 	let privileges_list = []
-			// 	user.privileges.map((privilege_object) => {
-
-			// 		if ( privilege_object.privilege_name === 'allow_surfing' ){
-				
-			// 			privileges_list.push( 'Basic' )
-
-			// 		} else if ( privilege_object.privilege_name === 'is_allowed_image_upload' ){
-
-			// 			privileges_list.push( 'Images control' )
-
-			// 		} else if ( privilege_object.privilege_name === 'is_allowed_video_upload' ){
-
-			// 			privileges_list.push( 'Videos control' )
-
-			// 		} else if ( privilege_object.privilege_name === 'is_allowed_writing_blopost' ){
-
-			// 			privileges_list.push( 'Blogposts control' )
-
-			// 		} else {
-			// 		}
-
-			// 	})
-
-			// // add revoked or privileges that are not given
-			// 	if ( !privileges_list.includes('Basic') ){
-			// 		privileges_list.push('Revoke Basic')
-			// 	} 
-
-			// 	if ( !privileges_list.includes('Images control') ){
-			// 		privileges_list.push('Revoke Images control')
-			// 	} 
-
-			// 	if ( !privileges_list.includes('Videos control') ){
-			// 		privileges_list.push('Revoke Videos control')
-			// 	} 
-
-			// 	if ( !privileges_list.includes('Blogposts control') ){
-			// 		privileges_list.push('Revoke Blogposts control')
-			// 	} 
-
 				// overwriting user and incorporating any other payload, since only user can be the payload from this middleware
 				user = { user_object: user, privileges: privileges_list, msg: "I am from passport js payload" }
 
