@@ -11,7 +11,7 @@ import axios from 'axios';
 import firebase from 'firebase';
 
 import {
-	ComponentForShowingImage
+	// ComponentForShowingImage
 } from "."
 
 import utils from "../../utilities";
@@ -26,6 +26,7 @@ import {
 
 import {
 	ConnectedCreateCommentForImage,
+	ConnectedComponentForShowingImage,
 } from "../../redux_stuff/connected_components"
 
 
@@ -154,7 +155,7 @@ class ImageCard extends Component {
 			
 					{/* first the parent / card component */}
 			
-			  		<ComponentForShowingImage
+			  		<ConnectedComponentForShowingImage
 						dataPayloadFromParent = { this.props.dataPayloadFromParent }
 						local_height = { this.props.local_height } // being passed so that heights can be assigned to each image backgorund
 			  		>
@@ -225,7 +226,7 @@ class ImageCard extends Component {
 
 			  			</div>
 
-			  		</ComponentForShowingImage>
+			  		</ConnectedComponentForShowingImage>
 		  		</div>
 		  	</div>
 		);

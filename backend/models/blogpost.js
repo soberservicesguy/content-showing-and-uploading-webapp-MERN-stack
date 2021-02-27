@@ -47,8 +47,8 @@ BlogPostSchema.pre('save', function(next) {
 
 BlogPostSchema.post('save', function() {
 
-	console.log('SAVED CONDITION')
-    console.log(this)
+	// console.log('SAVED CONDITION')
+ //    console.log(this)
 
 });
 

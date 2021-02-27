@@ -45,8 +45,8 @@ VideoSchema.pre('save', function(next) {
 
 VideoSchema.post('save', function() {
 
-	console.log('SAVED CONDITION')
-    console.log(this)
+	// console.log('SAVED CONDITION')
+ //    console.log(this)
 
 });
 

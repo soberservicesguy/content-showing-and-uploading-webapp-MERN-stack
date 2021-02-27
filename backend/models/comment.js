@@ -27,8 +27,8 @@ CommentSchema.pre('save', function(next) {
 
 CommentSchema.post('save', function() {
 
-	console.log('SAVED CONDITION')
-    console.log(this)
+	// console.log('SAVED CONDITION')
+ //    console.log(this)
 
 });
 

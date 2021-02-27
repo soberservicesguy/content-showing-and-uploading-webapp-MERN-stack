@@ -66,7 +66,8 @@ const upload_main_image_by_user_of_blog = multer({
 // create blogpost with undefined
 // USED IN CREATING BLOGPOST
 router.post('/create-blogpost-with-user', passport.authenticate('jwt', { session: false }), isAllowedWritingBlogposts, function(req, res, next){
-	
+
+	console.log('roeute called')	
 
 	console.log('OUTER LOG')
 	console.log(req.body)
@@ -124,6 +125,7 @@ router.post('/create-blogpost-with-user', passport.authenticate('jwt', { session
 							let base64_encoded_image = base64_encode(newBlogPost.image_main_filepath)
 
 							let new_blogpost = {
+								endpoint: newBlogPost.endpoint,
 								category: newBlogPost.category,
 								title: newBlogPost.title,
 								initial_tags: newBlogPost.initial_tags,

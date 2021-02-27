@@ -144,10 +144,16 @@ class VideoCard extends Component {
 		  	<div>
 
 				{/* first the parent / card component */}
-		  		<ComponentForShowingVideo
-					dataPayloadFromParent = { this.props.dataPayloadFromParent }
-					local_height = { this.props.local_height } // being passed so that heights can be assigned to each image backgorund
-		  		/>
+  		  		<Link 
+  		  			to = {{ pathname: `/videos/:id=${this.props.dataPayloadFromParent.endpoint}` }}
+  		  			style = {{color: 'inherit', textDecoration: 'inherit'}}
+  		  			onClick = { () => this.props.set_current_video(this.props.dataPayloadFromParent) }
+  				>
+			  		<ComponentForShowingVideo
+						dataPayloadFromParent = { this.props.dataPayloadFromParent }
+						local_height = { this.props.local_height } // being passed so that heights can be assigned to each image backgorund
+			  		/>
+  		  		</Link> 
 
 	  			<div 
 	  				style={{

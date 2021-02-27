@@ -9,7 +9,7 @@ router.use('/stripe_payments', require('./stripe_payments/stripe_payments'));
 
 router.use('/blogpostings', require('./blogpost/blogpost'));
 router.use('/videos', require('./videos/videos'));
-router.use('/images', require('./images/images'));
+router.use('/image', require('./image_routes/image'));
 
 // router.use('/avatar-uploads', require('./uploads/upload_user_avatar_image'));
 router.use('/image-uploads', require('./uploads/upload_images_by_user'));

@@ -32,7 +32,7 @@ class CreateImage extends Component {
 			description: '',
 			all_tags: '',
 
-
+			new_image_id:null,
 		}
 	}
 
@@ -130,7 +130,7 @@ class CreateImage extends Component {
 			this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))
 
 			// redirecting
-			return <Redirect to = {{ pathname: "/Individual-Image" }} />
+			return <Redirect to = {{ pathname: `/images/:id=${this.state.new_image_id}` }} />
 
 		} else {
 
@@ -234,6 +234,7 @@ class CreateImage extends Component {
 
 										let setResponseInCurrentImage = (arg) => this.props.set_current_image(arg)
 										let redirectToNewImage = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
+										let setNewImageIDInState = (response) => this.setState(prev => ({...prev, new_image_id: response.data.new_image.endpoint }))	
 
 										// in formData send individual variables and not a complete object
 										// formData.append('video_object', video_object) // THIS WILL NOT WORK, SENT VARS INDIVIDUALLY
@@ -247,11 +248,13 @@ class CreateImage extends Component {
 											formData.append('upload_images_by_user', this.state.image_filepath, this.state.image_filepath.name)
 										}
 
-										axios.post(utils.baseUrl + '/image-uploads/protected-image-upload', formData)
+										axios.post(utils.baseUrl + '/image/create-image-with-user', formData)
 										.then(function (response) {
 											// console.log(this.props.user_name)
 											console.log(response.data) // current image screen data
 											
+											setNewImageIDInState(response)
+
 											// set to current parent object
 											setResponseInCurrentImage(response.data.new_image)
 

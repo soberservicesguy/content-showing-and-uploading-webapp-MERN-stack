@@ -26,8 +26,8 @@ LikeSchema.pre('save', function(next) {
 
 LikeSchema.post('save', function() {
 
-	console.log('SAVED CONDITION')
-    console.log(this)
+	// console.log('SAVED CONDITION')
+ //    console.log(this)
 
 });
 

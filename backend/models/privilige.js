@@ -13,7 +13,6 @@ const PrivilegeSchema = new mongoose.Schema({
 
 })
 
-mongoose.model('Privilege', PrivilegeSchema);
 	
 PrivilegeSchema.pre('save', function(next) {
 
@@ -26,3 +25,4 @@ PrivilegeSchema.pre('save', function(next) {
 // allow_image_upoading
 // allow_video_uploading
 // allow_blogpost_uploading
+mongoose.model('Privilege', PrivilegeSchema);

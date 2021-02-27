@@ -80,15 +80,15 @@ class ComponentForShowingVideo extends Component {
 			<div style={styles.outerContainer}>
 
 				<p style={styles.titleText}>
-					Title{ data.title }
+					{ data.title }
 				</p>
 				<p style={styles.categoryText}>
-					Category{ data.category }
+					<span style={{fontWeight:'bold'}}>Category:</span> { data.category }
 				</p>
 				<div style={styles.imageContainer}>
 					<img 
-						// src={base64Image} 
-						src={utils.image}
+						src={base64Image} 
+						// src={utils.image}
 						alt="" 
 						style={styles.imageStyle}
 					/>
@@ -99,7 +99,6 @@ class ComponentForShowingVideo extends Component {
 		  			style={{color: 'inherit', textDecoration: 'inherit'}}
 				>
 					<p style={styles.descriptionText}>
-						Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum 
 						{ data.description }
 					</p>
 				</Link>

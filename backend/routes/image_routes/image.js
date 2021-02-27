@@ -85,12 +85,13 @@ router.post('/create-image-with-user', passport.authenticate('jwt', { session: f
 				// console.log('INNER LOG')
 				// console.log(req.body)
 
+
 			// image is uploaded , now saving image in db
 				const newImage = new Image({
 
 					_id: new mongoose.Types.ObjectId(),
 					category: req.body.category,
-					image_filepath: `./assets/images/uploads/images_uploaded_by_user/`,
+					image_filepath: `./assets/images/uploads/images_uploaded_by_user/${filename_used_to_store_image_in_assets}`,
 					title: req.body.title,
 					description: req.body.description,
 					all_tags: req.body.all_tags,
@@ -98,6 +99,7 @@ router.post('/create-image-with-user', passport.authenticate('jwt', { session: f
 					// endpoint: req.body.endpoint, // this will be taken care in db model
 
 				});
+
 
 				newImage.save(function (err, newImage) {
 
@@ -118,6 +120,7 @@ router.post('/create-image-with-user', passport.authenticate('jwt', { session: f
 							let base64_encoded_image = base64_encode(newImage.image_filepath)
 
 							let new_image = {
+								endpoint: newImage.endpoint,
 								category: newImage.category,
 								image_filepath: base64_encoded_image,
 								title: newImage.title,
@@ -125,7 +128,7 @@ router.post('/create-image-with-user', passport.authenticate('jwt', { session: f
 								all_tags: newImage.all_tags,
 							}
 
-							res.status(200).json({ success: true, msg: 'new user saved', new_image: new_image});	
+							res.status(200).json({ success: true, msg: 'new image saved', new_image: new_image});	
 
 						} else {
 
@@ -694,39 +697,39 @@ router.get('/get-all-likes-of-image', function(req, res, next){
 
 // create image with undefined
 
-router.post('/create-image-with-user', function(req, res, next){
+// router.post('/create-image-with-user', function(req, res, next){
 	
-	var image_object = req.body.image_object
-	var user_object = req.body.user_object
+// 	var image_object = req.body.image_object
+// 	var user_object = req.body.user_object
 
-	var newImage = new Image({
-		_id: new mongoose.Types.ObjectId(),
-		...image_object
-	})
+// 	var newImage = new Image({
+// 		_id: new mongoose.Types.ObjectId(),
+// 		...image_object
+// 	})
 
-	newImage.save(function (err, newImage) {
-		if (err) return console.log(err);
+// 	newImage.save(function (err, newImage) {
+// 		if (err) return console.log(err);
 
-			User.
-			findOne({...user_object})
-		.then((user) => {
+// 			User.
+// 			findOne({...user_object})
+// 		.then((user) => {
 			
-			if( !user ){
+// 			if( !user ){
 			
-				console.log('no User found')
+// 				console.log('no User found')
 			
-			} else {
+// 			} else {
 			
-				newImage.user = user
-				res.status(200).json( newImage )
+// 				newImage.user = user
+// 				res.status(200).json( newImage )
 			
-			}
-		})
-		.catch((err) => {
-			console.log(err)
-		})
-	})
-})
+// 			}
+// 		})
+// 		.catch((err) => {
+// 			console.log(err)
+// 		})
+// 	})
+// })
 
 
 

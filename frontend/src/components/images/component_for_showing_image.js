@@ -85,6 +85,7 @@ class ComponentForShowingImage extends Component {
 			  		<Link 
 			  			to={`/images/:id=${this.props.dataPayloadFromParent.endpoint}`} 
 			  			style={{color: 'inherit', textDecoration: 'inherit'}}
+			  			onClick={ () => this.props.set_current_image(this.props.dataPayloadFromParent) }
 					>
 						<div style={{height:70,}}>
 							<p style={styles.titleText}>

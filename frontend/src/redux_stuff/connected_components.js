@@ -59,6 +59,7 @@ import {
 	CreateLikeForImage,
 } from "../components/likes"
 
+
 export const ConnectedFooterContainer = connect(
 	mapStateToProps,
 	mapDispatchToProps

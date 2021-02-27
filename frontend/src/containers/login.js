@@ -54,6 +54,19 @@ class LoginContainer extends Component {
 
 	login_and_get_jwt_token_and_privileges(){
 
+		let allow_basic_privilege = () => this.props.allow_basic_privilege()
+		let allow_images_privilege = () => this.props.allow_images_privilege()
+		let allow_videos_privilege = () => this.props.allow_videos_privilege()
+		let allow_blogpost_privilege = () => this.props.allow_blogpost_privilege()
+
+		let revoke_basic_privilege = () => this.props.revoke_basic_privilege()
+		let revoke_images_privilege = () => this.props.revoke_images_privilege()
+		let revoke_videos_privilege = () => this.props.revoke_videos_privilege()
+		let revoke_blogpost_privilege = () => this.props.revoke_blogpost_privilege()
+
+		let set_is_signed_in = () => this.props.set_is_signed_in( true )
+		let set_phone_number= () => this.props.set_phone_number( this.state.phone_number )
+
 		axios.post(utils.baseUrl + '/users/login', 
 			{
 				phone_number:this.state.phone_number, 
@@ -66,97 +79,50 @@ class LoginContainer extends Component {
 				axios.defaults.headers.common['Authorization'] = response.data.token				
 				let privileges = response.data.privileges
 
-				console.log('response.data')
 				console.log(privileges)
-
-				console.log('privileges.length')
-				console.log(privileges.length)
 
 				for (let i = 0; i < privileges.length; i++) {
 					let privilege_name = privileges[i]
 
-					console.log(privilege_name)
-
 					if ( privilege_name === 'Basic' ){
 						// this.props.allow_basic_privilege()
+						allow_basic_privilege()
 
 					} else if ( privilege_name === 'Images control' ){
 
-						this.props.allow_images_privilege()
+						allow_images_privilege()
 
 					} else if ( privilege_name === 'Videos control' ){
 
-						this.props.allow_videos_privilege()
+						allow_videos_privilege()
 
 					} else if ( privilege_name === 'Blogposts control' ){
 
-						this.props.allow_blogpost_privilege()
+						allow_blogpost_privilege()
 
 					} else  if ( privilege_name === 'Revoke Basic' ){
 
-						this.props.revoke_basic_privilege()
+						revoke_basic_privilege()
 
 					} else if  ( privilege_name === 'Revoke Images control' ){
 
-						this.props.revoke_images_privilege()
+						revoke_images_privilege()
 
 					} else if  ( privilege_name === 'Revoke Videos control' ){
 
-						this.props.revoke_videos_privilege()
+						revoke_videos_privilege()
 
 					} else if  ( privilege_name === 'Revoke Blogposts control' ){
 
-						this.props.revoke_blogpost_privilege()
+						revoke_blogpost_privilege()
 
 					} else {
 					}
 
 				}
 
-
-				// response.data.privileges.map((privilege_name) => {
-				// 	// console.log('triggered')
-				// 	// console.log(privilege_name)
-				// 	if ( privilege_name === 'Basic' ){
-				// 		// this.props.allow_basic_privilege()
-
-				// 	} else if ( privilege_name === 'Images control' ){
-
-				// 		console.log('inner')
-				// 		this.props.allow_images_privilege()
-
-				// 	} else if ( privilege_name === 'Videos control' ){
-
-				// 		console.log('triggered video')
-				// 		this.props.allow_videos_privilege()
-
-				// 	} else if ( privilege_name === 'Blogposts control' ){
-
-				// 		this.props.allow_blogpost_privilege()
-
-				// 	} else  if ( privilege_name === 'Revoke Basic' ){
-
-				// 		this.props.revoke_basic_privilege()
-
-				// 	} else if  ( privilege_name === 'Revoke Images control' ){
-
-				// 		this.props.revoke_images_privilege()
-
-				// 	} else if  ( privilege_name === 'Revoke Videos control' ){
-
-				// 		this.props.revoke_videos_privilege()
-
-				// 	} else if  ( privilege_name === 'Revoke Blogposts control' ){
-
-				// 		this.props.revoke_blogpost_privilege()
-
-				// 	} else {
-				// 	}
-				// })
-
-				this.props.set_is_signed_in( true )
-				this.props.set_phone_number( this.state.phone_number )
-
+				set_is_signed_in()
+				set_phone_number()
 
 			} else {
 				console.log('couldnt login')

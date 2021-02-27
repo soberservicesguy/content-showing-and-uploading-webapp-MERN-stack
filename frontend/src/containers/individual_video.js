@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
@@ -10,20 +9,10 @@ import {
 	// Button 
 } from "@material-ui/core";
 // IMPORT responsiveness hook
-import withResponsiveness from "../responsiveness_hook";
+// import withResponsiveness from "../responsiveness_hook";
 
-import { withRouter } from "react-router-dom";
-import ReactPlayer from 'react-player'
-
-const styles = theme => ({
-  root: {
-    height: 48,
-    // color: props => (props.cool) ? 'red' : 'black',
-    [theme.breakpoints.up('sm')]:{
-    	paddingLeft:100
-    },
-  },
-});
+// import { withRouter } from "react-router-dom";
+// import ReactPlayer from 'react-player'
 
 
 class IndividualIndividualVideo extends Component {
@@ -42,22 +31,79 @@ class IndividualIndividualVideo extends Component {
 
 // RENDER METHOD
 	render() {
-		const { classes } = this.props;
+
+		const styles = {
+			outerContainer:{
+				margin:'auto',
+				width:'80%'
+			},
+			descriptionText:{
+				fontWeight:'normal',
+				fontSize:20,
+				marginTop:10,
+				marginBottom:10,
+
+			},
+			categoryText:{
+				fontWeight:'bold',
+				fontSize:18,
+				marginTop:10,
+				marginBottom:10,
+
+			},
+			titleText:{
+				fontWeight:'bold',
+				fontSize:30,
+				marginTop:40,
+				marginBottom:0,
+			},
+			allTagsText:{
+				borderTopColor:'#eee',
+				borderTopWidth:2,
+				borderTopStyle:'solid',
+				paddingTop:30,
+				fontSize:15,
+				marginTop:30,
+				color:'grey',								
+			},
+			videoStyle:{
+				width:'100%',
+				height:400,
+			}
+
+		}
+
+
 	  	const {_xs, _sm, _md, _lg, _xl} = this.props
 
 		  		// <ReactPlayer 
 		  		// 	controls={true}
 			  	// 	url={`http://localhost:3001/video-stream/video?endpoint=${this.props.current_video}`} 
 		  		// />
-		console.log('ENDPOINT REQUEST')
-		console.log(this.props.current_video)
 	  	return (
-	  		<div>
+	  		<div style={styles.outerContainer}>
+
+	  			<p style={styles.titleText}>
+	  				{this.props.current_video.title}
+	  			</p>
 
 		  		<video 
-			  		src = {`http://localhost:3001/video-stream/video?endpoint=${this.props.current_video}`} 
+			  		style={styles.videoStyle}
+			  		src = {`${utils.baseUrl}/video-stream/video?endpoint=${this.props.current_video.endpoint}`} 
 			  		controls = {true}
 		  		/>
+
+	  			<p style={styles.categoryText}>
+	  				Category: <span style={{fontWeight:'normal'}}>{this.props.current_video.category}</span>
+	  			</p>
+
+	  			<p style={styles.descriptionText}>
+	  				{this.props.current_video.description}
+	  			</p>
+
+	  			<p style={styles.allTagsText}>
+	  				{this.props.current_video.all_tags}
+	  			</p>
 	  			
 	  		</div>
 
@@ -65,46 +111,10 @@ class IndividualIndividualVideo extends Component {
 		);
 	}
 }
-	
+
+
 IndividualIndividualVideo.defaultProps = {
 	//:,
 };
 
-export default withRouter(withResponsiveness(withStyles(styles)(IndividualIndividualVideo)));
-
-	  		// <Grid container direction="row" spacing={4} style={{backgroundColor: '#eee'}} >
-
-	  		// 	<Grid item container direction="column" xs={12} sm={12} md={2} lg={3}>
-	  		// 		<Grid item>
-	  		// 		</Grid>
-
-	  		// 		<Grid item>
-	  		// 		</Grid>
-
-	  		// 		<Grid item>
-	  		// 		</Grid>
-	  		// 	</Grid>
-
-	  		// 	<Grid item container direction="column" xs={12} sm={12} md={8} lg={6}>
-	  		// 		<Grid item>
-	  		// 		</Grid>
-
-	  		// 		<Grid item>
-	  		// 		</Grid>
-
-	  		// 		<Grid item>
-	  		// 		</Grid>
-	  		// 	</Grid>
-
-	  		// 	<Grid item container direction="column" xs={12} sm={12} md={2} lg={3}>
-	  		// 		<Grid item>
-	  		// 		</Grid>
-
-	  		// 		<Grid item>
-	  		// 		</Grid>
-
-	  		// 		<Grid item>
-	  		// 		</Grid>
-	  		// 	</Grid>
-
-	  		// </Grid>
+export default IndividualIndividualVideo;

@@ -35,6 +35,9 @@ class CreateBlogPost extends Component {
 			third_para: '',
 			fourth_para: '',
 			all_tags: '',
+
+
+			new_blogpost_id: null,
 		}
 
 	}
@@ -138,7 +141,7 @@ class CreateBlogPost extends Component {
 			this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))
 
 			// redirecting
-			return <Redirect to = {{ pathname: "/Individual-BlogPost" }} />
+			return <Redirect to = {{ pathname: `/blogposts/:${this.state.new_blogpost_id}` }} />
 
 		} else {
 
@@ -305,6 +308,7 @@ class CreateBlogPost extends Component {
 
 										let setResponseInCurrentBlogPost = (arg) => this.props.set_current_blogpost(arg)
 										let redirectToNewBlogPost = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
+										let setNewBlogpostIDInState = (response) => this.setState(prev => ({...prev, new_blogpost_id: response.data.new_blogpost.endpoint }))	
 
 										// in formData send individual variables and not a complete object
 										// formData.append('video_object', video_object) // THIS WILL NOT WORK, SENT VARS INDIVIDUALLY
@@ -322,10 +326,12 @@ class CreateBlogPost extends Component {
 											formData.append('blogpost_image_main', this.state.image_main_filepath, this.state.image_main_filepath.name)
 										}
 
-										axios.post(utils.baseUrl + '/blogposts/create-blogpost-with-user', formData)
+										axios.post(utils.baseUrl + '/blogpostings/create-blogpost-with-user', formData)
 										.then(function (response) {
 											console.log(response.data) // current blogpost screen data
 											
+											setNewBlogpostIDInState(response)
+
 											// set to current parent object
 											setResponseInCurrentBlogPost(response.data.new_blogpost)
 

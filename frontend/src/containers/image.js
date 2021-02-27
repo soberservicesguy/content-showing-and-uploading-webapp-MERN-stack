@@ -35,8 +35,7 @@ class ImageContainer extends Component {
 
 // COMPONENT DID MOUNT
 	componentDidMount() {
-		// this.props.allow_images_privilege()
-
+		
 // FETCHING DATA FOR COMPONENT
 		axios.get(utils.baseUrl + '/images/images-list-with-children',)
 		.then((response) => {
@@ -96,7 +95,7 @@ class ImageContainer extends Component {
 	  	}
 
 	// copying EXACT same children being passed to VerticalMasonriesContainer below but without local_height prop
-		let total_children = [...total_images, 1, 2].map((item, index) => {
+		let total_children = total_images.map((item, index) => {
 
 			return(
 				<ConnectedImageCard
@@ -122,7 +121,6 @@ class ImageContainer extends Component {
 
 			<Grid container direction="row">
 
-				{console.log(this.props.isAllowedImagesControl)}
 				{(this.props.isAllowedImagesControl) ? (
 				
 					<Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -145,7 +143,7 @@ class ImageContainer extends Component {
 		  				// { width_in_grids:3, bottom_spacing:10, leftGap:10 },
 		  			]}
 		  		>
-		  			{[...total_images, 1, 2].map((item, index) => {
+		  			{total_images.map((item, index) => {
 
 		  				return(
 /*  test component for masonry

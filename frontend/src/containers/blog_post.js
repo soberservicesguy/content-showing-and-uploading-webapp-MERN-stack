@@ -3,8 +3,8 @@ import {
   // Switch,
   // Route,
   // Link,
-	useParams,
-	useRouteMatch,
+	// useParams,
+	// useRouteMatch,
 } from "react-router-dom";
 
 import React, { Component } from 'react';
@@ -99,7 +99,7 @@ class BlogPostContainer extends Component {
 	  	}
 
 	// copying EXACT same children being passed to VerticalMasonriesContainer below but without local_height prop
-	  	let total_children = [...total_blogposts,1,2].map((item, index) => {
+	  	let total_children = total_blogposts.map((item, index) => {
 
 			return(
 
@@ -153,7 +153,7 @@ class BlogPostContainer extends Component {
 		  				// { width_in_grids:3, bottom_spacing:10, leftGap:10 },
 		  			]}
 		  		>
-					{[...total_blogposts,1,2].map((item, index) => {
+					{total_blogposts.map((item, index) => {
 
 		  				return(
 /*  test component for masonry
