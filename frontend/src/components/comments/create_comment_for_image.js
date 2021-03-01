@@ -131,7 +131,7 @@ class CreateCommentForImage extends Component {
 			this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))
 
 			// redirecting
-			return <Redirect to = {{ pathname: "/Individual-Image" }} />
+			return <Redirect to = {{ pathname: `/images/:id=${this.props.parentDetailsPayload.endpoint}` }} />
 
 		} else {
 
@@ -165,7 +165,7 @@ class CreateCommentForImage extends Component {
 									let setResponseInCurrentImage = (arg) => this.props.set_current_image(arg)
 									let redirectToNewImage = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
 
-									axios.post(utils.baseUrl + '/images/create-comment-for-image', 
+									axios.post(utils.baseUrl + '/image/create-comment-for-image', 
 										{
 											comment_text: this.state.text,
 											image_endpoint: this.props.parentDetailsPayload.endpoint,
@@ -186,7 +186,7 @@ class CreateCommentForImage extends Component {
 
 								}}
 							>
-								<Comment style={{color:'grey', fontSize:30, marginRight:40,}}/>
+								<Comment style={{color:'orange', fontSize:30, marginRight:40,}}/>
 							</button>
 
 						</div>

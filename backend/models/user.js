@@ -25,7 +25,7 @@ const UserSchema = new mongoose.Schema({
 	videos_likes:[{ type: Schema.Types.ObjectId, ref: 'Like'  }],
 	
 	images:[{ type: Schema.Types.ObjectId, ref: 'Image'  }],
-	images_blogpost_comments:[{ type: Schema.Types.ObjectId, ref: 'Comment'  }],
+	images_comments:[{ type: Schema.Types.ObjectId, ref: 'Comment'  }],
 	images_likes:[{ type: Schema.Types.ObjectId, ref: 'Like'  }],
 	
 	total_blogposts:0,

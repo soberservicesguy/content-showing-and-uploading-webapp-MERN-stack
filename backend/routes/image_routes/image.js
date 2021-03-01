@@ -155,175 +155,167 @@ router.post('/create-image-with-user', passport.authenticate('jwt', { session: f
 // get n childs of image
 // USED 
 router.get('/get-all-comments-of-image', async function(req, res, next){
+// find image
+	var image_with_comments = await Image.findOne({endpoint:req.query.endpoint}).populate('comments')
 
-	let list_of_promises = []
-
-	var image_with_comments = await Image.findOne({endpoint:req.query.endpoint}).
-	populate('comments').
-	then((image) => {
-
-		if ( image ){
-
-			return image.comments
-
-		} else {
-
-			null
-		}
-	})
-	.catch((err) => console.log(err))
-
-	console.log(image_with_comments)
-
-	list_of_promises.push( image_with_comments )
-
-	var users_list_who_commented = await Promise.all(image_with_comments.map(async (comment_object) => {
+// find likes from blogpost
+	let users_list_who_commented = await Promise.all(image_with_comments.comments.map(async (comment_object) => {
 	// find user from each like
-		return await User.findOne({_id:comment_object.user})
-		.then(async (user_object) => {
+		let user_object = await User.findOne({_id:comment_object.user})
 
-			if (user_object){
-				console.log('USER FOUND')
-				console.log(user_object)
-				return {
-					// ...user_object, // NEVER SPREAD IN MONGOOSE, IT INCLUDES _doc and lots of other info
-					user_name:user_object.user_name,
-					user_image:user_object.user_image,
-					text:comment_object.text
-				}
-
-			} else {
-				null
-			}
-		})
+		return {
+			// ...user_object, // NEVER SPREAD IN MONGOOSE, IT INCLUDES _doc and lots of other info
+			user_name:user_object.user_name,
+			user_image:user_object.user_image,
+			text:comment_object.text
+		}
 
 	}))
-
-	// console.log('PROMISE RESULT 1')
-	// console.log(users_list_who_commented)
 
 // find image from user
-	var final_comments_payload = await Promise.all(users_list_who_commented.map(async (user_object) => {
-	
-		return await Image.findOne({_id:user_object.user_image})
-		.then(async (image_object) => {
+	let final_result = []
+	let final_commments_payload = await Promise.all(users_list_who_commented.map(async (user_object) => {
 
-			if (image_object){
-
-				return {
-					user_name:user_object.user_name,
-					user_image:base64_encode(image_object.image_filepath),
-					comment_text:user_object.text,
-				}
-
-			} else {
-				null
-			}
-
+		let image_object = await Image.findOne({_id:user_object.user_image})
+		final_result.push({
+			user_name:user_object.user_name,
+			user_image:base64_encode(image_object.image_filepath),
+			comment_text:user_object.text,
 		})
 
 	}))
 
-	// console.log('PROMISE RESULT 2')
-	// console.log(final_comments_payload)
-
-	Promise.all(list_of_promises)
-	.then(() => {
-
-		// console.log(final_comments_payload)
-		res.status(200).json( final_comments_payload );
-
-	})
-
+	// final_result.map((result) => {
+	// 	console.log(Object.keys(result))
+	// })
+	res.status(200).json( final_result );
 })
+
+
+// router.get('/get-all-comments-of-image', async function(req, res, next){
+
+// 	let list_of_promises = []
+
+// 	var image_with_comments = await Image.findOne({endpoint:req.query.endpoint}).
+// 	populate('comments').
+// 	then((image) => {
+
+// 		if ( image ){
+
+// 			return image.comments
+
+// 		} else {
+
+// 			null
+// 		}
+// 	})
+// 	.catch((err) => console.log(err))
+
+// 	console.log(image_with_comments)
+
+// 	list_of_promises.push( image_with_comments )
+
+// 	var users_list_who_commented = await Promise.all(image_with_comments.map(async (comment_object) => {
+// 	// find user from each like
+// 		return await User.findOne({_id:comment_object.user})
+// 		.then(async (user_object) => {
+
+// 			if (user_object){
+// 				console.log('USER FOUND')
+// 				console.log(user_object)
+// 				return {
+// 					// ...user_object, // NEVER SPREAD IN MONGOOSE, IT INCLUDES _doc and lots of other info
+// 					user_name:user_object.user_name,
+// 					user_image:user_object.user_image,
+// 					text:comment_object.text
+// 				}
+
+// 			} else {
+// 				null
+// 			}
+// 		})
+
+// 	}))
+
+// 	// console.log('PROMISE RESULT 1')
+// 	// console.log(users_list_who_commented)
+
+// // find image from user
+// 	var final_comments_payload = await Promise.all(users_list_who_commented.map(async (user_object) => {
+	
+// 		return await Image.findOne({_id:user_object.user_image})
+// 		.then(async (image_object) => {
+
+// 			if (image_object){
+
+// 				return {
+// 					user_name:user_object.user_name,
+// 					user_image:base64_encode(image_object.image_filepath),
+// 					comment_text:user_object.text,
+// 				}
+
+// 			} else {
+// 				null
+// 			}
+
+// 		})
+
+// 	}))
+
+// 	// console.log('PROMISE RESULT 2')
+// 	// console.log(final_comments_payload)
+
+// 	Promise.all(list_of_promises)
+// 	.then(() => {
+
+// 		// console.log(final_comments_payload)
+// 		res.status(200).json( final_comments_payload );
+
+// 	})
+
+// })
+
 
 // USED
 router.get('/get-all-likes-of-image',async function(req, res, next){
-
-	let list_of_promises = []
+	// console.log({endpoint: req.query.endpoint})
 
 // find image
-	var image_with_likes = await Image.findOne({endpoint:req.query.endpoint}).
-	populate('likes').
-	then((image_with_likes) => {
-
-		if ( image_with_likes ){
-
-			return image_with_likes.likes
-	
-		} else {
-
-			null
-
-		}
-
-	})
-
-	list_of_promises.push( image_with_likes )
+	var image_with_likes = await Image.findOne({endpoint:req.query.endpoint}).populate('likes')
 
 // find likes from blogpost
-	let users_list_who_liked = await Promise.all(image_with_likes.map(async (like_object) => {
-
+	let users_list_who_liked = await Promise.all(image_with_likes.likes.map(async (like_object) => {
 	// find user from each like
-		return await User.findOne({_id:like_object.user})
-		.then(async (user_object) => {
-
-			if (user_object){
-
-				return user_object
-
-			} else {
-				null
-			}
-		})
-		
+		let user_object = await User.findOne({_id:like_object.user})
+		return user_object
 	}))
-
-	// console.log('PROMISE RESULT 1')
-	// console.log(users_list_who_liked)
 
 // find image from user
+	let final_result = []
 	let final_liked_payload = await Promise.all(users_list_who_liked.map(async (user_object) => {
-	
-		return await Image.findOne({_id:user_object.user_image})
-		.then(async (image_object) => {
 
-			if (image_object){
-
-				return {
-					user_name:user_object.user_name,
-					user_image:base64_encode(image_object.image_filepath),
-				}
-
-			} else {
-				null
-			}
-
+		let image_object = await Image.findOne({_id:user_object.user_image})
+		final_result.push({
+			user_name:user_object.user_name,
+			user_image:base64_encode(image_object.image_filepath),
 		})
 
 	}))
 
-	// console.log('PROMISE RESULT 2')
-	// console.log(final_liked_payload)
+	// final_result.map((result) => {
+	// 	console.log(Object.keys(result))
+	// })
 
-	Promise.all(list_of_promises)
-	.then(() => {
-
-		// console.log(final_liked_payload)
-		res.status(200).json( final_liked_payload );
-
-	})
-
+	res.status(200).json( final_result );
 })
-
-
-
 
 
 // USED FOR CREATING COMMENT
 router.post('/create-comment-for-image', passport.authenticate('jwt', { session: false }), isAllowedSurfing, function(req, res, next){
 
 	console.log('CALLED')
+	console.log(comment_text)
+	console.log(image_endpoint)
 	var comment_text = req.body.comment_text	
 	var image_endpoint = req.body.image_endpoint
 
@@ -336,18 +328,35 @@ router.post('/create-comment-for-image', passport.authenticate('jwt', { session:
 	.then((user) => {
 					
 		newComment.user = user
+		user.images_comments.push(newComment)
+
 
 	// finding BlogPost object
 		Image.findOne({endpoint: image_endpoint})
 		.then((image) => {
 
 			image.comments.push( newComment )
+
+			newComment.image = image
 			
 			newComment.save(function (err, newComment) {
 				if (err) return console.log(err);
 			})
 
-			image.save((err, image) => res.status(200).json(image) )
+			console.log({title:image.title})
+			image.save((err, image) => {
+
+				// image.image_filepath = base64_encode( image.image_filepath )
+				res.status(200).json({
+					category: image.category,
+					image_filepath: base64_encode( image.image_filepath ),
+					title: image.title,
+					endpoint: image.endpoint,
+					timestamp_of_uploading: image.timestamp_of_uploading,
+					description: image.description,
+					all_tags: image.all_tags,
+				})
+			})
 		})
 		.catch((err1) => {
 			console.log(err1)
@@ -364,16 +373,19 @@ router.post('/create-comment-for-image', passport.authenticate('jwt', { session:
 // will be used for creating like
 router.post('/create-like-for-image', passport.authenticate('jwt', { session: false }), isAllowedSurfing, function(req, res, next){
 
+	console.log('attempting to create like')
+
 	var image_endpoint = req.body.image_endpoint
 
-	var newLike = new Like({
-		_id: new mongoose.Types.ObjectId(),
-	})
 
 	User.findOne({ phone_number: req.user.user_object.phone_number })
 	.then((user) => {
 					
+	var newLike = new Like({
+		_id: new mongoose.Types.ObjectId(),
+	})
 		newLike.user = user
+		user.images_likes.push(newLike)
 
 	// finding image object
 		Image.findOne({endpoint: image_endpoint})
@@ -381,11 +393,24 @@ router.post('/create-like-for-image', passport.authenticate('jwt', { session: fa
 
 			image.likes.push( newLike )
 
+			newLike.image = image
+
 			newLike.save(function (err, newLike) {
 				if (err) return console.log(err);
 			})
 			console.log('LIKE CREATED FOR IMAGE')	
-			image.save((err, image) => res.status(200).json(image) )
+			image.save((err, image) => {
+				// image.image_filepath = base64_encode( image.image_filepath )
+				res.status(200).json({
+					category: image.category,
+					image_filepath: base64_encode( image.image_filepath ),
+					title: image.title,
+					endpoint: image.endpoint,
+					timestamp_of_uploading: image.timestamp_of_uploading,
+					description: image.description,
+					all_tags: image.all_tags,
+				})
+			})
 		})
 		.catch((err1) => {
 			console.log(err1)
@@ -409,8 +434,8 @@ router.get('/images-list-with-children', function(req, res, next){
 	Image.
 	find().
 	limit(10).
-	populate('comments').
-	populate('likes').
+	// populate('comments'). // not needed since Image stored total number of likes and comments in it
+	// populate('likes').
 	// populate('user').
 	then((images)=>{
 		var newImages_list = []
@@ -421,6 +446,8 @@ router.get('/images-list-with-children', function(req, res, next){
 			newImage.image_filepath = base64_encode( image['image_filepath'] )
 			newImage.title = image['title']
 			newImage.endpoint = image['endpoint']
+			newImage.comments_quantity = image.total_comments
+			newImage.likes_quantity = image.total_likes
 
 			newImages_list.push({...newImage})
 			newImage = {}
@@ -674,25 +701,25 @@ router.get('/top-n-like-of-image', function(req, res, next){
 
 // get n childs of image
 
-router.get('/get-all-likes-of-image', function(req, res, next){
-	Image.findOne({endpoint:req.query.endpoint}).
-	populate('likes').
-	exec(function (err, image_with_likes) {
+// router.get('/get-all-likes-of-image', function(req, res, next){
+// 	Image.findOne({endpoint:req.query.endpoint}).
+// 	populate('likes').
+// 	exec(function (err, image_with_likes) {
 
-		if (err) return console.log(err);
+// 		if (err) return console.log(err);
 
-		if ( image_with_likes ){
+// 		if ( image_with_likes ){
 
-			var likes = image_with_likes.likes
-			res.status(200).json( likes );
+// 			var likes = image_with_likes.likes
+// 			res.status(200).json( likes );
 
-		} else {
+// 		} else {
 
-			res.status(500).json({msg: 'sorry no image found'});				
+// 			res.status(500).json({msg: 'sorry no image found'});				
 
-		}
-	})
-})
+// 		}
+// 	})
+// })
 
 
 // create image with undefined
@@ -735,57 +762,57 @@ router.get('/get-all-likes-of-image', function(req, res, next){
 
 // create Like for image
 
-router.post('/create-like-for-image', function(req, res, next){
+// router.post('/create-like-for-image', function(req, res, next){
 
-	var like_object = req.body.like_object	
-	var image_object = req.body.image_object
-	var user_object = req.body.user_object
+// 	var like_object = req.body.like_object	
+// 	var image_object = req.body.image_object
+// 	var user_object = req.body.user_object
 
-	var newLike = new Like({
-		_id: new mongoose.Types.ObjectId(),
-		...like_object
-	})
+// 	var newLike = new Like({
+// 		_id: new mongoose.Types.ObjectId(),
+// 		...like_object
+// 	})
 
-	newLike.save(function (err, newLike) {
-		if (err) return console.log(err);
+// 	newLike.save(function (err, newLike) {
+// 		if (err) return console.log(err);
 
-			User.findOne({...user_object})
-		.then((user) => {
+// 			User.findOne({...user_object})
+// 		.then((user) => {
 			
-			if( !user ){
+// 			if( !user ){
 			
-				console.log('no User found')
+// 				console.log('no User found')
 			
-			} else {
+// 			} else {
 			
-				newLike.user = user
+// 				newLike.user = user
 
-			// finding Image object
-					Image.findOne({endpoint: image_object.endpoint})
-				.then((image) => {
+// 			// finding Image object
+// 					Image.findOne({endpoint: image_object.endpoint})
+// 				.then((image) => {
 
-					if ( !image ){
+// 					if ( !image ){
 
-						console.log('no Image found')
+// 						console.log('no Image found')
 
-					} else {
+// 					} else {
 
-						image.likes.push( newLike )
-						image.save((err, blogpost) => res.status(200).json(image) )
+// 						image.likes.push( newLike )
+// 						image.save((err, blogpost) => res.status(200).json(image) )
 						
-					}
-				})
-				.catch((err1) => {
-					console.log(err1)
-				})
+// 					}
+// 				})
+// 				.catch((err1) => {
+// 					console.log(err1)
+// 				})
 
-			}
-		})
-		.catch((err) => {
-			console.log(err)
-		})
-	})
-})
+// 			}
+// 		})
+// 		.catch((err) => {
+// 			console.log(err)
+// 		})
+// 	})
+// })
 
 
 

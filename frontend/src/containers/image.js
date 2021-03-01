@@ -37,9 +37,9 @@ class ImageContainer extends Component {
 	componentDidMount() {
 		
 // FETCHING DATA FOR COMPONENT
-		axios.get(utils.baseUrl + '/images/images-list-with-children',)
+		axios.get(utils.baseUrl + '/image/images-list-with-children',)
 		.then((response) => {
-			// console.log(response.data)
+			console.log(response.data)
 			this.props.set_fetched_images(response.data)
 		})
 		.catch((error) => {
@@ -107,8 +107,8 @@ class ImageContainer extends Component {
 					likes_quantity = { item.likes_quantity }
 					likes = { item.likes || [] }
 
-					user_quantity = { item.user_quantity }
-					user = { item.user || [] }
+					// user_quantity = { item.user_quantity }
+					// user = { item.user || [] }
 				/>
   			)
 

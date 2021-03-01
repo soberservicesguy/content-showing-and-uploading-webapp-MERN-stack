@@ -51,7 +51,7 @@ class ImageCard extends Component {
 			expanded: false,
 			comments: [],
 			likes: [],
-			users: [],
+			// users: [],
 
 			showOnlyQuantityForComment:true,
 			showOnlyQuantityForLike:true,
@@ -59,46 +59,45 @@ class ImageCard extends Component {
 		}
 	}
 
-	fetchAllComment(endpoint) {
+	// fetchAllComment(endpoint) {
 
-		axios.get(utils.baseUrl + '/images/get-all-comments-of-image', 
-			{
-			    params: {
-					endpoint: endpoint,
-					child_count: 3,
-			    }
-			})
-		.then((response) => {
-			// console.log(response.data);
-			this.setState( prev => ({...prev, comments: ( prev.comments.length === 0 ) ? response.data : [] }) )
+	// 	axios.get(utils.baseUrl + '/image/get-all-comments-of-image', 
+	// 		{
+	// 		    params: {
+	// 				endpoint: endpoint,
+	// 				child_count: 3,
+	// 		    }
+	// 		})
+	// 	.then((response) => {
+
+	// 		this.setState( prev => ({...prev, comments: ( prev.comments.length === 0 ) ? response.data : [] }) )
 			
-		})
-		.catch((error) => {
-			console.log(error);
-		})
+	// 	})
+	// 	.catch((error) => {
+	// 		console.log(error);
+	// 	})
 		
-	}
+	// }
 
 
-	fetchAllLike(endpoint) {
+	// fetchAllLike(endpoint) {
+	// 	axios.get(utils.baseUrl + '/image/get-all-likes-of-image', 
+	// 		{
+	// 		    params: {
+	// 				endpoint: endpoint,
+	// 				child_count: 3,
+	// 		    }
+	// 		})
+	// 	.then((response) => {
 
-		axios.get(utils.baseUrl + '/images/get-all-likes-of-image', 
-			{
-			    params: {
-					endpoint: endpoint,
-					child_count: 3,
-			    }
-			})
-		.then((response) => {
-			// console.log(response.data);
-			this.setState( prev => ({...prev, likes: ( prev.likes.length === 0 ) ? response.data : [] }) )
+	// 		this.setState( prev => ({...prev, likes: ( prev.likes.length === 0 ) ? response.data : [] }) )
 			
-		})
-		.catch((error) => {
-			console.log(error);
-		})
+	// 	})
+	// 	.catch((error) => {
+	// 		console.log(error);
+	// 	})
 		
-	}
+	// }
 
 // COMPONENT DID MOUNT
 	componentDidMount() {
@@ -123,12 +122,16 @@ class ImageCard extends Component {
 				marginTop:10,
 			},
 			showSocialsButton:{
+				color: 'inherit', 
+				textDecoration: 'inherit',
+
 				outline:'none',
 				background:'none',
 				borderWidth:0,
+				color:'orange',
 				// borderStyle:'solid',
 				// borderColor:'white',
-				// backgroundColor:'white'
+				// backgroundColor:'white',
 			},
 			createSocialObjectsContainer:{
 				width:'90%',
@@ -170,24 +173,37 @@ class ImageCard extends Component {
 								style={styles.showSocialsContainer}
 							>
 								{/* 2nd show individual summary of childs */}
-
 								<div>
-									<button 
+									<ShowLikesOfImage
+										dataPayloadFromParent = { this.props.dataPayloadFromParent }
+										likes_quantity = { this.props.likes_quantity }
+									/>
+								</div>
+								<div>
+									<ShowCommentsOfImage
+										dataPayloadFromParent = { this.props.dataPayloadFromParent }
+										comments_quantity = { this.props.comments_quantity }
+									/>
+								</div>
+								{/*<div>
+							  		<Link 
+							  			to={{pathname:`/images/:id=${this.props.dataPayloadFromParent.endpoint}`, state:{likes:this.state.likes} }} 
 										style={styles.showSocialsButton}
 										onClick={ () => this.fetchAllLike( this.props.dataPayloadFromParent.endpoint ) }
 									>
-										<ThumbUp style={{color:'grey', fontSize:30, marginRight:20,}}/> {this.props.likes_quantity} likes							
-									</button>
-								</div>
+										<ThumbUp style={{color:'orange', fontSize:30, marginRight:10,}}/> {this.props.likes_quantity} likes							
+									</Link>
+								</div>*/}
 
-								<div>
-									<button 
+								{/*<div>
+							  		<Link 
+							  			to={{pathname:`/images/:id=${this.props.dataPayloadFromParent.endpoint}`, state:{comments:this.state.comments} }} 
 										style={styles.showSocialsButton}
 										onClick={ () => this.fetchAllComment( this.props.dataPayloadFromParent.endpoint ) }
 									>
-										<Comment style={{color:'grey', fontSize:30, marginRight:20,}}/> {this.props.comments_quantity} likes
-									</button>
-								</div>
+										<Comment style={{color:'orange', fontSize:30, marginRight:10,}}/> {this.props.comments_quantity} comments
+									</Link>
+								</div>*/}
 
 							{/*	<SummarizeCommentsOfImage
 				  					showOnlyQuantity= { false }
@@ -202,16 +218,17 @@ class ImageCard extends Component {
 				  			</div>
 
 
-							<div style={{
+{/*							<div style={{
 								marginBottom: 25,
 							}}>
 								<ShowLikesOfImage
-									dataPayloadFromParent = { this.props.likes }
+									dataPayloadFromParent = { this.state.likes }
+									likes_quantity = { this.props.likes_quantity }
 								/>
 								<ShowCommentsOfImage
-									dataPayloadFromParent = { this.props.comments }
+									dataPayloadFromParent = { this.state.comments }
 								/>
-							</div>
+							</div>*/}
 
 							<div style={styles.createSocialObjectsContainer}>
 								{/* 4th create individual child options like comment / like */}					
@@ -222,6 +239,16 @@ class ImageCard extends Component {
 				  				<ConnectedCreateLikeForImage
 				  					parentDetailsPayload = { this.props.dataPayloadFromParent }
 				  				/>
+				  			</div>
+				  			<div>
+				  				<p>
+				  					asdsa{this.state.likes}
+				  				</p>
+				  			</div>
+				  			<div>
+				  				<p>
+				  					asdas{this.state.comments.length}
+				  				</p>
 				  			</div>
 
 			  			</div>

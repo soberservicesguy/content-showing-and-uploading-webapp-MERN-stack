@@ -53,7 +53,7 @@ class CreateLikeForImage extends Component {
 			this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))
 
 			// redirecting
-			return <Redirect to = {{ pathname: "/Individual-Image" }} />
+			return <Redirect to = {{ pathname: `/images/:id=${this.props.parentDetailsPayload.endpoint}` }} />
 
 		} else {
 
@@ -68,7 +68,8 @@ class CreateLikeForImage extends Component {
 							let setResponseInCurrentImage = (arg) => this.props.set_current_image(arg)
 							let redirectToNewImage = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
 
-							axios.post(utils.baseUrl + '/images/create-like-for-image', 
+
+							axios.post(utils.baseUrl + '/image/create-like-for-image', 
 								{
 									image_endpoint: this.props.parentDetailsPayload.endpoint,
 								})
@@ -76,6 +77,7 @@ class CreateLikeForImage extends Component {
 								console.log(response.data) // current blogpost screen data
 								
 								// set to current parent object
+								console.log(response.data)
 								setResponseInCurrentImage(response.data)
 
 								// change route to current_blogpost	
@@ -88,7 +90,7 @@ class CreateLikeForImage extends Component {
 
 						}}
 					>
-						<ThumbUp style={{color:'grey', fontSize:30,}}/>
+						<ThumbUp style={{color:'orange', fontSize:30,}}/>
 					</button>
 				</div>
 			);

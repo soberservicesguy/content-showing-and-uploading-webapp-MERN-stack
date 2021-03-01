@@ -96,8 +96,6 @@ router.post('/signup-and-get-privileges', (req, res, next) => {
 
 						});
 
-						await newImage.save()
-						// await new Image({args}).save shortcut
 
 					} catch (image_error){
 						res.status(404).json({ success: false, msg: 'couldnt create image database entry'})
@@ -189,7 +187,9 @@ router.post('/signup-and-get-privileges', (req, res, next) => {
 						}
 
 					}))
-
+					// await new Image({args}).save shortcut
+					newImage.user = newUser
+					await newImage.save()
 					await newUser.save()
 					res.status(200).json({ success: true, msg: 'new user saved' });
 

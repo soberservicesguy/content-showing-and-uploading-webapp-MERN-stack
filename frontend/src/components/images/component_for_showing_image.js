@@ -35,11 +35,14 @@ class ComponentForShowingImage extends Component {
 		const data = this.props.dataPayloadFromParent // data being plugged from parent flatlist
 		var base64Image = "data:image/jpeg;base64," + data.image_filepath
 
+		// console.log(Object.keys(this.props.dataPayloadFromParent))
+
 		const styles = {
 
 			imageContainer:{
-				// backgroundImage: `url("${base64Image}")`,
-				backgroundImage: `url("${utils.image}")`,
+				backgroundImage: `url("${base64Image}")`,
+				// backgroundImage: `url("${utils.image}")`,
+
 				backgroundColor: '#cccccc',
 				backgroundPosition: 'center',
 				backgroundRepeat: 'no-repeat',
