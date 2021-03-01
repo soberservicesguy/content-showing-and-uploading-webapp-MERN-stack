@@ -121,6 +121,8 @@ class CreateCommentForImage extends Component {
 				outline:'none',
 				color:'white',
 				fontWeight:'bold',
+				textAlign:'right',
+
 			},
 
 		}
@@ -186,7 +188,7 @@ class CreateCommentForImage extends Component {
 
 								}}
 							>
-								<Comment style={{color:'orange', fontSize:30, marginRight:40,}}/>
+								<Comment style={{color:'orange', fontSize:30, marginRight:10,}}/>
 							</button>
 
 						</div>

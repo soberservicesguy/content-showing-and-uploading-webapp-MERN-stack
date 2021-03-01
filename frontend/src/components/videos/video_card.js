@@ -53,46 +53,46 @@ class VideoCard extends Component {
 
 	}
 
-	fetchAllComment(endpoint) {
+	// fetchAllComment(endpoint) {
 
-		axios.get(utils.baseUrl + '/videos/get-all-comments-of-video', 
-			{
-			    params: {
-					endpoint: endpoint,
-					child_count: 3,
-			    }
-			})
-		.then((response) => {
-			// console.log(response.data);
-			this.setState( prev => ({...prev, comments: ( prev.comments.length === 0 ) ? response.data : [] }) )
+	// 	axios.get(utils.baseUrl + '/videos/get-all-comments-of-video', 
+	// 		{
+	// 		    params: {
+	// 				endpoint: endpoint,
+	// 				child_count: 3,
+	// 		    }
+	// 		})
+	// 	.then((response) => {
+	// 		// console.log(response.data);
+	// 		this.setState( prev => ({...prev, comments: ( prev.comments.length === 0 ) ? response.data : [] }) )
 			
-		})
-		.catch((error) => {
-			console.log(error);
-		})
+	// 	})
+	// 	.catch((error) => {
+	// 		console.log(error);
+	// 	})
 		
-	}
+	// }
 
 
-	fetchAllLike(endpoint) {
+	// fetchAllLike(endpoint) {
 
-		axios.get(utils.baseUrl + '/videos/get-all-likes-of-video', 
-			{
-			    params: {
-					endpoint: endpoint,
-					child_count: 3,
-			    }
-			})
-		.then((response) => {
-			// console.log(response.data);
-			this.setState( prev => ({...prev, likes: ( prev.likes.length === 0 ) ? response.data : [] }) )
+	// 	axios.get(utils.baseUrl + '/videos/get-all-likes-of-video', 
+	// 		{
+	// 		    params: {
+	// 				endpoint: endpoint,
+	// 				child_count: 3,
+	// 		    }
+	// 		})
+	// 	.then((response) => {
+	// 		// console.log(response.data);
+	// 		this.setState( prev => ({...prev, likes: ( prev.likes.length === 0 ) ? response.data : [] }) )
 			
-		})
-		.catch((error) => {
-			console.log(error);
-		})
+	// 	})
+	// 	.catch((error) => {
+	// 		console.log(error);
+	// 	})
 		
-	}
+	// }
 
 
 
@@ -163,8 +163,7 @@ class VideoCard extends Component {
 		  				margin:'auto',
 		  			}}
 	  			>
-					<div style={styles.showSocialsContainer}>
-						{/* 2nd show individual summary of childs */}
+					{/*<div style={styles.showSocialsContainer}>
 
 						<div>
 							<button 
@@ -184,17 +183,17 @@ class VideoCard extends Component {
 							</button>
 						</div>
 
-		  			</div>
+		  			</div>*/}
 
-					<div style={{
-						marginBottom: 25,
-					}}>
+					<div style={styles.showSocialsContainer}>
 						<ShowLikesOfVideo
-							dataPayloadFromParent = { this.state.likes }
+							dataPayloadFromParent = { this.props.dataPayloadFromParent }
+							likes_quantity = { this.props.likes_quantity }
 						/>
 
 						<ShowCommentsOfVideo
-							dataPayloadFromParent = { this.state.comments }
+							dataPayloadFromParent = { this.props.dataPayloadFromParent }
+							comments_quantity = { this.props.comments_quantity }
 						/>
 
 					</div>

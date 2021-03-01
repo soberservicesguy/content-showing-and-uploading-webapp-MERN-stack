@@ -31,7 +31,9 @@ class CreateVideo extends Component {
 			endpoint: '',
 			description: '',
 			// timestamp_of_uploading: '',
-			all_tags: '',		
+			all_tags: '',
+
+			new_video_id:null,		
 		}
 
 	}
@@ -136,7 +138,7 @@ class CreateVideo extends Component {
 			this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))
 
 			// redirecting
-			return <Redirect to = {{ pathname: "/Individual-Video" }} />
+			return <Redirect to = {{ pathname: `/videos/:id=${this.state.new_video_id}` }} />
 
 		} else {
 
@@ -214,7 +216,7 @@ class CreateVideo extends Component {
 								<label htmlFor="myVideoInput">
 									{/* below div will act as myInput button*/}
 									<div style={styles.uploadImageButton}>
-										Upload Image
+										Upload Video
 									</div>
 								</label>
 								<input
@@ -240,6 +242,7 @@ class CreateVideo extends Component {
 
 										let setResponseInCurrentVideo = (arg) => this.props.set_current_video(arg)
 										let redirectToNewVideo = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
+										let setNewVideoIDInState = (response) => this.setState(prev => ({...prev, new_video_id: response.data.endpoint }))	
 
 										// in formData send individual variables and not a complete object
 										// formData.append('video_object', video_object) // THIS WILL NOT WORK, SENT VARS INDIVIDUALLY
@@ -253,12 +256,14 @@ class CreateVideo extends Component {
 											formData.append('videos_uploaded_by_users', this.state.video_filepath, this.state.video_filepath.name)
 										}
 
-										axios.post(utils.baseUrl + '/video-uploads/protected-video-upload', formData)
+										axios.post(utils.baseUrl + '/video/create-video-with-user', formData)
 										.then(function (response) {
 											console.log(response.data) // current video screen data
 											
+											setNewVideoIDInState(response)
+
 											// set to current parent object
-											setResponseInCurrentVideo(response.data.video_endpoint)
+											setResponseInCurrentVideo(response.data)
 
 											// change route to current_video
 											redirectToNewVideo()

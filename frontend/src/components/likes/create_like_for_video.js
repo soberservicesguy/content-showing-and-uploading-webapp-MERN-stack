@@ -53,7 +53,7 @@ class CreateLikeForVideo extends Component {
 			this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))
 
 			// redirecting
-			return <Redirect to = {{ pathname: "/Individual-Video" }} />
+			return <Redirect to = {{ pathname: `/videos/:id=${this.props.parentDetailsPayload.endpoint}` }} />
 
 		} else {
 
@@ -68,7 +68,7 @@ class CreateLikeForVideo extends Component {
 							let setResponseInCurrentVideo = (arg) => this.props.set_current_video(arg)
 							let redirectToNewVideo = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
 
-							axios.post(utils.baseUrl + '/videos/create-like-for-video', 
+							axios.post(utils.baseUrl + '/video/create-like-for-video', 
 								{
 									video_endpoint: this.props.parentDetailsPayload.endpoint,
 								})
@@ -76,7 +76,7 @@ class CreateLikeForVideo extends Component {
 								console.log(response.data.endpoint) // current blogpost screen data
 								
 								// set to current parent object
-								setResponseInCurrentVideo(response.data.endpoint)
+								setResponseInCurrentVideo(response.data)
 
 								// change route to current_blogpost	
 								redirectToNewVideo()							

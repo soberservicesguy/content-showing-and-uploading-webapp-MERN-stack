@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
@@ -11,6 +10,20 @@ import {
 } from "@material-ui/core";
 // IMPORT responsiveness hook
 import withResponsiveness from "../responsiveness_hook";
+
+import {
+	ShowCommentsOfImage,
+} from "../components/comments/"
+
+import {
+	ShowLikesOfImage,
+} from "../components/likes/"
+
+import {
+	ConnectedCreateCommentForImage,
+	ConnectedCreateLikeForImage,
+} from "../redux_stuff/connected_components"
+
 
 import { withRouter } from "react-router-dom";
 
@@ -37,7 +50,8 @@ class IndividualIndividualImage extends Component {
 		const styles = {
 			outerContainer:{
 				margin:'auto',
-				width:'80%'
+				width:'80%',
+				// backgroundColor: '#000000'
 			},
 			descriptionText:{
 				fontWeight:'normal',
@@ -69,6 +83,33 @@ class IndividualIndividualImage extends Component {
 				color:'grey',								
 			},
 
+			showSocialsContainer:{
+				display:'flex',
+				flexDirection:'row',
+				justifyContent: 'space-between',
+				width:'100%',
+				margin:'auto',
+				marginTop:10,
+			},
+			createSocialObjectsContainer:{
+				width:'90%',
+				margin:'auto',
+				display:'flex',
+				flexDirection:'row',
+				justifyContent: 'center',
+				alignItems: 'center',
+				marginTop:20,
+				paddingBottom:20,
+
+				borderWidth:0,
+				borderTopWidth:1,
+				borderStyle:'solid',
+				borderColor:'#eee',
+				paddingTop:20,
+			},
+
+
+
 		}
 
 	  	const {_xs, _sm, _md, _lg, _xl} = this.props
@@ -94,7 +135,8 @@ class IndividualIndividualImage extends Component {
 		  				// src={utils.image}
 		  				alt="" 
 		  				style={{
-		  					// width:'100%', height:600, 
+		  					width:'100%', 
+		  					// height:600, 
 		  					resizeMode: "stretch"
 		  				}}
 	  				/>
@@ -111,6 +153,42 @@ class IndividualIndividualImage extends Component {
 	  			<p style={styles.allTagsText}>
 	  				{data.all_tags}
 	  			</p>
+
+
+	  			<div
+	  				style={styles.showSocialsContainer}
+	  			>
+	  				{/* 2nd show individual summary of childs */}
+	  				<div>
+	  					<ShowLikesOfImage
+	  						dataPayloadFromParent = { this.props.current_image }
+	  						likes_quantity = { this.props.current_image.likes_quantity }
+	  					/>
+	  				</div>
+	  				<div>
+	  					<ShowCommentsOfImage
+	  						dataPayloadFromParent = { this.props.current_image }
+	  						comments_quantity = { this.props.current_image.comments_quantity }
+	  					/>
+	  				</div>
+  				</div>
+
+				<div style={styles.createSocialObjectsContainer}>
+					{/* 4th create individual child options like comment / like */}					
+
+					<div style={{flex:1}}>
+		  				<ConnectedCreateCommentForImage
+		  					parentDetailsPayload = { this.props.current_image }
+		  				/>					
+					</div>
+
+					<div style={{flexBasis:100}}>
+		  				<ConnectedCreateLikeForImage
+		  					parentDetailsPayload = { this.props.current_image }
+		  				/>
+		  			</div>
+	  			</div>
+
 	
 	  		</div>
 		);

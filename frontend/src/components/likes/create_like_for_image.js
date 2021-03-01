@@ -60,7 +60,10 @@ class CreateLikeForImage extends Component {
 		return (
 			// e.g a social post, textinput which lets user to enter text, takes persons id as assigned object
 
-				<div>
+				<div style={{
+					width:30,
+					margin:'auto'
+				}}>
 
 					<button style={styles.buttonWithoutBG}
 						onClick={ () => {

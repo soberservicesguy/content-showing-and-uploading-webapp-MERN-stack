@@ -130,7 +130,7 @@ class CreateCommentForVideo extends Component {
 			this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))
 
 			// redirecting
-			return <Redirect to = {{ pathname: "/Individual-Video" }} />
+			return <Redirect to = {{ pathname: `/videos/:id=${this.props.parentDetailsPayload.endpoint}` }} />
 
 		} else {
 
@@ -165,7 +165,7 @@ class CreateCommentForVideo extends Component {
 									let setResponseInCurrentVideo = (arg) => this.props.set_current_video(arg)
 									let redirectToNewVideo = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
 
-									axios.post(utils.baseUrl + '/videos/create-comment-for-video', 
+									axios.post(utils.baseUrl + '/video/create-comment-for-video', 
 										{
 											comment_text: this.state.text,
 											video_endpoint: this.props.parentDetailsPayload.endpoint,
@@ -174,7 +174,7 @@ class CreateCommentForVideo extends Component {
 										console.log(response.data.endpoint) // current image screen data
 										
 										// set to current parent object
-										setResponseInCurrentVideo(response.data.endpoint)
+										setResponseInCurrentVideo(response.data)
 
 										// change route to current_image	
 										redirectToNewVideo()							

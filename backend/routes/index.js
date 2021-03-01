@@ -1,14 +1,14 @@
 const router = require('express').Router();
 
 router.use('/users', require('./users/users'));
-router.use('/video-stream', require('./videos/video_stream'));
 
 router.use('/push_notifications', require('./push_notifications/push_notifications'));
 router.use('/paypal_payments', require('./paypal_payments/paypal_payments'));
 router.use('/stripe_payments', require('./stripe_payments/stripe_payments'));
 
 router.use('/blogpostings', require('./blogpost/blogpost'));
-router.use('/videos', require('./videos/videos'));
+router.use('/video', require('./video_routes/videos'));
+router.use('/video', require('./video_routes/video_stream'));
 router.use('/image', require('./image_routes/image'));
 
 // router.use('/avatar-uploads', require('./uploads/upload_user_avatar_image'));

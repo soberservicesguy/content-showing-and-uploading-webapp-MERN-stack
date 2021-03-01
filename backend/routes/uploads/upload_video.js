@@ -98,7 +98,7 @@ router.post('/protected-video-upload', passport.authenticate('jwt', { session: f
 					// filename: 'name-of-file.png', // if single snapshot is needed
 					// timemarks: [ '00:00:02.000', '6' ], 
 					// Will take screenshots at 20%, 40%, 60% and 80% of the video
-					count: 4,
+					// count: 4,
 					filenames: [
 						`${filename_used_to_store_video_in_assets_without_format}1.png`, 
 						`${filename_used_to_store_video_in_assets_without_format}2.png`, 

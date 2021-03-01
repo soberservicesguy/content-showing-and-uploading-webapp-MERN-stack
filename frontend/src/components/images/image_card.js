@@ -25,8 +25,9 @@ import {
 } from "../comments/"
 
 import {
-	ConnectedCreateCommentForImage,
 	ConnectedComponentForShowingImage,
+	ConnectedCreateCommentForImage,
+	ConnectedCreateLikeForImage,
 } from "../../redux_stuff/connected_components"
 
 
@@ -34,10 +35,6 @@ import {
 	SummarizeLikesOfImage,
 	ShowLikesOfImage,
 } from "../likes/"
-
-import {
-	ConnectedCreateLikeForImage,
-} from "../../redux_stuff/connected_components"
 
 import Comment from '@material-ui/icons/Comment';
 import ThumbUp from '@material-ui/icons/ThumbUp';
@@ -239,16 +236,6 @@ class ImageCard extends Component {
 				  				<ConnectedCreateLikeForImage
 				  					parentDetailsPayload = { this.props.dataPayloadFromParent }
 				  				/>
-				  			</div>
-				  			<div>
-				  				<p>
-				  					asdsa{this.state.likes}
-				  				</p>
-				  			</div>
-				  			<div>
-				  				<p>
-				  					asdas{this.state.comments.length}
-				  				</p>
 				  			</div>
 
 			  			</div>

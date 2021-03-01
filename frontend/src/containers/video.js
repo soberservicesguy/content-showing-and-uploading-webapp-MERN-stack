@@ -31,7 +31,7 @@ class VideoContainer extends Component {
 		// this.props.allow_videos_privilege()
 		
 // FETCHING DATA FOR COMPONENT
-			axios.get(utils.baseUrl + '/videos/videos-list-with-children',)
+			axios.get(utils.baseUrl + '/video/videos-list-with-children',)
 			.then((response) => {
 				this.props.set_fetched_videos(response.data)
 			})
@@ -65,10 +65,10 @@ class VideoContainer extends Component {
 		return (
 
 			<Grid container direction="row">
-				{console.log(this.props.isAllowedVideosControl)}
+
 				{(this.props.isAllowedVideosControl) ? (
 				
-					<Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+					<Grid item xs={12}>
 			  			<ConnectedCreateVideo/>
 			  		</Grid>
 
@@ -89,8 +89,8 @@ class VideoContainer extends Component {
 							likes_quantity = { item.likes_quantity }
 							likes = { item.likes || [] }
 
-							user_quantity = { item.user_quantity }
-							user = { item.user || [] }
+							// user_quantity = { item.user_quantity }
+							// user = { item.user || [] }
 						
 						/>
 					</Grid>

@@ -74,6 +74,8 @@ class IndividualIndividualVideo extends Component {
 		}
 
 
+		console.log(this.props.current_video.endpoint)
+
 	  	const {_xs, _sm, _md, _lg, _xl} = this.props
 
 		  		// <ReactPlayer 
@@ -89,7 +91,7 @@ class IndividualIndividualVideo extends Component {
 
 		  		<video 
 			  		style={styles.videoStyle}
-			  		src = {`${utils.baseUrl}/video-stream/video?endpoint=${this.props.current_video.endpoint}`} 
+			  		src = {`${utils.baseUrl}/video/video-streaming?endpoint=${this.props.current_video.endpoint}`} 
 			  		controls = {true}
 		  		/>
 

@@ -160,7 +160,7 @@ router.get('/get-all-comments-of-image', async function(req, res, next){
 
 // find likes from blogpost
 	let users_list_who_commented = await Promise.all(image_with_comments.comments.map(async (comment_object) => {
-	// find user from each like
+
 		let user_object = await User.findOne({_id:comment_object.user})
 
 		return {
@@ -313,9 +313,9 @@ router.get('/get-all-likes-of-image',async function(req, res, next){
 // USED FOR CREATING COMMENT
 router.post('/create-comment-for-image', passport.authenticate('jwt', { session: false }), isAllowedSurfing, function(req, res, next){
 
-	console.log('CALLED')
-	console.log(comment_text)
-	console.log(image_endpoint)
+	// console.log('CALLED')
+	// console.log(comment_text)
+	// console.log(image_endpoint)
 	var comment_text = req.body.comment_text	
 	var image_endpoint = req.body.image_endpoint
 
@@ -343,7 +343,7 @@ router.post('/create-comment-for-image', passport.authenticate('jwt', { session:
 				if (err) return console.log(err);
 			})
 
-			console.log({title:image.title})
+			// console.log({title:image.title})
 			image.save((err, image) => {
 
 				// image.image_filepath = base64_encode( image.image_filepath )
@@ -381,9 +381,10 @@ router.post('/create-like-for-image', passport.authenticate('jwt', { session: fa
 	User.findOne({ phone_number: req.user.user_object.phone_number })
 	.then((user) => {
 					
-	var newLike = new Like({
-		_id: new mongoose.Types.ObjectId(),
-	})
+		var newLike = new Like({
+			_id: new mongoose.Types.ObjectId(),
+		})
+		
 		newLike.user = user
 		user.images_likes.push(newLike)
 
