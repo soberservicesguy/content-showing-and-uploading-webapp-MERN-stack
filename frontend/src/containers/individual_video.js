@@ -14,6 +14,17 @@ import {
 // import { withRouter } from "react-router-dom";
 // import ReactPlayer from 'react-player'
 
+import {
+	ShowLikesOfVideo,
+} from "../components/likes"
+import {
+	ShowCommentsOfVideo
+} from "../components/comments"
+
+import {
+	ConnectedCreateCommentForVideo,
+	ConnectedCreateLikeForVideo,
+} from "../redux_stuff/connected_components"
 
 class IndividualIndividualVideo extends Component {
 	constructor(props) {
@@ -69,7 +80,34 @@ class IndividualIndividualVideo extends Component {
 			videoStyle:{
 				width:'100%',
 				height:400,
-			}
+			},
+
+			showSocialsContainer:{
+				display:'flex',
+				flexDirection:'row',
+				justifyContent: 'space-between',
+				width:'100%',
+				margin:'auto',
+				marginTop:10,
+			},
+			createSocialObjectsContainer:{
+				width:'90%',
+				margin:'auto',
+				display:'flex',
+				flexDirection:'row',
+				justifyContent: 'center',
+				alignItems: 'center',
+				marginTop:20,
+				paddingBottom:20,
+
+				borderWidth:0,
+				borderTopWidth:1,
+				borderStyle:'solid',
+				borderColor:'#eee',
+				paddingTop:20,
+			},
+
+
 
 		}
 
@@ -107,6 +145,43 @@ class IndividualIndividualVideo extends Component {
 	  				{this.props.current_video.all_tags}
 	  			</p>
 	  			
+
+	  			<div
+	  				style={styles.showSocialsContainer}
+	  			>
+	  				{/* 2nd show individual summary of childs */}
+	  				<div>
+	  					<ShowLikesOfVideo
+	  						dataPayloadFromParent = { this.props.current_video }
+	  						likes_quantity = { this.props.current_video.likes_quantity }
+	  					/>
+	  				</div>
+	  				<div>
+	  					<ShowCommentsOfVideo
+	  						dataPayloadFromParent = { this.props.current_video }
+	  						comments_quantity = { this.props.current_video.comments_quantity }
+	  					/>
+	  				</div>
+  				</div>
+
+				<div style={styles.createSocialObjectsContainer}>
+					{/* 4th create individual child options like comment / like */}					
+
+					<div style={{flex:1}}>
+		  				<ConnectedCreateCommentForVideo
+		  					parentDetailsPayload = { this.props.current_video }
+		  					redirectToNew = {false}  
+		  				/>					
+					</div>
+
+					<div style={{flexBasis:100}}>
+		  				<ConnectedCreateLikeForVideo
+		  					parentDetailsPayload = { this.props.current_video }
+		  					redirectToNew = {false}  
+		  				/>
+		  			</div>
+	  			</div>
+
 	  		</div>
 
 

@@ -179,12 +179,14 @@ class IndividualIndividualImage extends Component {
 					<div style={{flex:1}}>
 		  				<ConnectedCreateCommentForImage
 		  					parentDetailsPayload = { this.props.current_image }
+		  					redirectToNew = { false }
 		  				/>					
 					</div>
 
 					<div style={{flexBasis:100}}>
 		  				<ConnectedCreateLikeForImage
 		  					parentDetailsPayload = { this.props.current_image }
+		  					redirectToNew = { false }		  					
 		  				/>
 		  			</div>
 	  			</div>

@@ -82,8 +82,8 @@ class ComponentForShowingBlogPost extends Component {
 				
 				<div style={styles.imageContainer}>
 					<img 
-						// src={base64Image} 
-						src={utils.image}
+						src={base64Image} 
+						// src={utils.image}
 						alt="" 
 						style={styles.imageStyle}
 					/>

@@ -163,7 +163,7 @@ class CreateCommentForVideo extends Component {
 								onClick={ () => {
 
 									let setResponseInCurrentVideo = (arg) => this.props.set_current_video(arg)
-									let redirectToNewVideo = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
+									let redirectToNewVideo = () => (this.props.redirectToNew) ? this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false })) : null
 
 									axios.post(utils.baseUrl + '/video/create-comment-for-video', 
 										{
@@ -177,7 +177,7 @@ class CreateCommentForVideo extends Component {
 										setResponseInCurrentVideo(response.data)
 
 										// change route to current_image	
-										redirectToNewVideo()							
+																	
 
 									})
 									.catch(function (error) {

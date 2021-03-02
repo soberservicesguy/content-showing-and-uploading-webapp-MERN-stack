@@ -165,7 +165,7 @@ class CreateCommentForImage extends Component {
 								onClick={ () => {
 
 									let setResponseInCurrentImage = (arg) => this.props.set_current_image(arg)
-									let redirectToNewImage = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
+									let redirectToNewImage = () => (this.props.redirectToNew) ? this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false })) : null
 
 									axios.post(utils.baseUrl + '/image/create-comment-for-image', 
 										{

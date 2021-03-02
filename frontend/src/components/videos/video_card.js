@@ -203,9 +203,11 @@ class VideoCard extends Component {
 
 						<ConnectedCreateCommentForVideo
 							parentDetailsPayload = { this.props.dataPayloadFromParent }
+		  					redirectToNew = {true}  
 						/>					
 						<ConnectedCreateLikeForVideo
 							parentDetailsPayload = { this.props.dataPayloadFromParent }
+		  					redirectToNew = {true}  
 						/>
 
 		  			</div>

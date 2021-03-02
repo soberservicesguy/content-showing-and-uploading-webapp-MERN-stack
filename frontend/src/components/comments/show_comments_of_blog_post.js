@@ -21,28 +21,8 @@ import {
 import { withStyles } from '@material-ui/styles';
 import withResponsiveness from "../../responsiveness_hook";
 
-const styles = theme => ({
-	root: {
-		maxWidth: 380,
-	},
-	media: {
-		height: 0,
-		paddingTop: '56.25%', // 16:9
-	},
-	expand: {
-		transform: 'rotate(0deg)',
-		marginLeft: 'auto',
-		transition: theme.transitions.create('transform', {
-			duration: theme.transitions.duration.shortest,
-		}),
-	},
-	expandOpen: {
-		transform: 'rotate(180deg)',
-	},
-	avatar: {
-		// backgroundColor: red[500],
-	},
-});
+import Comment from '@material-ui/icons/Comment';
+
 
 class ShowCommentsOfBlogPost extends Component {
 	constructor(props) {
@@ -50,9 +30,34 @@ class ShowCommentsOfBlogPost extends Component {
 // STATE	
 		this.state = {
 			show_comment_modal: false,
+
+			comments:[],
 		}
 
 	}
+
+	fetchAllComment(endpoint) {
+
+		axios.get(utils.baseUrl + '/blogpostings/get-all-comments-of-blogpost', 
+			{
+			    params: {
+					endpoint: endpoint,
+					child_count: 3,
+			    }
+			})
+		.then((response) => {
+
+			// console.log('Called')
+			this.setState( prev => ({...prev, comments: ( prev.comments.length === 0 ) ? response.data : [] }) )
+			this.toggle_comment_modal()
+			
+		})
+		.catch((error) => {
+			console.log(error);
+		})
+		
+	}
+
 
 	toggle_comment_modal(){
 		this.setState(
@@ -72,24 +77,37 @@ class ShowCommentsOfBlogPost extends Component {
 
 	render() {
 
+		const styles = {
+			showSocialsButton:{
+				// color: 'inherit', 
+				// textDecoration: 'inherit',
+
+				outline:'none',
+				background:'none',
+				borderWidth:0,
+				color:'orange',
+				// borderStyle:'solid',
+				// borderColor:'white',
+				// backgroundColor:'white',
+			},
+
+		}
+
 		return (
 		// e.g a social post, textinput which lets user to enter text, takes persons id as assigned object
 			<div style={styles.outerContainer}>
 
+				<div>
+			  		<button 
+						style={styles.showSocialsButton}
+						onClick={ () => {
+							this.fetchAllComment( this.props.dataPayloadFromParent.endpoint )
+						}}
+					>
+						<Comment style={{color:'orange', fontSize:30, marginRight:10,}}/> {this.props.comments_quantity} comments
+					</button>
+				</div>
 
-	{/* showing Comment as expanded list is below */}
-				<Grid container direction="row" spacing={4} style={{backgroundColor: '#eee'}}>
-
-					{ this.props.dataPayloadFromParent.map((item, index) => (
-
-						<Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-							<ComponentForShowingComment
-								componentData = { item }
-							/>
-						</Grid>
-					))}
-
-				</Grid>
 
 {/* showing Comment as modal is below */}
 				
@@ -104,17 +122,27 @@ class ShowCommentsOfBlogPost extends Component {
 						// height:windowHeight, 
 					}}>
 		
-						<button onClick={() => this.toggle_comment_modal()} 
+						<button onClick={() => {
+							this.toggle_comment_modal()
+							this.setState( prev => ({...prev, comments: [] }) )
+						}}
 							style={{
-								// height:windowHeight * 0.1
-							}}>
+								outline:'none',
+								background:'none',
+								borderWidth:0,
+								backgroundColor: 'grey',
+								width:'100%',
+								fontWeight:'bold',
+								height:50,
+						}}>
+							Close Comments
 						</button>
 						
-						<Grid container direction="row" spacing={4} style={{backgroundColor: '#eee'}}>
+						<Grid container direction="column" style={{backgroundColor: '#eee', paddingTop:20}}>
 	
-							{ this.props.dataPayloadFromParent.map((item, index) => (
+							{ this.state.comments.map((item, index) => (
 
-								<Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+								<Grid item xs={12}>
 									<ComponentForShowingComment
 										componentData = { item }
 									/>
@@ -122,12 +150,7 @@ class ShowCommentsOfBlogPost extends Component {
 							))}
 
 						</Grid>
-		
-						<button onClick={() => this.toggle_comment_modal()} 
-							style={{
-								// height:windowHeight * 0.1
-							}}>
-						</button>
+
 					</div>
 				</Modal>
 
@@ -143,5 +166,4 @@ ShowCommentsOfBlogPost.defaultProps = {
 
 
 // export default ShowCommentsOfBlogPost // REMOVE withResponsiveness and withStyles as much as possible
-export default withResponsiveness(withStyles(styles)(ShowCommentsOfBlogPost))
-
+export default withResponsiveness(ShowCommentsOfBlogPost)

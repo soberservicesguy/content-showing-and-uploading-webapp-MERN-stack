@@ -53,7 +53,7 @@ class CreateLikeForBlogpost extends Component {
 			this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))
 
 			// redirecting
-			return <Redirect to = {{ pathname: "/Individual-BlogPost" }} />
+			return <Redirect to = {{ pathname: `/blogposts/:id=${this.props.parentDetailsPayload.endpoint}` }} />
 
 		} else {
 
@@ -66,7 +66,7 @@ class CreateLikeForBlogpost extends Component {
 						onClick={ () => {
 
 							let setResponseInCurrentBlogPost = (arg) => this.props.set_current_blogpost(arg)
-							let redirectToNewBlogPost = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
+							let redirectToNewBlogPost = () => (this.props.redirectToNew) ? this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false })) : null
 
 							axios.post(utils.baseUrl + '/blogpostings/create-like-for-blogpost', 
 								{

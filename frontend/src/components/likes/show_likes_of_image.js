@@ -95,9 +95,6 @@ class ShowLikesOfImage extends Component {
 		return (
 		// e.g a social post, textinput which lets user to enter text, takes persons id as assigned object
 			<div>
-
-
-			{/* showing Like as modal is below */}
 				
 				<div>
 			  		<button 

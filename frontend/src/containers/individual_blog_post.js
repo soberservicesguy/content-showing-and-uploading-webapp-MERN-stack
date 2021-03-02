@@ -13,6 +13,18 @@ import withResponsiveness from "../responsiveness_hook";
 
 import { withRouter } from "react-router-dom";
 
+import {
+	ShowLikesOfBlogPost,
+} from "../components/likes"
+
+import {
+	ShowCommentsOfBlogPost,
+} from "../components/comments"
+
+import {
+	ConnectedCreateCommentForBlogpost,
+	ConnectedCreateLikeForBlogpost,
+} from "../redux_stuff/connected_components"
 
 class IndividualIndividualBlogPost extends Component {
 	constructor(props) {
@@ -106,11 +118,38 @@ class IndividualIndividualBlogPost extends Component {
 				fontSize:15,
 				marginTop:30,
 				color:'grey',								
-			}
+			},
+
+
+			showSocialsContainer:{
+				display:'flex',
+				flexDirection:'row',
+				justifyContent: 'space-between',
+				width:'100%',
+				margin:'auto',
+				marginTop:10,
+			},
+			createSocialObjectsContainer:{
+				width:'90%',
+				margin:'auto',
+				display:'flex',
+				flexDirection:'row',
+				justifyContent: 'center',
+				alignItems: 'center',
+				marginTop:20,
+				paddingBottom:20,
+
+				borderWidth:0,
+				borderTopWidth:1,
+				borderStyle:'solid',
+				borderColor:'#eee',
+				paddingTop:20,
+			},
+
 
 		}
 
-		var base64Image = "data:image/jpeg;base64," + this.props.current_blogpost.image_main
+		var base64Image = "data:image/jpeg;base64," + this.props.current_blogpost.image_main_filepath
 		let { id } = this.props.match.params // use in render method
 		// console.log({id})
 
@@ -164,6 +203,44 @@ class IndividualIndividualBlogPost extends Component {
 					{this.props.current_blogpost.all_tags}
 				</p>
 				
+
+	  			<div
+	  				style={styles.showSocialsContainer}
+	  			>
+	  				{/* 2nd show individual summary of childs */}
+	  				<div>
+	  					<ShowLikesOfBlogPost
+	  						dataPayloadFromParent = { this.props.current_blogpost }
+	  						likes_quantity = { this.props.current_blogpost.likes_quantity }
+	  					/>
+	  				</div>
+	  				<div>
+	  					<ShowCommentsOfBlogPost
+	  						dataPayloadFromParent = { this.props.current_blogpost }
+	  						comments_quantity = { this.props.current_blogpost.comments_quantity }
+	  					/>
+	  				</div>
+  				</div>
+
+				<div style={styles.createSocialObjectsContainer}>
+					{/* 4th create individual child options like comment / like */}					
+
+					<div style={{flex:1}}>
+		  				<ConnectedCreateCommentForBlogpost
+		  					parentDetailsPayload = { this.props.current_blogpost }
+		  					redirectToNew = {false}  
+		  				/>					
+					</div>
+
+					<div style={{flexBasis:100}}>
+		  				<ConnectedCreateLikeForBlogpost
+		  					parentDetailsPayload = { this.props.current_blogpost }
+		  					redirectToNew = {false}  
+		  				/>
+		  			</div>
+	  			</div>
+
+
 			</div>
 
 		);

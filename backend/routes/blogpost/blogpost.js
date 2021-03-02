@@ -166,164 +166,64 @@ router.post('/create-blogpost-with-user', passport.authenticate('jwt', { session
 // USED 
 router.get('/get-all-comments-of-blogpost', async function(req, res, next){
 
-	let list_of_promises = []
+	var blogpost_with_comments = await BlogPost.findOne({endpoint:req.query.endpoint}).populate('comments')
 
-	var blogpost_with_comments = await BlogPost.findOne({endpoint:req.query.endpoint}).
-	populate('comments').
-	then((blogpost) => {
-
-		if ( blogpost ){
-
-			return blogpost.comments
-
-		} else {
-
-			null
-		}
-	})
-	.catch((err) => console.log(err))
-
-	console.log(blogpost_with_comments)
-
-	list_of_promises.push( blogpost_with_comments )
-
-	var users_list_who_commented = await Promise.all(blogpost_with_comments.map(async (comment_object) => {
+	var users_list_who_commented = await Promise.all(blogpost_with_comments.comments.map(async (comment_object) => {
 	// find user from each like
-		return await User.findOne({_id:comment_object.user})
-		.then(async (user_object) => {
-
-			if (user_object){
-				console.log('USER FOUND')
-				console.log(user_object)
-				return {
-					// ...user_object, // NEVER SPREAD IN MONGOOSE, IT INCLUDES _doc and lots of other info
-					user_name:user_object.user_name,
-					user_image:user_object.user_image,
-					text:comment_object.text
-				}
-
-			} else {
-				null
-			}
-		})
-
+		let user_object = await User.findOne({_id:comment_object.user})
+		return {
+			// ...user_object, // NEVER SPREAD IN MONGOOSE, IT INCLUDES _doc and lots of other info
+			user_name:user_object.user_name,
+			user_image:user_object.user_image,
+			text:comment_object.text
+		}
 	}))
 
-	// console.log('PROMISE RESULT 1')
-	// console.log(users_list_who_commented)
+	let final_result = []
 
-// find image from user
 	var final_comments_payload = await Promise.all(users_list_who_commented.map(async (user_object) => {
-	
-		return await Image.findOne({_id:user_object.user_image})
-		.then(async (image_object) => {
-
-			if (image_object){
-
-				return {
-					user_name:user_object.user_name,
-					user_image:base64_encode(image_object.image_filepath),
-					comment_text:user_object.text,
-				}
-
-			} else {
-				null
-			}
-
+		let image_object = await Image.findOne({_id:user_object.user_image})
+		final_result.push({
+			user_name:user_object.user_name,
+			user_image:base64_encode(image_object.image_filepath),
+			comment_text:user_object.text,
 		})
-
 	}))
 
-	// console.log('PROMISE RESULT 2')
-	// console.log(final_comments_payload)
-
-	Promise.all(list_of_promises)
-	.then(() => {
-		// console.log('COMMENTS SENT BELOW')
-		// console.log(final_comments_payload)
-		res.status(200).json( final_comments_payload );
-
-	})
-
+	// final_result.map((result) => {
+	// 	console.log(Object.keys(result))
+	// })
+	res.status(200).json( final_result );
 })
 
 // USED
 router.get('/get-all-likes-of-blogpost',async function(req, res, next){
 
-	let list_of_promises = []
+	// console.log({query:req.query.endpoint})
 
-// find blogpost
-	var blogpost_with_likes = await BlogPost.findOne({endpoint:req.query.endpoint}).
-	populate('likes').
-	then((blogpost_with_likes) => {
+	var blogpost_with_likes = await BlogPost.findOne({endpoint:req.query.endpoint}).populate('likes')
 
-		if ( blogpost_with_likes ){
-
-			return blogpost_with_likes.likes
-	
-		} else {
-
-			null
-
-		}
-
-	})
-
-	list_of_promises.push( blogpost_with_likes )
-
-// find likes from blogpost
-	let users_list_who_liked = await Promise.all(blogpost_with_likes.map(async (like_object) => {
-
+	let users_list_who_liked = await Promise.all(blogpost_with_likes.likes.map(async (like_object) => {
 	// find user from each like
-		return await User.findOne({_id:like_object.user})
-		.then(async (user_object) => {
-
-			if (user_object){
-
-				return user_object
-
-			} else {
-				null
-			}
-		})
-		
+		let user_object = await User.findOne({_id:like_object.user})
+		return user_object
 	}))
 
-	// console.log('PROMISE RESULT 1')
-	// console.log(users_list_who_liked)
-
-// find image from user
+	let final_result = []
 	let final_liked_payload = await Promise.all(users_list_who_liked.map(async (user_object) => {
-	
-		return await Image.findOne({_id:user_object.user_image})
-		.then(async (image_object) => {
 
-			if (image_object){
-
-				return {
-					user_name:user_object.user_name,
-					user_image:base64_encode(image_object.image_filepath),
-				}
-
-			} else {
-				null
-			}
-
+		let image_object = await Image.findOne({_id:user_object.user_image})
+		final_result.push({
+			user_name:user_object.user_name,
+			user_image:base64_encode(image_object.image_filepath),
 		})
 
 	}))
+	// final_result.map((result) => {
+	// 	console.log(Object.keys(result))
+	// })
 
-	// console.log('PROMISE RESULT 2')
-	// console.log(final_liked_payload)
-
-	Promise.all(list_of_promises)
-	.then(() => {
-
-		// console.log(final_liked_payload)
-		res.status(200).json( final_liked_payload );
-
-	})
-
+	res.status(200).json( final_result );
 })
 
 
@@ -344,6 +244,8 @@ router.post('/create-comment-for-blogpost', passport.authenticate('jwt', { sessi
 	.then((user) => {
 					
 		newComment.user = user
+		user.blogpost_comments.push(newComment)
+
 
 	// finding BlogPost object
 		BlogPost.findOne({endpoint: blogpost_endpoint})
@@ -357,7 +259,24 @@ router.post('/create-comment-for-blogpost', passport.authenticate('jwt', { sessi
 				if (err) return console.log(err);
 			})
 
-			blogpost.save((err, blogpost) => res.status(200).json(blogpost) )
+			blogpost.save((err, blogpost) => {
+				res.status(200).json({
+					category: blogpost.category,
+					image_main_filepath: base64_encode( blogpost.image_main_filepath ),
+					title: blogpost.title,
+					timestamp_of_uploading: blogpost.timestamp_of_uploading,
+					initial_tags: blogpost.initial_tags,
+					first_para: blogpost.first_para,
+					second_para: blogpost.second_para,
+					qouted_para: blogpost.qouted_para,
+					third_para: blogpost.third_para,
+					fourth_para: blogpost.fourth_para,
+					all_tags: blogpost.all_tags,
+					endpoint: blogpost.endpoint,
+					total_comments: blogpost.total_comments,
+					total_likes: blogpost.total_likes,
+				}) 
+			})
 		})
 		.catch((err1) => {
 			console.log(err1)
@@ -384,6 +303,7 @@ router.post('/create-like-for-blogpost', passport.authenticate('jwt', { session:
 	.then((user) => {
 					
 		newLike.user = user
+		user.blogpost_likes.push(newLike)
 
 	// finding BlogPost object
 		BlogPost.findOne({endpoint: blogpost_endpoint})
@@ -397,7 +317,24 @@ router.post('/create-like-for-blogpost', passport.authenticate('jwt', { session:
 				if (err) return console.log(err);
 			})
 				
-			blogpost.save((err, blogpost) => res.status(200).json(blogpost) )
+			blogpost.save((err, blogpost) => {
+				res.status(200).json({
+					category: blogpost.category,
+					image_main_filepath: base64_encode( blogpost.image_main_filepath ),
+					title: blogpost.title,
+					timestamp_of_uploading: blogpost.timestamp_of_uploading,
+					initial_tags: blogpost.initial_tags,
+					first_para: blogpost.first_para,
+					second_para: blogpost.second_para,
+					qouted_para: blogpost.qouted_para,
+					third_para: blogpost.third_para,
+					fourth_para: blogpost.fourth_para,
+					all_tags: blogpost.all_tags,
+					endpoint: blogpost.endpoint,
+					total_comments: blogpost.total_comments,
+					total_likes: blogpost.total_likes,
+				}) 
+			})
 		})
 		.catch((err1) => {
 			console.log(err1)

@@ -167,8 +167,18 @@ class BlogPostCard extends Component {
 					<div
 						style={styles.showSocialsContainer}
 					>
-						{/* 2nd show individual summary of childs */}
-						<div>
+
+						<ShowLikesOfBlogPost
+							dataPayloadFromParent = { this.props.dataPayloadFromParent }
+							likes_quantity = { this.props.likes_quantity }
+						/>
+						<ShowCommentsOfBlogPost
+							dataPayloadFromParent = { this.props.dataPayloadFromParent }
+							comments_quantity = { this.props.comments_quantity }
+						/>
+
+
+						{/*<div>
 							<button 
 								style={styles.showSocialsButton}
 								onClick={ () => this.fetchAllLike( this.props.dataPayloadFromParent.endpoint ) }
@@ -185,7 +195,7 @@ class BlogPostCard extends Component {
 								<Comment style={{color:'grey', fontSize:30, marginRight:20,}}/> {this.props.comments_quantity} likes
 							</button>
 
-						</div>
+						</div>*/}
 
 		  			</div>
 				</div>
@@ -193,23 +203,17 @@ class BlogPostCard extends Component {
 				<div style={{
 					marginBottom: 25,
 				}}>
-
-					<ShowLikesOfBlogPost
-						dataPayloadFromParent = { this.state.likes }
-					/>
-					<ShowCommentsOfBlogPost
-						dataPayloadFromParent = { this.state.comments }
-					/>
-
 				</div>
 
 				<div style={styles.createSocialObjectsContainer}>
 					{/* 4th create individual child options like comment / like */}					
 					<ConnectedCreateCommentForBlogpost
 						parentDetailsPayload = { this.props.dataPayloadFromParent }
+	  					redirectToNew = { true }
 					/>					
 					<ConnectedCreateLikeForBlogpost
 						parentDetailsPayload = { this.props.dataPayloadFromParent }
+	  					redirectToNew = { true }
 					/>
 				</div>
 

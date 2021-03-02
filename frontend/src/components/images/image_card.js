@@ -232,9 +232,11 @@ class ImageCard extends Component {
 
 				  				<ConnectedCreateCommentForImage
 				  					parentDetailsPayload = { this.props.dataPayloadFromParent }
+				  					redirectToNew = { true }
 				  				/>					
 				  				<ConnectedCreateLikeForImage
 				  					parentDetailsPayload = { this.props.dataPayloadFromParent }
+				  					redirectToNew = { true }
 				  				/>
 				  			</div>
 

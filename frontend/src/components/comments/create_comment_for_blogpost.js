@@ -127,7 +127,7 @@ class CreateCommentForBlogpost extends Component {
 			this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))
 
 			// redirecting
-			return <Redirect to = {{ pathname: "/Individual-BlogPost" }} />
+			return <Redirect to = {{ pathname: `/blogposts/:id=${this.props.parentDetailsPayload.endpoint}` }} />
 
 		} else {
 
@@ -159,7 +159,7 @@ class CreateCommentForBlogpost extends Component {
 							<button style={styles.roundButtonInsideTextInput}
 								onClick={ () => {
 									let setResponseInCurrentBlogpost = (arg) => this.props.set_current_blogpost(arg)
-									let redirectToNewBlogpost = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
+									let redirectToNewBlogpost = () => (this.props.redirectToNew) ? this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false })) : null
 
 									// first create child object
 									axios.post(utils.baseUrl + '/blogpostings/create-comment-for-blogpost', 
