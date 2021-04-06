@@ -6,6 +6,8 @@ const UserSchema = new mongoose.Schema({
 
 	_id: Schema.Types.ObjectId,
 
+	object_files_hosted_at: {type:String, enum:['gcp_storage', 'aws_s3', 'disk_storage',]},
+
 	user_name:String,
 	phone_number:String,
 	hash:String,
@@ -42,21 +44,30 @@ const UserSchema = new mongoose.Schema({
 
 })
 
-mongoose.model('User', UserSchema);
 	
 UserSchema.pre('save', function(next) {
 	this.total_blogposts = this.blogposts.length
-	this.total_blogposts_comments = this.comments.length
-	this.total_blogposts_likes = this.likes.length
+	this.total_blogposts_comments = this.blogpost_comments.length
+	this.total_blogposts_likes = this.blogpost_likes.length
 
 	this.total_videos = this.videos.length
-	this.total_videos_comments = this.comments.length
-	this.total_videos_likes = this.likes.length
+	this.total_videos_comments = this.videos_comments.length
+	this.total_videos_likes = this.videos_likes.length
 	
 	this.total_images = this.images.length
-	this.total_images_comments = this.comments.length
-	this.total_images_likes = this.likes.length
+	this.total_images_comments = this.images_comments.length
+	this.total_images_likes = this.images_likes.length
 
     next();
 
 });
+
+UserSchema.post('save', function() {
+
+	// console.log('SAVED CONDITION')
+    // console.log(this)
+
+});
+
+
+mongoose.model('User', UserSchema);

@@ -7,6 +7,8 @@ const BlogPostSchema = new mongoose.Schema({
 
 	_id: Schema.Types.ObjectId,
 
+	object_files_hosted_at: {type:String, enum:['gcp_storage', 'aws_s3', 'disk_storage',]},
+
 	category:String,
 	image_main_filepath:String,
 	title:String,

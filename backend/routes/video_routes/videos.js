@@ -25,44 +25,67 @@ var ffmpeg = require('fluent-ffmpeg') // for setting thumbnail of video upload u
 var filename_used_to_store_video_in_assets = ''
 var filename_used_to_store_video_in_assets_without_format = ''
 
+const {
+	get_image_to_display,
+	// store_video_at_tmp_and_get_its_path,
+	// delete_video_at_tmp,
+	get_multer_storage_to_use,
+	// get_multer_storage_to_use_alternate,
+	// get_multer_storage_to_use_for_bulk_files,
+	get_file_storage_venue,
+	get_file_path_to_use,
+	// get_file_path_to_use_for_bulk_files,
+	// get_snapshots_storage_path,
+	// get_snapshots_fullname_and_path,
+
+	// gcp_bucket,
+	// save_file_to_gcp_storage,
+	save_file_to_gcp,
+	// save_file_to_gcp_for_bulk_files,
+	use_gcp_storage,
+	// get_file_from_gcp,
+	
+	use_aws_s3_storage,
+	// save_file_to_s3,
+	// get_file_from_aws,
+	// save_file_to_aws_s3,
+	// save_file_to_aws_s3_for_bulk_files,
+
+	checkFileTypeForImages,
+	checkFileTypeForVideos,
+	// checkFileTypeForImageAndVideo,
+	// checkFileTypeForImagesAndExcelSheet,
+} = require('../../config/storage/')
+
+let timestamp
+
 
 // Set The Storage Engine
-const video_storage = multer.diskStorage({
-	destination: path.join(__dirname , '../../assets/videos/uploads/videos_uploaded_by_users'),
-	filename: function(req, file, cb){
-		// file name pattern fieldname-currentDate-fileformat
-		filename_used_to_store_video_in_assets_without_format = file.originalname.replace( path.extname(file.originalname), "");
-		// filename_used_to_store_video_in_assets = filename_used_to_store_video_in_assets_without_format + path.extname(file.originalname)
-		filename_used_to_store_video_in_assets = file.originalname
-		cb(null, filename_used_to_store_video_in_assets)
-	}
-});
+// const video_storage = multer.diskStorage({
+// 	destination: path.join(__dirname , '../../assets/videos/uploads/videos_uploaded_by_users'),
+// 	filename: function(req, file, cb){
+// 		// file name pattern fieldname-currentDate-fileformat
+// 		filename_used_to_store_video_in_assets_without_format = file.originalname.replace( path.extname(file.originalname), "");
+// 		// filename_used_to_store_video_in_assets = filename_used_to_store_video_in_assets_without_format + path.extname(file.originalname)
+// 		filename_used_to_store_video_in_assets = file.originalname
+// 		cb(null, filename_used_to_store_video_in_assets)
+// 	}
+// });
 
-// Check File Type
-function checkFileTypeForVideo(file, cb){
-	// Allowed ext
-	let filetypes = /mp4|avi|flv/;
-	// Check ext
-	let extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-	// Check mime
-	let mimetype = filetypes.test(file.mimetype);
-
-	if(mimetype && extname){
-		return cb(null,true);
-	} else {
-		cb('Error: mp4, avi,flv Videos Only!');
-	}
-}
 
 // Init Upload
-const upload_video_by_user = multer({
-	storage: video_storage,
-	limits:{fileSize: 20000000}, // 1 mb
-	fileFilter: function(req, file, cb){
-		checkFileTypeForVideo(file, cb);
-	}
-}).single('videos_uploaded_by_users'); // this is the field that will be dealt
-// .array('blogpost_image_main', 12)
+function upload_video_by_user(){
+
+	return multer({
+		storage: get_multer_storage_to_use_alternate(timestamp),
+		limits:{fileSize: 20000000}, // 1 mb
+		fileFilter: function(req, file, cb){
+			checkFileTypeForVideo(file, cb);
+		}
+	}).single('videos_uploaded_by_users'); // this is the field that will be dealt
+	// .array('blogpost_image_main', 12)
+
+}
 
 
 
@@ -74,33 +97,82 @@ router.post('/create-video-with-user', passport.authenticate('jwt', { session: f
 	console.log('OUTER LOG')
 	console.log(req.body)
 
-	upload_video_by_user(req, res, (err) => {
-		if(err){
+	timestamp = Date.now()
 
-			console.log(err)
+	upload_video_by_user(timestamp)(req, res, (err) => {
 
-		} else {
+		{(async () => {
 
-			if(req.file == undefined){
+			if(err){
 
-				res.status(404).json({ success: false, msg: 'File is undefined!',file: `uploads/${req.file.filename}`})
+				console.log(err)
 
 			} else {
 
-				var video_id = ''
-			// video is uploaded , NOW creating thumbnail from video using snapshot
- 				ffmpeg(`./assets/videos/uploads/videos_uploaded_by_users/${filename_used_to_store_video_in_assets}`)
-				.on('end', async function() {
-					console.log('Screenshots taken');
+				if(req.file == undefined){
+
+					res.status(404).json({ success: false, msg: 'File is undefined!',file: `uploads/${req.file.filename}`})
+
+				} else {
+
+
+					let promises = []
+					let save_image_or_video_promise
+
+					if (use_gcp_storage){
+
+						// save_image_or_video_promise = await save_file_to_gcp(timestamp, req.files['social_post_video'][0])
+						save_image_or_video_promise = save_file_to_gcp(timestamp, req.files['videos_uploaded_by_users'][0])
+						promises.push(save_image_or_video_promise)
+
+						console.log('SAVED TO GCP')
+
+					} else if (use_aws_s3_storage) {
+
+						// console.log(`req.files['social_post_video']`)
+						// console.log(req.files['social_post_video'][0])
+						// save_image_or_video_promise = await save_file_to_aws_s3( req.files['social_post_video'][0] )
+						save_image_or_video_promise = save_file_to_aws_s3( req.files['videos_uploaded_by_users'][0] )
+						promises.push(save_image_or_video_promise)
+						// console.log(save_image_or_video_promise)
+						console.log('SAVED TO AWS')
+
+					} else {
+
+						console.log('SAVED TO DISK STORAGE')
+
+					}
+
+					let store_video_at_tmp_promise
+					let create_snapshots_promise
+					let save_snapshots_promises
+
+
+					var video_id = ''
+				// video is uploaded , NOW creating thumbnail from video using snapshot
+
+					store_video_at_tmp_promise = store_video_at_tmp_and_get_its_path( req.files['social_post_video'][0], video_path )
+					promises.push(store_video_at_tmp_promise)
+
+					promise_fulfilled = await Promise.all(promises)
+
+					create_snapshots_promise = await create_snapshots_from_uploaded_video(timestamp, req.files['videos_uploaded_by_users'][0], promise_fulfilled[1], total_snapshots_count)
+					save_snapshots_promises = save_generated_snapshots(req.files['videos_uploaded_by_users'][0], timestamp)
+
+					await Promise.all(save_snapshots_promises)
 
 					let user = await User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
+
+					let video_path = get_file_path_to_use(req.files['videos_uploaded_by_users'][0], 'videos_uploaded_by_users', timestamp)
 
 					video_id = new mongoose.Types.ObjectId()
 					const newVideo = new Video({
 						_id: video_id,
-						image_thumbnail: `./assets/videos/uploads/upload_thumbnails/${filename_used_to_store_video_in_assets_without_format}_1.png`,
+						image_thumbnail: get_snapshots_fullname_and_path('upload_thumbnails', file_without_format, timestamp),
+						// image_thumbnail: `./assets/videos/uploads/upload_thumbnails/${filename_used_to_store_video_in_assets_without_format}_1.png`,
 						timestamp_of_uploading: String( Date.now() ),
-						video_filepath: `./assets/videos/uploads/videos_uploaded_by_users/${filename_used_to_store_video_in_assets}`,
+						video_filepath: video_path,
+						// video_filepath: `./assets/videos/uploads/videos_uploaded_by_users/${filename_used_to_store_video_in_assets}`,
 						category: req.body.category,
 						title: req.body.title,
 						all_tags: req.body.all_tags,
@@ -116,9 +188,12 @@ router.post('/create-video-with-user', passport.authenticate('jwt', { session: f
 
 					let saved_video = await Video.findOne({ _id: video_id })
 
+					let image_in_base64_encoding = await get_image_to_display(saved_video.image_thumbnail, saved_video.object_files_hosted_at)
+				
 					res.status(200).json({ 
 						category: saved_video.category,
-						image_thumbnail: base64_encode( saved_video.image_thumbnail ),
+						image_thumbnail: image_in_base64_encoding,
+						// image_thumbnail: base64_encode( saved_video.image_thumbnail ),
 						video_filepath: saved_video.video_filepath,
 						title: saved_video.title,
 						endpoint: saved_video.endpoint,
@@ -130,99 +205,107 @@ router.post('/create-video-with-user', passport.authenticate('jwt', { session: f
 						// success: true, msg: 'new video saved', endpoint: saved_video.endpoint
 					});	
 
-					// newVideo.save(function (err, newVideo) {
+						// newVideo.save(function (err, newVideo) {
 
-					// 	if (err){
-					// 		res.status(404).json({ success: false, msg: 'couldnt create video database entry'})
-					// 		return console.log(err)
-					// 	}
+						// 	if (err){
+						// 		res.status(404).json({ success: false, msg: 'couldnt create video database entry'})
+						// 		return console.log(err)
+						// 	}
 
-					// 	// assign user object then save
-					// 	User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
-					// 	.then((user) => {
-					// 		if (user){
+						// 	// assign user object then save
+						// 	User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
+						// 	.then((user) => {
+						// 		if (user){
 
-					// 			newVideo.user = user
-					// 			newVideo.save()
-					// 		// finding video saved to access its endpoint since its created at model level
-								
-					// 		} else {
+						// 			newVideo.user = user
+						// 			newVideo.save()
+						// 		// finding video saved to access its endpoint since its created at model level
+									
+						// 		} else {
 
-					// 			res.status(200).json({ success: false, msg: "user doesnt exists, try logging in again" });
+						// 			res.status(200).json({ success: false, msg: "user doesnt exists, try logging in again" });
 
-					// 		}
-					// 	})
-					// 	.then(() => {
+						// 		}
+						// 	})
+						// 	.then(() => {
 
-					// 		Video.findOne({ _id: video_id })
-					// 		.then((saved_video) => {
+						// 		Video.findOne({ _id: video_id })
+						// 		.then((saved_video) => {
 
-					// 			console.log(saved_video.endpoint)
+						// 			console.log(saved_video.endpoint)
 
-					// 			res.status(200).json({ 
-					// 				category: saved_video.category,
-					// 				image_thumbnail: base64_encode( saved_video.image_thumbnail ),
-					// 				video_filepath: saved_video.video_filepath,
-					// 				title: saved_video.title,
-					// 				endpoint: saved_video.endpoint,
-					// 				description: saved_video.description,
-					// 				timestamp_of_uploading: saved_video.timestamp_of_uploading,
-					// 				all_tags: saved_video.all_tags,
-					// 				total_comments: saved_video.total_comments,
-					// 				total_likes: saved_video.total_likes,
-					// 				// success: true, msg: 'new video saved', endpoint: saved_video.endpoint
-					// 			});	
+						// 			res.status(200).json({ 
+						// 				category: saved_video.category,
+						// 				image_thumbnail: base64_encode( saved_video.image_thumbnail ),
+						// 				video_filepath: saved_video.video_filepath,
+						// 				title: saved_video.title,
+						// 				endpoint: saved_video.endpoint,
+						// 				description: saved_video.description,
+						// 				timestamp_of_uploading: saved_video.timestamp_of_uploading,
+						// 				all_tags: saved_video.all_tags,
+						// 				total_comments: saved_video.total_comments,
+						// 				total_likes: saved_video.total_likes,
+						// 				// success: true, msg: 'new video saved', endpoint: saved_video.endpoint
+						// 			});	
 
-					// 		})
+						// 		})
 
-					// 	})
-					// 	.catch((err) => {
+						// 	})
+						// 	.catch((err) => {
 
-					// 		next(err);
+						// 		next(err);
 
-					// 	})
+						// 	})
 
-					// 	// not needed, used for multer
-					// 	// res.status(200).json({ success: false, msg: 'couldnt create video database entry',file: `uploads/${req.file.filename}`})
+						// 	// not needed, used for multer
+						// 	// res.status(200).json({ success: false, msg: 'couldnt create video database entry',file: `uploads/${req.file.filename}`})
+						// })
+
+
+
+	 			// 	ffmpeg(`./assets/videos/uploads/videos_uploaded_by_users/${filename_used_to_store_video_in_assets}`)
+					// .on('end', async function() {
+					// 	console.log('Screenshots taken');
+
+					// })
+					// .on('error', function(err) {
+					// 	console.error(err);
+					// })
+					// .on('filenames', function(filenames) {
+					// 	console.log('screenshots are ' + filenames.join(', '));
+					// })
+					// // screenshots at mentioned times
+					// // .takeScreenshots({ 
+					// // 	count: 2, 
+					// // 	timemarks: [ '00:00:02.000', '6' ], 
+					// // 	filenames: [
+					// // 		`${filename_used_to_store_video_in_assets_without_format}1.png`, 
+					// // 		`${filename_used_to_store_video_in_assets_without_format}2.png`, 
+					// // 	],
+					// // 	size: '150x100', 
+					// // }, '../assets/videos/uploads/upload_thumbnails/')
+					// // screenshots at % completion ie 20%, 40%, 60%, 80%
+					// .screenshots({
+					// 	filename: `${filename_used_to_store_video_in_assets_without_format}.png`, // if single snapshot is needed
+					// 	// timemarks: [ '00:00:02.000', '6' ], 
+					// 	// Will take screenshots at 20%, 40%, 60% and 80% of the video
+					// 	count: 4,
+					// 	// filenames: [
+					// 	// 	`${filename_used_to_store_video_in_assets_without_format}1.png`, 
+					// 	// 	`${filename_used_to_store_video_in_assets_without_format}2.png`, 
+					// 	// 	`${filename_used_to_store_video_in_assets_without_format}3.png`, 
+					// 	// 	`${filename_used_to_store_video_in_assets_without_format}4.png`,
+					// 	// ],
+					// 	size: '150x100', 
+					// 	folder: './assets/videos/uploads/upload_thumbnails/',
 					// })
 
-
-				})
-				.on('error', function(err) {
-					console.error(err);
-				})
-				.on('filenames', function(filenames) {
-					console.log('screenshots are ' + filenames.join(', '));
-				})
-				// screenshots at mentioned times
-				// .takeScreenshots({ 
-				// 	count: 2, 
-				// 	timemarks: [ '00:00:02.000', '6' ], 
-				// 	filenames: [
-				// 		`${filename_used_to_store_video_in_assets_without_format}1.png`, 
-				// 		`${filename_used_to_store_video_in_assets_without_format}2.png`, 
-				// 	],
-				// 	size: '150x100', 
-				// }, '../assets/videos/uploads/upload_thumbnails/')
-				// screenshots at % completion ie 20%, 40%, 60%, 80%
-				.screenshots({
-					filename: `${filename_used_to_store_video_in_assets_without_format}.png`, // if single snapshot is needed
-					// timemarks: [ '00:00:02.000', '6' ], 
-					// Will take screenshots at 20%, 40%, 60% and 80% of the video
-					count: 4,
-					// filenames: [
-					// 	`${filename_used_to_store_video_in_assets_without_format}1.png`, 
-					// 	`${filename_used_to_store_video_in_assets_without_format}2.png`, 
-					// 	`${filename_used_to_store_video_in_assets_without_format}3.png`, 
-					// 	`${filename_used_to_store_video_in_assets_without_format}4.png`,
-					// ],
-					size: '150x100', 
-					folder: './assets/videos/uploads/upload_thumbnails/',
-				})
-
-			// saving video in DB
+				// }
+				}
 			}
-		}
+
+		})()}
+
 	})
 })
 
@@ -247,12 +330,18 @@ router.get('/get-all-comments-of-video', async function(req, res, next){
 
 // find image from user
 	let final_result = []
+	let image_in_base64_encoding
+
 	let final_commments_payload = await Promise.all(users_list_who_commented.map(async (user_object) => {
 
+
 		let image_object = await Image.findOne({_id:user_object.user_image})
+		image_in_base64_encoding = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
+
 		final_result.push({
 			user_name:user_object.user_name,
-			user_image:base64_encode(image_object.image_filepath),
+			user_image:image_in_base64_encoding,
+			// user_image:base64_encode(image_object.image_filepath),
 			comment_text:user_object.text,
 		})
 
@@ -280,12 +369,16 @@ router.get('/get-all-likes-of-video',async function(req, res, next){
 
 // find image from user
 	let final_result = []
+	let image_in_base64_encoding
+
 	let final_liked_payload = await Promise.all(users_list_who_liked.map(async (user_object) => {
 
 		let image_object = await Image.findOne({_id:user_object.user_image})
+		image_in_base64_encoding = await get_image_to_display(user_object.user_name, user_object.object_files_hosted_at)
 		final_result.push({
 			user_name:user_object.user_name,
-			user_image:base64_encode(image_object.image_filepath),
+			user_image:image_in_base64_encoding,
+			// user_image:base64_encode(image_object.image_filepath),
 		})
 
 	}))
@@ -301,7 +394,7 @@ router.get('/get-all-likes-of-video',async function(req, res, next){
 
 
 // USED FOR CREATING COMMENT
-router.post('/create-comment-for-video', passport.authenticate('jwt', { session: false }), isAllowedSurfing, function(req, res, next){
+router.post('/create-comment-for-video', passport.authenticate('jwt', { session: false }), isAllowedSurfing, async function(req, res, next){
 
 	var comment_text = req.body.comment_text	
 	var video_endpoint = req.body.video_endpoint
@@ -312,14 +405,16 @@ router.post('/create-comment-for-video', passport.authenticate('jwt', { session:
 	})
 
 	User.findOne({ phone_number: req.user.user_object.phone_number })
-	.then((user) => {
-					
+	.then(async (user) => {
+
+		let image_in_base64_encoding
+
 		newComment.user = user
 		user.videos_comments.push(newComment)
 
 	// finding video object
 		Video.findOne({endpoint: video_endpoint})
-		.then((video) => {
+		.then(async (video) => {
 
 			video.comments.push( newComment )
 
@@ -329,10 +424,13 @@ router.post('/create-comment-for-video', passport.authenticate('jwt', { session:
 				if (err) return console.log(err);
 			})
 
+			image_in_base64_encoding = await get_image_to_display(video.image_thumbnail, video.object_files_hosted_at)
+
 			video.save((err, video) => {
 				res.status(200).json({
 					category: video.category,
-					image_thumbnail: base64_encode( video.image_thumbnail ),
+					image_thumbnail: image_in_base64_encoding,
+					// image_thumbnail: base64_encode( video.image_thumbnail ),
 					video_filepath: video.video_filepath,
 					title: video.title,
 					endpoint: video.endpoint,
@@ -356,12 +454,14 @@ router.post('/create-comment-for-video', passport.authenticate('jwt', { session:
 
 
 // will be used for creating like
-router.post('/create-like-for-video', passport.authenticate('jwt', { session: false }), isAllowedSurfing, function(req, res, next){
+router.post('/create-like-for-video', passport.authenticate('jwt', { session: false }), isAllowedSurfing, async function(req, res, next){
 
 	var video_endpoint = req.body.video_endpoint
 
 	User.findOne({ phone_number: req.user.user_object.phone_number })
-	.then((user) => {
+	.then(async (user) => {
+
+		let image_in_base64_encoding
 
 		var newLike = new Like({
 			_id: new mongoose.Types.ObjectId(),
@@ -372,7 +472,7 @@ router.post('/create-like-for-video', passport.authenticate('jwt', { session: fa
 
 	// finding video object
 		Video.findOne({endpoint: video_endpoint})
-		.then((video) => {
+		.then(async (video) => {
 
 			video.likes.push( newLike )
 
@@ -381,11 +481,14 @@ router.post('/create-like-for-video', passport.authenticate('jwt', { session: fa
 			newLike.save(function (err, newLike) {
 				if (err) return console.log(err);
 			})
-				
+
+			image_in_base64_encoding = await get_image_to_display(video.image_thumbnail, video.object_files_hosted_at)
+
 			video.save((err, video) => {
 				res.status(200).json({
 					category: video.category,
-					image_thumbnail: base64_encode( video.image_thumbnail ),
+					image_thumbnail: image_in_base64_encoding,
+					// image_thumbnail: base64_encode( video.image_thumbnail ),
 					video_filepath: video.video_filepath,
 					title: video.title,
 					endpoint: video.endpoint,
@@ -412,7 +515,7 @@ router.post('/create-like-for-video', passport.authenticate('jwt', { session: fa
 
 // get blogposts_list_with_children
 // USED
-router.get('/videos-list-with-children', function(req, res, next){
+router.get('/videos-list-with-children', async function(req, res, next){
 	console.log('called')
 
 	Video.
@@ -421,13 +524,14 @@ router.get('/videos-list-with-children', function(req, res, next){
 	populate('comments').
 	populate('likes').
 	// populate('user').
-	then((videos)=>{
+	then(async (videos)=>{
 		var newVideos_list = []
-		videos.map((video, index)=>{
+		videos.map(async (video, index)=>{
 			var newVideo = {}
-
+			
 			newVideo.category = video[ 'category' ]
-			newVideo.image_thumbnail = base64_encode( video[ 'image_thumbnail' ] )
+			newVideo.image_thumbnail = await get_image_to_display(video.image_thumbnail, video.object_files_hosted_at)
+			// newVideo.image_thumbnail = base64_encode( video[ 'image_thumbnail' ] )
 			newVideo.title = video[ 'title' ]
 			newVideo.all_tags = video[ 'all_tags' ]
 			newVideo.description = video[ 'description' ]

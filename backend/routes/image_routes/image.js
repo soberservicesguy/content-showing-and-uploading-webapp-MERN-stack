@@ -19,45 +19,83 @@ const { isAllowedUploadingImages } = require('../authMiddleware/isAllowedUploadi
 const multer = require('multer');
 const path = require('path')
 
+const {
+	get_image_to_display,
+	// store_video_at_tmp_and_get_its_path,
+	// delete_video_at_tmp,
+	get_multer_storage_to_use,
+	// get_multer_storage_to_use_alternate,
+	// get_multer_storage_to_use_for_bulk_files,
+	get_file_storage_venue,
+	get_file_path_to_use,
+	// get_file_path_to_use_for_bulk_files,
+	// get_snapshots_storage_path,
+	// get_snapshots_fullname_and_path,
+
+	// gcp_bucket,
+	// save_file_to_gcp_storage,
+	save_file_to_gcp,
+	// save_file_to_gcp_for_bulk_files,
+	use_gcp_storage,
+	// get_file_from_gcp,
+	
+	use_aws_s3_storage,
+	// save_file_to_s3,
+	// get_file_from_aws,
+	// save_file_to_aws_s3,
+	// save_file_to_aws_s3_for_bulk_files,
+
+	checkFileTypeForImages,
+	// checkFileTypeForImageAndVideo,
+	// checkFileTypeForImagesAndExcelSheet,
+} = require('../../config/storage/')
+
+let timestamp
+
+
 // Set The Storage Engine
-const image_storage = multer.diskStorage({
-	destination: path.join(__dirname , '../../assets/images/uploads/images_uploaded_by_user/'),
-	filename: function(req, file, cb){
-		// file name pattern fieldname-currentDate-fileformat
-		// filename_used_to_store_image_in_assets_without_format = file.fieldname + '-' + Date.now()
-		// filename_used_to_store_image_in_assets = filename_used_to_store_image_in_assets_without_format + path.extname(file.originalname)
+// const image_storage = multer.diskStorage({
+// 	destination: path.join(__dirname , '../../assets/images/uploads/images_uploaded_by_user/'),
+// 	filename: function(req, file, cb){
+// 		// file name pattern fieldname-currentDate-fileformat
+// 		// filename_used_to_store_image_in_assets_without_format = file.fieldname + '-' + Date.now()
+// 		// filename_used_to_store_image_in_assets = filename_used_to_store_image_in_assets_without_format + path.extname(file.originalname)
 
-		filename_used_to_store_image_in_assets = file.originalname
-		cb(null, file.originalname);
+// 		filename_used_to_store_image_in_assets = file.originalname
+// 		cb(null, file.originalname);
 
-	}
-});
+// 	}
+// });
 
 // Check File Type
-function checkFileTypeForImage(file, cb){
-	// Allowed ext
-	let filetypes = /jpeg|jpg|png|gif/;
-	// Check ext
-	let extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-	// Check mime
-	let mimetype = filetypes.test(file.mimetype);
+// function checkFileTypeForImage(file, cb){
+// 	// Allowed ext
+// 	let filetypes = /jpeg|jpg|png|gif/;
+// 	// Check ext
+// 	let extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+// 	// Check mime
+// 	let mimetype = filetypes.test(file.mimetype);
 
-	if(mimetype && extname){
-		return cb(null,true);
-	} else {
-		cb('Error: jpeg, jpg, png, gif Images Only!');
-	}
-}
+// 	if(mimetype && extname){
+// 		return cb(null,true);
+// 	} else {
+// 		cb('Error: jpeg, jpg, png, gif Images Only!');
+// 	}
+// }
 
 // Init Upload
-const upload_main_image_by_user = multer({
-	storage: image_storage,
-	limits:{fileSize: 20000000}, // 1 mb
-	fileFilter: function(req, file, cb){
-		checkFileTypeForImage(file, cb);
-	}
-}).single('upload_images_by_user'); // this is the field that will be dealt
-// .array('blogpost_image_main', 12)
+function upload_main_image_by_user(timestamp){
+
+	return multer({
+		storage: get_multer_storage_to_use(timestamp),
+		limits:{fileSize: 20000000}, // 1 mb
+		fileFilter: function(req, file, cb){
+			checkFileTypeForImages(file, cb);
+		}
+	}).single('upload_images_by_user'); // this is the field that will be dealt
+	// .array('blogpost_image_main', 12)
+
+} 
 
 
 
@@ -70,84 +108,103 @@ router.post('/create-image-with-user', passport.authenticate('jwt', { session: f
 	console.log('OUTER LOG')
 	console.log(req.body)
 
-	upload_main_image_by_user(req, res, (err) => {
-		if(err){
+	timestamp = Date.now()
 
-			console.log(err)
+	upload_main_image_by_user(timestamp)(req, res, (err) => {
 
-		} else {
+		{(async () => {
 
-			if(req.file == undefined){
+			if(err){
 
-				res.status(404).json({ success: false, msg: 'File is undefined!',file: `uploads/${req.file.filename}`})
+				console.log(err)
 
 			} else {
-				// console.log('INNER LOG')
-				// console.log(req.body)
 
+				if(req.file == undefined){
 
-			// image is uploaded , now saving image in db
-				const newImage = new Image({
+					res.status(404).json({ success: false, msg: 'File is undefined!',file: `uploads/${req.file.filename}`})
 
-					_id: new mongoose.Types.ObjectId(),
-					category: req.body.category,
-					image_filepath: `./assets/images/uploads/images_uploaded_by_user/${filename_used_to_store_image_in_assets}`,
-					title: req.body.title,
-					description: req.body.description,
-					all_tags: req.body.all_tags,
-					// timestamp_of_uploading: String( Date.now() ),
-					// endpoint: req.body.endpoint, // this will be taken care in db model
+				} else {
 
-				});
+					if (use_gcp_storage){
 
+						await save_file_to_gcp(timestamp, req.file)
 
-				newImage.save(function (err, newImage) {
+					} else if (use_aws_s3_storage) {
 
-					if (err){
-						res.status(404).json({ success: false, msg: 'couldnt create Image database entry'})
-						return console.log(err)
+						console.log('SAVED AUTOMATICALLY TO AWS')
+
+					} else {
+
 					}
-					// assign user object then save
-					User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
-					.then((user) => {
-						if (user){
-
-							newImage.user = user
-							newImage.save()
 
 
-							// in response sending new image too with base64 encoding
-							let base64_encoded_image = base64_encode(newImage.image_filepath)
+				// image is uploaded , now saving image in db
+					const newImage = new Image({
 
-							let new_image = {
-								endpoint: newImage.endpoint,
-								category: newImage.category,
-								image_filepath: base64_encoded_image,
-								title: newImage.title,
-								description: newImage.description,
-								all_tags: newImage.all_tags,
-							}
-
-							res.status(200).json({ success: true, msg: 'new image saved', new_image: new_image});	
-
-						} else {
-
-							res.status(200).json({ success: false, msg: "user doesnt exists, try logging in again" });
-
-						}
-					})
-					.catch((err) => {
-
-						next(err);
+						_id: new mongoose.Types.ObjectId(),
+						category: req.body.category,
+						image_filepath: get_file_path_to_use(req.file, 'upload_images_by_users', timestamp),
+						// image_filepath: `./assets/images/uploads/images_uploaded_by_user/${filename_used_to_store_image_in_assets}`,
+						title: req.body.title,
+						description: req.body.description,
+						all_tags: req.body.all_tags,
+						object_files_hosted_at: get_file_storage_venue(),
+						// timestamp_of_uploading: String( Date.now() ),
+						// endpoint: req.body.endpoint, // this will be taken care in db model
 
 					});
 
-				})
 
-				// not needed, this is used only in multer
-				// res.status(200).json({ success: true, msg: 'File Uploaded!',file: `uploads/${req.file.filename}`})
+					newImage.save(async function (err, newImage) {
+
+						if (err){
+							res.status(404).json({ success: false, msg: 'couldnt create Image database entry'})
+							return console.log(err)
+						}
+						// assign user object then save
+						User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
+						.then(async (user) => {
+							if (user){
+
+								newImage.user = user
+								newImage.save()
+
+								// in response sending new image too with base64 encoding
+								let base64_encoded_image = await get_image_to_display(newImage.image_filepath, newImage.object_files_hosted_at)
+
+								let new_image = {
+									endpoint: newImage.endpoint,
+									category: newImage.category,
+									image_filepath: base64_encoded_image,
+									title: newImage.title,
+									description: newImage.description,
+									all_tags: newImage.all_tags,
+								}
+
+								res.status(200).json({ success: true, msg: 'new image saved', new_image: new_image});	
+
+							} else {
+
+								res.status(200).json({ success: false, msg: "user doesnt exists, try logging in again" });
+
+							}
+						})
+						.catch((err) => {
+
+							next(err);
+
+						});
+
+					})
+
+					// not needed, this is used only in multer
+					// res.status(200).json({ success: true, msg: 'File Uploaded!',file: `uploads/${req.file.filename}`})
+				}
 			}
-		}
+
+		})()}
+
 	})
 })
 
@@ -175,11 +232,12 @@ router.get('/get-all-comments-of-image', async function(req, res, next){
 // find image from user
 	let final_result = []
 	let final_commments_payload = await Promise.all(users_list_who_commented.map(async (user_object) => {
+	let base64_encoded_image = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
 
 		let image_object = await Image.findOne({_id:user_object.user_image})
 		final_result.push({
 			user_name:user_object.user_name,
-			user_image:base64_encode(image_object.image_filepath),
+			user_image:base64_encoded_image,
 			comment_text:user_object.text,
 		})
 
@@ -292,12 +350,14 @@ router.get('/get-all-likes-of-image',async function(req, res, next){
 
 // find image from user
 	let final_result = []
+	let base64_encoded_image
 	let final_liked_payload = await Promise.all(users_list_who_liked.map(async (user_object) => {
 
+		base64_encoded_image = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
 		let image_object = await Image.findOne({_id:user_object.user_image})
 		final_result.push({
 			user_name:user_object.user_name,
-			user_image:base64_encode(image_object.image_filepath),
+			user_image:base64_encoded_image,
 		})
 
 	}))
@@ -311,7 +371,7 @@ router.get('/get-all-likes-of-image',async function(req, res, next){
 
 
 // USED FOR CREATING COMMENT
-router.post('/create-comment-for-image', passport.authenticate('jwt', { session: false }), isAllowedSurfing, function(req, res, next){
+router.post('/create-comment-for-image', passport.authenticate('jwt', { session: false }), isAllowedSurfing, async function(req, res, next){
 
 	// console.log('CALLED')
 	// console.log(comment_text)
@@ -325,7 +385,7 @@ router.post('/create-comment-for-image', passport.authenticate('jwt', { session:
 	})
 
 	User.findOne({ phone_number: req.user.user_object.phone_number })
-	.then((user) => {
+	.then(async (user) => {
 					
 		newComment.user = user
 		user.images_comments.push(newComment)
@@ -333,7 +393,7 @@ router.post('/create-comment-for-image', passport.authenticate('jwt', { session:
 
 	// finding BlogPost object
 		Image.findOne({endpoint: image_endpoint})
-		.then((image) => {
+		.then(async (image) => {
 
 			image.comments.push( newComment )
 
@@ -343,13 +403,15 @@ router.post('/create-comment-for-image', passport.authenticate('jwt', { session:
 				if (err) return console.log(err);
 			})
 
+			let base64_encoded_image
 			// console.log({title:image.title})
-			image.save((err, image) => {
+			image.save(async (err, image) => {
 
+				base64_encoded_image = await get_image_to_display(image.image_filepath, image.object_files_hosted_at)
 				// image.image_filepath = base64_encode( image.image_filepath )
 				res.status(200).json({
 					category: image.category,
-					image_filepath: base64_encode( image.image_filepath ),
+					image_filepath: base64_encoded_image,
 					title: image.title,
 					endpoint: image.endpoint,
 					timestamp_of_uploading: image.timestamp_of_uploading,
@@ -371,7 +433,7 @@ router.post('/create-comment-for-image', passport.authenticate('jwt', { session:
 
 
 // will be used for creating like
-router.post('/create-like-for-image', passport.authenticate('jwt', { session: false }), isAllowedSurfing, function(req, res, next){
+router.post('/create-like-for-image', passport.authenticate('jwt', { session: false }), isAllowedSurfing, async function(req, res, next){
 
 	console.log('attempting to create like')
 
@@ -379,7 +441,7 @@ router.post('/create-like-for-image', passport.authenticate('jwt', { session: fa
 
 
 	User.findOne({ phone_number: req.user.user_object.phone_number })
-	.then((user) => {
+	.then(async (user) => {
 					
 		var newLike = new Like({
 			_id: new mongoose.Types.ObjectId(),
@@ -390,7 +452,7 @@ router.post('/create-like-for-image', passport.authenticate('jwt', { session: fa
 
 	// finding image object
 		Image.findOne({endpoint: image_endpoint})
-		.then((image) => {
+		.then(async (image) => {
 
 			image.likes.push( newLike )
 
@@ -399,12 +461,16 @@ router.post('/create-like-for-image', passport.authenticate('jwt', { session: fa
 			newLike.save(function (err, newLike) {
 				if (err) return console.log(err);
 			})
-			console.log('LIKE CREATED FOR IMAGE')	
-			image.save((err, image) => {
+
+			let base64_encoded_image
+
+			image.save(async (err, image) => {
+			
+				base64_encoded_image = await get_image_to_display(image.image_filepath, image.object_files_hosted_at)
 				// image.image_filepath = base64_encode( image.image_filepath )
 				res.status(200).json({
 					category: image.category,
-					image_filepath: base64_encode( image.image_filepath ),
+					image_filepath: base64_encoded_image,
 					title: image.title,
 					endpoint: image.endpoint,
 					timestamp_of_uploading: image.timestamp_of_uploading,
@@ -429,7 +495,7 @@ router.post('/create-like-for-image', passport.authenticate('jwt', { session: fa
 
 // get blogposts_list_with_children
 // USED
-router.get('/images-list-with-children', function(req, res, next){
+router.get('/images-list-with-children', async function(req, res, next){
 	console.log('called')
 
 	Image.
@@ -438,22 +504,33 @@ router.get('/images-list-with-children', function(req, res, next){
 	// populate('comments'). // not needed since Image stored total number of likes and comments in it
 	// populate('likes').
 	// populate('user').
-	then((images)=>{
+	then(async (images)=>{
+
 		var newImages_list = []
-		images.map((image, index)=>{
+		let all_images = await Promise.all(images.map(async(image, index)=>{
+
 			var newImage = {}
 
-			newImage.category = image['category']
-			newImage.image_filepath = base64_encode( image['image_filepath'] )
-			newImage.title = image['title']
-			newImage.endpoint = image['endpoint']
-			newImage.comments_quantity = image.total_comments
-			newImage.likes_quantity = image.total_likes
+			let image_object = await Image.findOne({ _id: image })
+			console.log('image_object')
+			console.log(image_object)
+			let base64_encoded_image = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
+
+			// let base64_encoded_image = await get_image_to_display(image.image_filepath, image.object_files_hosted_at)
+			console.log('FORWARD')
+			newImage.category = image_object['category']
+			newImage.image_filepath = base64_encoded_image
+			newImage.title = image_object['title']
+			newImage.endpoint = image_object['endpoint']
+			newImage.comments_quantity = image_object.total_comments
+			newImage.likes_quantity = image_object.total_likes
 
 			newImages_list.push({...newImage})
 			newImage = {}
-		});
+		}))
 
+		console.log('newImages_list')
+		console.log(newImages_list)
 		return newImages_list
 	})
 	.then((newImages_list) => {

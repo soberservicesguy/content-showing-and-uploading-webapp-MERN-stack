@@ -6,6 +6,7 @@ import {
 	Switch,
 	Route,
 	Link,
+	Redirect,
 } from "react-router-dom";
 
 import {
@@ -63,11 +64,16 @@ class RootRouterContainer extends Component {
 		return (
 			<Router>
 				<div>
-					<div style={{width:'95%', margin:'auto'}}>
-						<MyResponsiveNavigation/>
-					</div>
 
 					<Switch>
+
+						<Route exact path="/" render={() => (
+							(this.props.isSignedIn) ? (
+								<Redirect to="/blogposts"/>
+							) : (
+								<Redirect to="/login"/>
+							)
+						)}/>
 
 						<Route exact path="/signup">
 							<ConnectedSignUpContainer/>
@@ -77,60 +83,189 @@ class RootRouterContainer extends Component {
 							<ConnectedLoginContainer/>
 						</Route>
 
+						<Route exact path="/blogposts" render={() => (
+							(this.props.isSignedIn) ? (
+								<React.Fragment>
+									<div style={{width:'95%', margin:'auto'}}>
+										<MyResponsiveNavigation/>
+									</div>
+				
+									<ConnectedBlogPostContainer/>
+				
+									<div style={{backgroundColor: 'black'}}>
+										<ConnectedFooterContainer/>
+									</div>
+								</React.Fragment>
+							) : (
+								<Redirect to="/login"/>
+							)
+						)}/>
 
-						<Route exact path="/blogposts">
-							<ConnectedBlogPostContainer/>
-						</Route>
+						<Route exact path="/blogposts/:id" render={() => (
+							(this.props.isSignedIn) ? (
+								<React.Fragment>
+									<div style={{width:'95%', margin:'auto'}}>
+										<MyResponsiveNavigation/>
+									</div>
+				
+									<ConnectedIndividualBlogPost/>
+				
+									<div style={{backgroundColor: 'black'}}>
+										<ConnectedFooterContainer/>
+									</div>
+								</React.Fragment>
+							) : (
+								<Redirect to="/login"/>
+							)
+						)}/>
 
-						<Route exact path="/blogposts/:id">
-							<ConnectedIndividualBlogPost/>
-						</Route>
+						<Route exact path="/videos" render={() => (
+							(this.props.isSignedIn) ? (
+								<React.Fragment>
+									<div style={{width:'95%', margin:'auto'}}>
+										<MyResponsiveNavigation/>
+									</div>
+				
+									<ConnectedVideoContainer/>
+				
+									<div style={{backgroundColor: 'black'}}>
+										<ConnectedFooterContainer/>
+									</div>
+								</React.Fragment>
+							) : (
+								<Redirect to="/login"/>
+							)
+						)}/>
+
+						<Route exact path="/videos/:id" render={() => (
+							(this.props.isSignedIn) ? (
+								<React.Fragment>
+									<div style={{width:'95%', margin:'auto'}}>
+										<MyResponsiveNavigation/>
+									</div>
+				
+									<ConnectedIndividualVideo/>
+				
+									<div style={{backgroundColor: 'black'}}>
+										<ConnectedFooterContainer/>
+									</div>
+								</React.Fragment>
+							) : (
+								<Redirect to="/login"/>
+							)
+						)}/>
 
 
-						<Route exact path="/videos">
-							<ConnectedVideoContainer/>
-						</Route>
-
-						<Route exact path="/videos/:id">
-							<ConnectedIndividualVideo/>
-						</Route>
-
-
-						<Route exact path="/images">
-							<ConnectedImageContainer/>
-						</Route>
-
-
-						<Route exact path="/images/:id">
-							<ConnectedIndividualImage/>
-						</Route>
-
-
-						<Route path="/Bulk-Upload-Image">
-							<BulkImageUpload/>
-						</Route>
+						<Route exact path="/images" render={() => (
+							(this.props.isSignedIn) ? (
+								<React.Fragment>
+									<div style={{width:'95%', margin:'auto'}}>
+										<MyResponsiveNavigation/>
+									</div>
+				
+									<ConnectedImageContainer/>
+				
+									<div style={{backgroundColor: 'black'}}>
+										<ConnectedFooterContainer/>
+									</div>
+								</React.Fragment>
+							) : (
+								<Redirect to="/login"/>
+							)
+						)}/>
 
 
-						<Route path="/Bulk-Upload-Video">
-							<BulkVideoUpload/>
-						</Route>
+						<Route exact path="/images/:id" render={() => (
+							(this.props.isSignedIn) ? (
+								<React.Fragment>
+									<div style={{width:'95%', margin:'auto'}}>
+										<MyResponsiveNavigation/>
+									</div>
+				
+									<ConnectedIndividualImage/>
+				
+									<div style={{backgroundColor: 'black'}}>
+										<ConnectedFooterContainer/>
+									</div>
+								</React.Fragment>
+							) : (
+								<Redirect to="/login"/>
+							)
+						)}/>
 
 
-						<Route path="/Bulk-Upload-Blogpost">
-							<BulkBlogpostUpload/>
-						</Route>
+						<Route exact path="/Bulk-Upload-Image" render={() => (
+							(this.props.isSignedIn) ? (
+								<React.Fragment>
+									<div style={{width:'95%', margin:'auto'}}>
+										<MyResponsiveNavigation/>
+									</div>
+				
+									<BulkImageUpload/>
+				
+									<div style={{backgroundColor: 'black'}}>
+										<ConnectedFooterContainer/>
+									</div>
+								</React.Fragment>
+							) : (
+								<Redirect to="/login"/>
+							)
+						)}/>
+
+
+						<Route exact path="/Bulk-Upload-Video" render={() => (
+							(this.props.isSignedIn) ? (
+								<React.Fragment>
+									<div style={{width:'95%', margin:'auto'}}>
+										<MyResponsiveNavigation/>
+									</div>
+				
+									<BulkVideoUpload/>
+				
+									<div style={{backgroundColor: 'black'}}>
+										<ConnectedFooterContainer/>
+									</div>
+								</React.Fragment>
+							) : (
+								<Redirect to="/login"/>
+							)
+						)}/>
+
+
+						<Route exact path="/Bulk-Upload-Blogpost" render={() => (
+							(this.props.isSignedIn) ? (
+								<React.Fragment>
+									<div style={{width:'95%', margin:'auto'}}>
+										<MyResponsiveNavigation/>
+									</div>
+				
+									<BulkBlogpostUpload/>
+				
+									<div style={{backgroundColor: 'black'}}>
+										<ConnectedFooterContainer/>
+									</div>
+								</React.Fragment>
+							) : (
+								<Redirect to="/login"/>
+							)
+						)}/>
+
 
 
 				{/* if no match was made with endpoint then redirect to sign up */}
 						<Route path="/*">
-							<ConnectedSignUpContainer/>
+							(this.props.isSignedIn) ? (
+								<Redirect to="/blogposts"/>
+							) : (
+								<Redirect to="/login"/>
+							)
 						</Route>
 
 					</Switch>
 
-					<div style={{backgroundColor: 'black'}}>
+{/*					<div style={{backgroundColor: 'black'}}>
 						<ConnectedFooterContainer/>
-					</div>
+					</div>*/}
 
 				</div>
 

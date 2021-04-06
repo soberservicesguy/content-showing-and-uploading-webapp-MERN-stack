@@ -5,7 +5,15 @@ const Schema = mongoose.Schema;
 const PrivilegeSchema = new mongoose.Schema({
 
 	_id: Schema.Types.ObjectId,
-	privilege_name:String,
+	// privilege_name:String,
+	privilege_name:{ type:String, enum:[
+		// 'admin_control', 
+		'allow_surfing', 
+		'is_allowed_image_upload', 
+		'is_allowed_video_upload',		
+		'is_allowed_writing_blopost',
+	]},
+
 	total_users:0,
 
 // other model links
