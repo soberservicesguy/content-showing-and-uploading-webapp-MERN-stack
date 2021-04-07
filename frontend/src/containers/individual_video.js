@@ -153,13 +153,13 @@ class IndividualIndividualVideo extends Component {
 	  				<div>
 	  					<ShowLikesOfVideo
 	  						dataPayloadFromParent = { this.props.current_video }
-	  						likes_quantity = { this.props.current_video.likes_quantity }
+	  						likes_quantity = { this.props.current_video.total_likes }
 	  					/>
 	  				</div>
 	  				<div>
 	  					<ShowCommentsOfVideo
 	  						dataPayloadFromParent = { this.props.current_video }
-	  						comments_quantity = { this.props.current_video.comments_quantity }
+	  						comments_quantity = { this.props.current_video.total_comments }
 	  					/>
 	  				</div>
   				</div>

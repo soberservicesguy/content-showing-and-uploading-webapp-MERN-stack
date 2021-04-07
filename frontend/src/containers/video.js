@@ -33,6 +33,8 @@ class VideoContainer extends Component {
 // FETCHING DATA FOR COMPONENT
 			axios.get(utils.baseUrl + '/video/videos-list-with-children',)
 			.then((response) => {
+				console.log('response.data')
+				console.log(response.data)
 				this.props.set_fetched_videos(response.data)
 			})
 			.catch((error) => {
@@ -83,10 +85,10 @@ class VideoContainer extends Component {
 						<ConnectedVideoCard
 							dataPayloadFromParent = { item }
 
-							comments_quantity = { item.comments_quantity }
+							comments_quantity = { item.total_comments }
 							comments = { item.comments || [] }
 
-							likes_quantity = { item.likes_quantity }
+							likes_quantity = { item.total_likes }
 							likes = { item.likes || [] }
 
 							// user_quantity = { item.user_quantity }

@@ -252,7 +252,7 @@ function get_snapshots_storage_path(){
 		
 	} else {
 	
-		return 'assets/uploads/thumbnails_for_social_videos'
+		return 'assets/uploads/upload_thumbnails'
 	
 	}	
 

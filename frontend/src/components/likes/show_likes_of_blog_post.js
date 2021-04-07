@@ -93,6 +93,8 @@ class ShowLikesOfBlogPost extends Component {
 
 		}
 
+		console.log('this.props.likes_quantity')
+		console.log(this.props.likes_quantity)
 
 		return (
 		// e.g a social post, textinput which lets user to enter text, takes persons id as assigned object
@@ -105,7 +107,7 @@ class ShowLikesOfBlogPost extends Component {
 							this.fetchAllLike( this.props.dataPayloadFromParent.endpoint )
 						}}
 					>
-						<ThumbUp style={{color:'orange', fontSize:30, marginRight:10,}}/> {this.props.likes_quantity} likes							
+						<ThumbUp style={{color:'orange', fontSize:30, marginRight:10,}}/> {this.props.dataPayloadFromParent.total_likes} likes							
 					</button>
 				</div>
 

@@ -26,6 +26,8 @@ var filename_used_to_store_video_in_assets = ''
 var filename_used_to_store_video_in_assets_without_format = ''
 
 const {
+	get_snapshots_fullname_and_path,
+	get_file_path_to_use_alternate,
 	get_image_to_display,
 	store_video_at_tmp_and_get_its_path,
 	// delete_video_at_tmp,
@@ -35,7 +37,7 @@ const {
 	get_file_storage_venue,
 	get_file_path_to_use,
 	// get_file_path_to_use_for_bulk_files,
-	// get_snapshots_storage_path,
+	get_snapshots_storage_path,
 	// get_snapshots_fullname_and_path,
 
 	// gcp_bucket,
@@ -156,31 +158,53 @@ router.post('/create-video-with-user', passport.authenticate('jwt', { session: f
 					let create_snapshots_promise
 					let save_snapshots_promises
 
+					if (use_gcp_storage){
+
+						video_for_post = `${ gcp_bucket }/${ video_path }`
+
+					} else if (use_aws_s3_storage){
+
+						// since we will be using cloud front
+						video_for_post = `${ video_path }`
+
+					} else {
+
+						video_for_post = get_file_path_to_use_alternate(req.file, 'videos_uploaded_by_users', timestamp)
+
+					}
+
 
 					var video_id = ''
 				// video is uploaded , NOW creating thumbnail from video using snapshot
 					console.log('req.file')
 					console.log(req.file)
-					let video_path = get_file_path_to_use(req.file, 'videos_uploaded_by_user', timestamp)
+					let video_path = get_file_path_to_use(req.file, 'videos_uploaded_by_users', timestamp)
 
+					console.log('video_path')
+					console.log(video_path)
 
 					store_video_at_tmp_promise = store_video_at_tmp_and_get_its_path( req.file, video_path )
 					promises.push(store_video_at_tmp_promise)
 
-					promise_fulfilled = await Promise.all(promises)
+					// promise_fulfilled = await Promise.all(promises)
 
-					create_snapshots_promise = await create_snapshots_from_uploaded_video(timestamp, req.file, promise_fulfilled[1], total_snapshots_count)
-					save_snapshots_promises = save_generated_snapshots(req.file, timestamp)
+					create_snapshots_promise = await create_snapshots_from_uploaded_video(timestamp, req.file, video_for_post, total_snapshots_count)
+					save_snapshots_promises = await save_generated_snapshots(req.file, timestamp)
 
-					await Promise.all(save_snapshots_promises)
+					// await Promise.all(save_snapshots_promises)
 
 					let user = await User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
+
+					let file_without_format = path.basename( req.file.originalname, path.extname( req.file.originalname ) )
+
+					console.log('RESULT')
+					console.log(get_snapshots_fullname_and_path('upload_thumbnails', file_without_format, timestamp))
 
 					const newThumbnailImage = new Image({
 
 						_id: new mongoose.Types.ObjectId(),
-						category: req.body.category,
-						image_filepath: get_snapshots_fullname_and_path('upload_thumbnails', file_without_format, timestamp),
+						category: 'video_thumbnail',
+						image_filepath: `${get_snapshots_fullname_and_path('upload_thumbnails', file_without_format, timestamp)}/${file_without_format}-${timestamp}_.png`,
 						// image_filepath: `./assets/images/uploads/images_uploaded_by_user/${filename_used_to_store_image_in_assets}`,
 						title: req.body.title,
 						description: req.body.description,
@@ -218,7 +242,15 @@ router.post('/create-video-with-user', passport.authenticate('jwt', { session: f
 
 					let saved_video = await Video.findOne({ _id: video_id })
 
-					let image_in_base64_encoding = await get_image_to_display(newThumbnailImage.image_filepath, newThumbnailImage.object_files_hosted_at)
+					console.log('newThumbnailImage.image_filepath')
+					console.log(newThumbnailImage.image_filepath)
+					console.log('newThumbnailImage.object_files_hosted_at')
+					console.log(newThumbnailImage.object_files_hosted_at)
+
+					let get_random_screenshot = select_random_screenshot(newThumbnailImage.image_filepath, total_snapshots_count)
+					// let image_in_base64_encoding = await get_image_to_display(newThumbnailImage.image_filepath, newThumbnailImage.object_files_hosted_at)
+					// let image_in_base64_encoding = await get_image_to_display(screenshot_image, newThumbnailImage.object_files_hosted_at)
+					let image_in_base64_encoding = await get_image_to_display(`${get_snapshots_storage_path()}/${get_random_screenshot}`, newThumbnailImage.object_files_hosted_at)
 				
 					res.status(200).json({ 
 						category: saved_video.category,
@@ -379,6 +411,8 @@ router.get('/get-all-comments-of-video', async function(req, res, next){
 	// final_result.map((result) => {
 	// 	console.log(Object.keys(result))
 	// })
+	console.log('final_result')
+	console.log(final_result)
 	res.status(200).json( final_result );
 })
 
@@ -453,8 +487,8 @@ router.post('/create-comment-for-video', passport.authenticate('jwt', { session:
 				if (err) return console.log(err);
 			})
 
-			let image_object = await Image.findOne({_id:video.image_thumbnail})
-			image_in_base64_encoding = await get_image_to_display(image_in_base64_encoding.image_filepath, image_in_base64_encoding.object_files_hosted_at)
+			let image_object = await Image.findOne({_id:req.user.user_object.user_image})
+			image_in_base64_encoding = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
 
 			video.save((err, video) => {
 				res.status(200).json({
@@ -488,14 +522,15 @@ router.post('/create-like-for-video', passport.authenticate('jwt', { session: fa
 
 	var video_endpoint = req.body.video_endpoint
 
+	var newLike = new Like({
+		_id: new mongoose.Types.ObjectId(),
+	})
+
 	User.findOne({ phone_number: req.user.user_object.phone_number })
 	.then(async (user) => {
 
 		let image_in_base64_encoding
 
-		var newLike = new Like({
-			_id: new mongoose.Types.ObjectId(),
-		})
 					
 		newLike.user = user
 		user.videos_likes.push(newLike)
@@ -512,10 +547,13 @@ router.post('/create-like-for-video', passport.authenticate('jwt', { session: fa
 				if (err) return console.log(err);
 			})
 
-			let image_object = await Image.findOne({_id:video.image_thumbnail})
+			// let image_object = await Image.findOne({_id:video.image_thumbnail})
+			let image_object = await Image.findOne({_id:req.user.user_object.user_image})
 			image_in_base64_encoding = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
 
 			video.save((err, video) => {
+				// console.log('video')
+				// console.log(video)
 				res.status(200).json({
 					category: video.category,
 					image_thumbnail: image_in_base64_encoding,
@@ -531,6 +569,7 @@ router.post('/create-like-for-video', passport.authenticate('jwt', { session: fa
 			})
 		})
 		.catch((err1) => {
+			console.log('CAUGHT')
 			console.log(err1)
 		})
 
@@ -546,12 +585,12 @@ router.post('/create-like-for-video', passport.authenticate('jwt', { session: fa
 
 // get blogposts_list_with_children
 // USED
-router.get('/videos-list-with-children', async function(req, res, next){
+router.get('/videos-list-with-children', passport.authenticate('jwt', { session: false }), isAllowedSurfing, async function(req, res, next){
 	console.log('called')
 
 	Video.
 	find().
-	limit(10).
+	// limit(10).
 	populate('comments').
 	populate('likes').
 	// populate('user').
@@ -563,14 +602,17 @@ router.get('/videos-list-with-children', async function(req, res, next){
 			
 			newVideo.category = video[ 'category' ]
 
-			let image_object = await Image.findOne({ _id: video.image_thumbnail })
-
+			// let image_object = await Image.findOne({ _id: video.image_thumbnail })
+			let image_object = await Image.findOne({_id:req.user.user_object.user_image})
 			newVideo.image_thumbnail = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
 			// newVideo.image_thumbnail = base64_encode( video[ 'image_thumbnail' ] )
 			newVideo.title = video[ 'title' ]
 			newVideo.all_tags = video[ 'all_tags' ]
 			newVideo.description = video[ 'description' ]
 			newVideo.endpoint = video[ 'endpoint' ]
+
+			newVideo.total_comments = video['total_comments']
+			newVideo.total_likes = video['total_likes']
 
 			newVideos_list.push({...newVideo})
 			newVideo = {}
@@ -586,6 +628,8 @@ router.get('/videos-list-with-children', async function(req, res, next){
 
 		} else {
 
+			console.log('newVideos_list')
+			console.log(newVideos_list)
 			res.status(200).json(newVideos_list);
 
 		}

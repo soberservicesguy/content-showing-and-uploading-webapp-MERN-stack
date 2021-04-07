@@ -26,6 +26,10 @@ import {
 } from '../redux_stuff/connected_components';
 
 import {
+	BlogPostCard,
+} from "../components/blogposts/"
+
+import {
 	VerticalMasonriesContainer,
 } from "./"
 
@@ -44,7 +48,8 @@ class BlogPostContainer extends Component {
 // FETCHING DATA FOR COMPONENT
 		axios.get(utils.baseUrl + '/blogpostings/blogposts-list-with-children',)
 		.then((response) => {
-			// console.log(response.data)
+			console.log('response.data')
+			console.log(response.data)
 			this.props.set_fetched_blogposts(response.data)
 		})
 		.catch((error) => {
@@ -100,17 +105,20 @@ class BlogPostContainer extends Component {
 
 	// copying EXACT same children being passed to VerticalMasonriesContainer below but without local_height prop
 	  	let total_children = total_blogposts.map((item, index) => {
+	  	console.log('item.total_likes')
+	  	console.log(item.total_likes)
 
 			return(
 
 		  		<Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-		  			<ConnectedBlogPostCard
+		  			<BlogPostCard
+		  			// <ConnectedBlogPostCard
 		  				dataPayloadFromParent = { item }
 
-		  				comments_quantity = { item.comments_quantity }
+		  				comments_quantity = { item.total_comments }
 		  				comments = { item.comments || [] }
 
-		  				likes_quantity = { item.likes_quantity }
+		  				likes_quantity = { item.total_likes }
 		  				likes = { item.likes || [] }
 
 		  				// user_quantity = { item.user_quantity }

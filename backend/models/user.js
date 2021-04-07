@@ -14,6 +14,7 @@ const UserSchema = new mongoose.Schema({
 	salt:String,
 	isLoggedIn: Boolean,
 
+
 // other model links 
 	privileges: [{ type: Schema.Types.ObjectId, ref: 'Privilege'  }],
 	user_image:{ type: Schema.Types.ObjectId, ref: 'Image'  },

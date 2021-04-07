@@ -143,6 +143,9 @@ class BlogPostCard extends Component {
 			},
 		}
 
+		// console.log(' in card this.props.likes_number')
+		// console.log(Object.keys(this.props))
+		// console.log(this.props.dataPayloadFromParent.total_likes)
 		return (
 		  	<div>
 
@@ -170,11 +173,11 @@ class BlogPostCard extends Component {
 
 						<ShowLikesOfBlogPost
 							dataPayloadFromParent = { this.props.dataPayloadFromParent }
-							likes_quantity = { this.props.likes_quantity }
+							likes_quantity = { this.props.dataPayloadFromParent.total_likes }
 						/>
 						<ShowCommentsOfBlogPost
 							dataPayloadFromParent = { this.props.dataPayloadFromParent }
-							comments_quantity = { this.props.comments_quantity }
+							comments_quantity = { this.props.dataPayloadFromParent.total_comments}
 						/>
 
 

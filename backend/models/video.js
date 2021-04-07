@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-var endpoint_number = 393893
+var endpoint_number = 3938931
 
 const VideoSchema = new mongoose.Schema({
 
@@ -48,7 +48,7 @@ VideoSchema.pre('save', function(next) {
 VideoSchema.post('save', function() {
 
 	// console.log('SAVED CONDITION')
- //    console.log(this)
+    console.log(this)
 
 });
 

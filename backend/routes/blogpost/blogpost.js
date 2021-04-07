@@ -144,6 +144,25 @@ router.post('/create-blogpost-with-user', passport.authenticate('jwt', { session
 					// console.log('INNER LOG')
 					// console.log(req.body)
 
+					const newBlogpostImage = new Image({
+
+						_id: new mongoose.Types.ObjectId(),
+						category: 'blogpost_image',
+						image_filepath: get_file_path_to_use(req.file, 'blogpost_image_mains', timestamp),
+						// image_filepath: `assets/blogpost_image_main/${file_without_format}-${timestamp}_.png`,
+						// image_filepath: `./assets/images/uploads/images_uploaded_by_user/${filename_used_to_store_image_in_assets}`,
+						title: req.body.title,
+						description: req.body.description,
+						all_tags: req.body.all_tags,
+						object_files_hosted_at: get_file_storage_venue(),
+						// timestamp_of_uploading: String( Date.now() ),
+						// endpoint: req.body.endpoint, // this will be taken care in db model
+
+					});
+
+					await newBlogpostImage.save()
+
+
 				// image is uploaded , now saving image in db
 					const newBlogPost = new BlogPost({
 
@@ -157,7 +176,8 @@ router.post('/create-blogpost-with-user', passport.authenticate('jwt', { session
 						third_para: req.body.third_para,
 						fourth_para: req.body.fourth_para,
 						all_tags: req.body.all_tags,
-						image_main_filepath: get_file_path_to_use(req.file, 'blogpost_image_mains', timestamp),
+						image_main_filepath: newBlogpostImage,
+						// image_main_filepath: get_file_path_to_use(req.file, 'blogpost_image_mains', timestamp),
 						object_files_hosted_at: get_file_storage_venue(),
 						// image_main_filepath: `./assets/images/uploads/blogpost_image_main/${filename_used_to_store_image_in_assets}`,
 						// timestamp_of_uploading: String( Date.now() ),
@@ -177,11 +197,12 @@ router.post('/create-blogpost-with-user', passport.authenticate('jwt', { session
 							if (user){
 
 								newBlogPost.user = user
+								user.save()
 								newBlogPost.save()
 
-
+								let image_object = await Image.findOne({_id:newBlogPost.image_main_filepath})
 								// in response sending new image too with base64 encoding
-								let base64_encoded_image = await get_image_to_display(newBlogPost.image_main_filepath, newBlogPost.object_files_hosted_at)
+								let base64_encoded_image = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
 
 								let new_blogpost = {
 									endpoint: newBlogPost.endpoint,
@@ -194,7 +215,7 @@ router.post('/create-blogpost-with-user', passport.authenticate('jwt', { session
 									third_para: newBlogPost.third_para,
 									fourth_para: newBlogPost.fourth_para,
 									all_tags: newBlogPost.all_tags,
-									image_main: base64_encoded_image,
+									image_main_filepath: base64_encoded_image,
 								}
 
 								res.status(200).json({ success: true, msg: 'new user saved', new_blogpost: new_blogpost});	
@@ -243,10 +264,12 @@ router.get('/get-all-comments-of-blogpost', async function(req, res, next){
 
 	let final_result = []
 
-	let base64_encoded_image = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
 
 	var final_comments_payload = await Promise.all(users_list_who_commented.map(async (user_object) => {
+
 		let image_object = await Image.findOne({_id:user_object.user_image})
+		let base64_encoded_image = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
+	
 		final_result.push({
 			user_name:user_object.user_name,
 			user_image:base64_encoded_image,
@@ -275,11 +298,11 @@ router.get('/get-all-likes-of-blogpost',async function(req, res, next){
 
 	let final_result = []
 
-	let base64_encoded_image = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
-
 	let final_liked_payload = await Promise.all(users_list_who_liked.map(async (user_object) => {
 
 		let image_object = await Image.findOne({_id:user_object.user_image})
+		let base64_encoded_image = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
+
 		final_result.push({
 			user_name:user_object.user_name,
 			user_image:base64_encoded_image,
@@ -326,7 +349,8 @@ router.post('/create-comment-for-blogpost', passport.authenticate('jwt', { sessi
 				if (err) return console.log(err);
 			})
 
-			let base64_encoded_image = await get_image_to_display(blogpost.image_main_filepath, blogpost.object_files_hosted_at)
+			let image_object = await Image.findOne({_id:blogpost.image_main_filepath})
+			let base64_encoded_image = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
 
 			blogpost.save((err, blogpost) => {
 				res.status(200).json({
@@ -386,7 +410,9 @@ router.post('/create-like-for-blogpost', passport.authenticate('jwt', { session:
 				if (err) return console.log(err);
 			})
 
-			let base64_encoded_image = await get_image_to_display(blogpost.image_main_filepath, blogpost.object_files_hosted_at)
+			let image_object = await Image.findOne({_id:blogpost.image_main_filepath})
+
+			let base64_encoded_image = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
 				
 			blogpost.save((err, blogpost) => {
 				res.status(200).json({
@@ -433,10 +459,19 @@ router.get('/blogposts-list-with-children', async function(req, res, next){
 	populate('likes').
 	// populate('user').
 	then(async (blogposts)=>{
+		// console.log('blogposts')
+		// console.log(blogposts)
+
 		var newBlogPosts_list = []
-		blogposts.map(async (blogpost, index)=>{
+		let all_blogposts = await Promise.all(blogposts.map(async (blogpost, index)=>{
+			
+			console.log('blogpost')
+			console.log(blogpost)
+
 			var newBlogPost = {}
-			let base64_encoded_image = await get_image_to_display(blogpost.image_main_filepath, blogpost.object_files_hosted_at)
+
+			let image_object = await Image.findOne({_id:blogpost.image_main_filepath})
+			let base64_encoded_image = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
 
 			newBlogPost.category = blogpost[ 'category' ]
 			newBlogPost.image_main_filepath = base64_encoded_image
@@ -445,13 +480,19 @@ router.get('/blogposts-list-with-children', async function(req, res, next){
 			newBlogPost.initial_tags = blogpost[ 'initial_tags' ]
 			newBlogPost.endpoint = blogpost[ 'endpoint' ]
 
+			newBlogPost.total_comments = blogpost['total_comments']
+			newBlogPost.total_likes = blogpost['total_likes']
+
+
 			newBlogPosts_list.push({...newBlogPost})
 			newBlogPost = {}
-		});
+		}))
 
 		return newBlogPosts_list
 	})
 	.then((newBlogPosts_list) => {
+			console.log('newBlogPosts_list')
+			console.log(newBlogPosts_list)
 
 		if (!newBlogPosts_list) {
 
