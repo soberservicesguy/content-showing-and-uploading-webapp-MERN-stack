@@ -408,6 +408,8 @@ router.post('/create-comment-for-image', passport.authenticate('jwt', { session:
 			// console.log({title:image.title})
 			image.save(async (err, image) => {
 
+				console.log('image.image_filepath')
+				console.log(image.image_filepath)
 				base64_encoded_image = await get_image_to_display(image.image_filepath, image.object_files_hosted_at)
 				// image.image_filepath = base64_encode( image.image_filepath )
 				res.status(200).json({

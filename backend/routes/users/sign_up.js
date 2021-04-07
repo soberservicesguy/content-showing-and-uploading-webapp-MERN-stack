@@ -181,6 +181,7 @@ router.post('/signup-and-get-privileges', (req, res, next) => {
 
 						} else {
 							res.status(200).json({ success: false, msg: "user already exists, try another" });
+							return
 						}
 
 					} catch (err){

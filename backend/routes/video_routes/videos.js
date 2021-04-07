@@ -40,7 +40,7 @@ const {
 	get_snapshots_storage_path,
 	// get_snapshots_fullname_and_path,
 
-	// gcp_bucket,
+	gcp_bucket,
 	// save_file_to_gcp_storage,
 	save_file_to_gcp,
 	// save_file_to_gcp_for_bulk_files,
@@ -157,6 +157,8 @@ router.post('/create-video-with-user', passport.authenticate('jwt', { session: f
 					let store_video_at_tmp_promise
 					let create_snapshots_promise
 					let save_snapshots_promises
+					// let video_path = get_file_path_to_use(req.file, 'videos_uploaded_by_users', timestamp)
+					let video_path = get_file_path_to_use_alternate(req.file, 'videos_uploaded_by_users', timestamp)
 
 					if (use_gcp_storage){
 
@@ -178,20 +180,36 @@ router.post('/create-video-with-user', passport.authenticate('jwt', { session: f
 				// video is uploaded , NOW creating thumbnail from video using snapshot
 					console.log('req.file')
 					console.log(req.file)
-					let video_path = get_file_path_to_use(req.file, 'videos_uploaded_by_users', timestamp)
 
 					console.log('video_path')
 					console.log(video_path)
 
-					store_video_at_tmp_promise = store_video_at_tmp_and_get_its_path( req.file, video_path )
+
+					if (use_gcp_storage || use_aws_s3_storage){
+
+						store_video_at_tmp_promise = store_video_at_tmp_and_get_its_path( req.file, video_path )
+						promises.push(store_video_at_tmp_promise)
+
+						promise_fulfilled = await Promise.all(promises)
+
+						create_snapshots_promise = await create_snapshots_from_uploaded_video(timestamp, req.file, promise_fulfilled[1], total_snapshots_count)
+
+
+					} else {
+
+						create_snapshots_promise = await create_snapshots_from_uploaded_video(timestamp, req.file, video_for_post, total_snapshots_count)
+
+					}
+
+
+
 					promises.push(store_video_at_tmp_promise)
 
 					// promise_fulfilled = await Promise.all(promises)
 
-					create_snapshots_promise = await create_snapshots_from_uploaded_video(timestamp, req.file, video_for_post, total_snapshots_count)
-					save_snapshots_promises = await save_generated_snapshots(req.file, timestamp)
+					save_snapshots_promises = await save_generated_snapshots(req.file, timestamp, total_snapshots_count)
 
-					// await Promise.all(save_snapshots_promises)
+					await Promise.all(save_snapshots_promises)
 
 					let user = await User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
 
@@ -200,11 +218,37 @@ router.post('/create-video-with-user', passport.authenticate('jwt', { session: f
 					console.log('RESULT')
 					console.log(get_snapshots_fullname_and_path('upload_thumbnails', file_without_format, timestamp))
 
+					let random_screenshot = get_snapshots_fullname_and_path('upload_thumbnails', file_without_format, timestamp)  
+					
+
+					// let get_random_screenshot = select_random_screenshot(req.file.originalname, total_snapshots_count)
+					// let get_random_screenshot = select_random_screenshot(file_without_format, total_snapshots_count)
+					let get_random_screenshot = select_random_screenshot(random_screenshot, total_snapshots_count)
+
+					console.log('get_random_screenshot')
+					console.log(get_random_screenshot)
+
+					let video_thumbnail_image_to_use
+					if (use_gcp_storage || use_aws_s3_storage){
+
+						// video_thumbnail_image_to_use = get_snapshots_fullname_and_path(get_snapshots_storage_path(), file_without_format, timestamp)
+						video_thumbnail_image_to_use = await get_image_to_display(`upload_thumbnails/${get_random_screenshot}`, (use_gcp_storage) ? 'gcp_storage' : 'aws_s3')
+
+						console.log('video_thumbnail_image_to_use')
+						console.log(video_thumbnail_image_to_use)
+					} else {
+
+						video_thumbnail_image_to_use = `${get_snapshots_fullname_and_path('upload_thumbnails', file_without_format, timestamp)}/${file_without_format}-${timestamp}_.png`
+
+					}
+
+
 					const newThumbnailImage = new Image({
 
 						_id: new mongoose.Types.ObjectId(),
 						category: 'video_thumbnail',
-						image_filepath: `${get_snapshots_fullname_and_path('upload_thumbnails', file_without_format, timestamp)}/${file_without_format}-${timestamp}_.png`,
+						image_filepath: video_thumbnail_image_to_use,
+						// image_filepath: `${get_snapshots_fullname_and_path('upload_thumbnails', file_without_format, timestamp)}/${file_without_format}-${timestamp}_.png`,
 						// image_filepath: `./assets/images/uploads/images_uploaded_by_user/${filename_used_to_store_image_in_assets}`,
 						title: req.body.title,
 						description: req.body.description,
@@ -224,6 +268,7 @@ router.post('/create-video-with-user', passport.authenticate('jwt', { session: f
 						image_thumbnail: newThumbnailImage,
 						// image_thumbnail: get_snapshots_fullname_and_path('upload_thumbnails', file_without_format, timestamp),
 						// image_thumbnail: `./assets/videos/uploads/upload_thumbnails/${filename_used_to_store_video_in_assets_without_format}_1.png`,
+						object_files_hosted_at: get_file_storage_venue(),
 						timestamp_of_uploading: String( Date.now() ),
 						video_filepath: video_path,
 						// video_filepath: `./assets/videos/uploads/videos_uploaded_by_user/${filename_used_to_store_video_in_assets}`,
@@ -247,14 +292,20 @@ router.post('/create-video-with-user', passport.authenticate('jwt', { session: f
 					console.log('newThumbnailImage.object_files_hosted_at')
 					console.log(newThumbnailImage.object_files_hosted_at)
 
-					let get_random_screenshot = select_random_screenshot(newThumbnailImage.image_filepath, total_snapshots_count)
-					// let image_in_base64_encoding = await get_image_to_display(newThumbnailImage.image_filepath, newThumbnailImage.object_files_hosted_at)
-					// let image_in_base64_encoding = await get_image_to_display(screenshot_image, newThumbnailImage.object_files_hosted_at)
-					let image_in_base64_encoding = await get_image_to_display(`${get_snapshots_storage_path()}/${get_random_screenshot}`, newThumbnailImage.object_files_hosted_at)
+					// get_random_screenshot = select_random_screenshot(newThumbnailImage.image_filepath, total_snapshots_count)
+					// console.log('get_random_screenshot')
+					// console.log(get_random_screenshot)
+					// // let image_in_base64_encoding = await get_image_to_display(newThumbnailImage.image_filepath, newThumbnailImage.object_files_hosted_at)
+					// // let image_in_base64_encoding = await get_image_to_display(screenshot_image, newThumbnailImage.object_files_hosted_at)
+					// console.log('FINAL')
+					// console.log(`${get_snapshots_storage_path()}/${get_random_screenshot}`)
+					
+					// let image_in_base64_encoding = await get_image_to_display(`${get_snapshots_storage_path()}/${get_random_screenshot}`, newThumbnailImage.object_files_hosted_at)
 				
+
 					res.status(200).json({ 
 						category: saved_video.category,
-						image_thumbnail: image_in_base64_encoding,
+						image_thumbnail: newThumbnailImage.image_filepath,
 						// image_thumbnail: base64_encode( saved_video.image_thumbnail ),
 						video_filepath: saved_video.video_filepath,
 						title: saved_video.title,
