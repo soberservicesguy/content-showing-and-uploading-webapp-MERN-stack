@@ -233,7 +233,8 @@ router.post('/create-video-with-user', passport.authenticate('jwt', { session: f
 
 					// getting image from cloud
 						// video_thumbnail_image_to_use = get_snapshots_fullname_and_path(get_snapshots_storage_path(), file_without_format, timestamp)
-						video_thumbnail_image_to_use = await get_image_to_display(`upload_thumbnails/${get_random_screenshot}`, (use_gcp_storage) ? 'gcp_storage' : 'aws_s3')
+						// video_thumbnail_image_to_use = await get_image_to_display(`upload_thumbnails/${get_random_screenshot}`, (use_gcp_storage) ? 'gcp_storage' : 'aws_s3')
+						video_thumbnail_image_to_use = get_snapshots_fullname_and_path('upload_thumbnails', file_without_format, timestamp)
 
 						// console.log('video_thumbnail_image_to_use')
 						// console.log(video_thumbnail_image_to_use)
@@ -241,6 +242,8 @@ router.post('/create-video-with-user', passport.authenticate('jwt', { session: f
 
 						video_thumbnail_image_to_use = `${get_snapshots_fullname_and_path('upload_thumbnails', file_without_format, timestamp)}/${file_without_format}-${timestamp}_.png`
 
+						console.log('CHECK THIS')
+						console.log(video_thumbnail_image_to_use)
 					}
 
 
@@ -264,9 +267,11 @@ router.post('/create-video-with-user', passport.authenticate('jwt', { session: f
 
 
 					video_id = new mongoose.Types.ObjectId()
+
+
 					const newVideo = new Video({
 						_id: video_id,
-						image_thumbnail: newThumbnailImage,
+						image_thumbnail: newThumbnailImage._id,
 						// image_thumbnail: get_snapshots_fullname_and_path('upload_thumbnails', file_without_format, timestamp),
 						// image_thumbnail: `./assets/videos/uploads/upload_thumbnails/${filename_used_to_store_video_in_assets_without_format}_1.png`,
 						object_files_hosted_at: get_file_storage_venue(),
@@ -304,10 +309,27 @@ router.post('/create-video-with-user', passport.authenticate('jwt', { session: f
 					
 					// let image_in_base64_encoding = await get_image_to_display(`${get_snapshots_storage_path()}/${get_random_screenshot}`, newThumbnailImage.object_files_hosted_at)
 				
+					if (use_gcp_storage || use_aws_s3_storage){
+
+						video_thumbnail_image_to_use = await get_image_to_display(`upload_thumbnails/${get_random_screenshot}`, get_file_storage_venue())
+
+					} else {
+
+						let filepath_for_screenshot = get_snapshots_fullname_and_path('upload_thumbnails', file_without_format, timestamp)  
+						console.log('random_screenshot')
+						console.log(random_screenshot)
+						get_random_screenshot = select_random_screenshot(`${filepath_for_screenshot}/${file_without_format}-${timestamp}_.png`, total_snapshots_count)
+						console.log('get_random_screenshot')
+						console.log(get_random_screenshot)
+
+						video_thumbnail_image_to_use = await get_image_to_display(`${get_snapshots_storage_path()}/${get_random_screenshot}`, get_file_storage_venue())
+
+					}
 
 					res.status(200).json({ 
 						category: saved_video.category,
-						image_thumbnail: newThumbnailImage.image_filepath,
+						image_thumbnail: video_thumbnail_image_to_use,
+						// image_thumbnail: newThumbnailImage.image_filepath,
 						object_files_hosted_at:get_file_storage_venue(),
 						// image_thumbnail: base64_encode( saved_video.image_thumbnail ),
 						video_filepath: saved_video.video_filepath, // THIS IS SECURITY CONCERN THOUGH
@@ -656,9 +678,25 @@ router.get('/videos-list-with-children', passport.authenticate('jwt', { session:
 			
 			newVideo.category = video[ 'category' ]
 
-			// let image_object = await Image.findOne({ _id: video.image_thumbnail })
-			let image_object = await Image.findOne({_id:req.user.user_object.user_image})
-			newVideo.image_thumbnail = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
+			let image_object = await Image.findOne({ _id: video.image_thumbnail })
+			// let image_object = await Image.findOne({_id:req.user.user_object.user_image})
+
+		// video_thumbnail_image_to_use = await get_image_to_display(`${get_snapshots_storage_path()}/${get_random_screenshot}`, get_file_storage_venue())
+
+			let random_thumbnail = select_random_screenshot(image_object.image_filepath, total_snapshots_count)
+			console.log('random_thumbnail')
+			console.log(random_thumbnail)
+			
+			if (use_gcp_storage || use_aws_s3_storage){
+
+				newVideo.image_thumbnail = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
+
+			} else {
+
+	 			newVideo.image_thumbnail = await get_image_to_display(`${get_snapshots_storage_path()}/${random_thumbnail}`, image_object.object_files_hosted_at)
+
+			}
+
 			// newVideo.image_thumbnail = base64_encode( video[ 'image_thumbnail' ] )
 			newVideo.title = video[ 'title' ]
 			newVideo.all_tags = video[ 'all_tags' ]
@@ -682,8 +720,8 @@ router.get('/videos-list-with-children', passport.authenticate('jwt', { session:
 
 		} else {
 
-			console.log('newVideos_list')
-			console.log(newVideos_list)
+			// console.log('newVideos_list')
+			// console.log(newVideos_list)
 			res.status(200).json(newVideos_list);
 
 		}
@@ -1083,7 +1121,7 @@ Video.
 
 // get videos_list_with_children
 
-router.get('/videos-list-with-children', function(req, res, next){
+router.get('/videos-list-with-children', async function(req, res, next){
 
 	Video.
 		find().
@@ -1097,20 +1135,33 @@ router.get('/videos-list-with-children', function(req, res, next){
 		populate('comments').
 		populate('likes').
 		populate('user').
-		then((videos)=>{
+		then(async (videos)=>{
+
 			var newVideos_list = []
-			videos.map((video, index)=>{
+
+			let all_videos = await Promise.all(videos.map(async (video, index)=>{
 				var newVideo = {}
 
+
+				let image_object = await Image.findOne({ _id: video.image_thumbnail })
+				console.log('image_object.image_filepath')
+				console.log(image_object.image_filepath)
+
+				let random_screenshot = `upload_thumbnails/${select_random_screenshot(image_object.image_filepath, total_snapshots_count)}`
+				// newVideo.image_thumbnail = await get_image_to_display(`${image_object.image_filepath}`, image_object.object_files_hosted_at)
+				console.log('random_screenshot')
+				console.log(random_screenshot)
+				newVideo.image_thumbnail = await get_image_to_display(random_screenshot, image_object.object_files_hosted_at)
+
 				newVideo.category = video[ 'category' ]
-				newVideo.image_thumbnail = base64_encode( video[ 'image_thumbnail' ] )
-				newVideo.video_filename = video[ 'video_filename' ]
+				// newVideo.image_thumbnail = base64_encode( video[ 'image_thumbnail' ] )
+				// newVideo.video_filename = video[ 'video_filename' ]
 				newVideo.title = video[ 'title' ]
 				newVideo.endpoint = video[ 'endpoint' ]
 
 				newVideos_list.push({...newVideo})
 				newVideo = {}
-			});
+			}))
 
 			return newVideos_list
 		})
@@ -1123,6 +1174,8 @@ router.get('/videos-list-with-children', function(req, res, next){
 
 			} else {
 
+				console.log('newVideos_list')
+				console.log(newVideos_list)
 				res.status(200).json(newVideos_list);
 
 			}

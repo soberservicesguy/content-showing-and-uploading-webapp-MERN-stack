@@ -43,8 +43,8 @@ function get_multers3_storage(timestamp){
 
 function get_file_from_aws(complete_file_name){
 
-	console.log('complete_file_name')
-	console.log(complete_file_name)
+	// console.log('complete_file_name')
+	// console.log(complete_file_name)
 
 	let params = { Bucket:s3_bucket, Key: complete_file_name }
 	let fileContents = new Buffer('');
