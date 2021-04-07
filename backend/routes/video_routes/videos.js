@@ -688,8 +688,9 @@ router.get('/videos-list-with-children', passport.authenticate('jwt', { session:
 			console.log(random_thumbnail)
 			
 			if (use_gcp_storage || use_aws_s3_storage){
-
-				newVideo.image_thumbnail = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
+				`/${random_thumbnail}`
+				// newVideo.image_thumbnail = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
+	 			newVideo.image_thumbnail = await get_image_to_display(`upload_thumbnails/${random_thumbnail}`, image_object.object_files_hosted_at)
 
 			} else {
 
