@@ -13,17 +13,19 @@ if (use_gcp_storage === false && use_aws_s3_storage === false){
 
 	let all_links = [
 	// images
-		'./assets/uploads/advertisement_images',
-		'./assets/uploads/avatar_images',
-		'./assets/uploads/book_images',
-		'./assets/uploads/cover_images',
-		'./assets/uploads/page_images',
-		'./assets/uploads/social_post_images',
-		'./assets/uploads/sport_images',
+		// './assets/uploads/advertisement_images',
+		// './assets/uploads/avatar_images',
+		// './assets/uploads/book_images',
+		// './assets/uploads/cover_images',
+		// './assets/uploads/page_images',
+		// './assets/uploads/social_post_images',
+		// './assets/uploads/sport_images',
 
 	// videos
-		'./assets/uploads/social_post_videos',
-		'./assets/uploads/thumbnails_for_social_videos',
+		'./assets/uploads/videos_uploaded_by_user',
+
+		// './assets/uploads/social_post_videos',
+		// './assets/uploads/thumbnails_for_social_videos',
 	]
 
 	Promise.all(all_links.map(async (dirpath) => {
@@ -56,9 +58,10 @@ function get_multer_disk_storage(timestamp){
 			let file_path = path.join(__dirname , `${path_for_saving_files}/${file.fieldname}s`)
 
 			await fs.access(file_path, function(err) {
-				if (err && err.code === 'ENOENT') {
-					fs.mkdir(file_path); //Create dir in case not found
-				}
+		// adding directories is not working
+				// if (err && err.code === 'ENOENT') {
+				// 	fs.mkdir(file_path); //Create dir in case not found
+				// }
 			});
 
 			cb(null, file_path)	

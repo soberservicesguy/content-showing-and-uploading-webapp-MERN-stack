@@ -232,9 +232,10 @@ router.get('/get-all-comments-of-image', async function(req, res, next){
 // find image from user
 	let final_result = []
 	let final_commments_payload = await Promise.all(users_list_who_commented.map(async (user_object) => {
-	let base64_encoded_image = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
 
 		let image_object = await Image.findOne({_id:user_object.user_image})
+		let base64_encoded_image = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
+
 		final_result.push({
 			user_name:user_object.user_name,
 			user_image:base64_encoded_image,
@@ -353,8 +354,8 @@ router.get('/get-all-likes-of-image',async function(req, res, next){
 	let base64_encoded_image
 	let final_liked_payload = await Promise.all(users_list_who_liked.map(async (user_object) => {
 
-		base64_encoded_image = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
 		let image_object = await Image.findOne({_id:user_object.user_image})
+		base64_encoded_image = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
 		final_result.push({
 			user_name:user_object.user_name,
 			user_image:base64_encoded_image,
@@ -512,12 +513,9 @@ router.get('/images-list-with-children', async function(req, res, next){
 			var newImage = {}
 
 			let image_object = await Image.findOne({ _id: image })
-			console.log('image_object')
-			console.log(image_object)
 			let base64_encoded_image = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
 
 			// let base64_encoded_image = await get_image_to_display(image.image_filepath, image.object_files_hosted_at)
-			console.log('FORWARD')
 			newImage.category = image_object['category']
 			newImage.image_filepath = base64_encoded_image
 			newImage.title = image_object['title']

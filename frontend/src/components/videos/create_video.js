@@ -222,7 +222,7 @@ class CreateVideo extends Component {
 								<input
 									id="myVideoInput"
 									style={{display:'none'}}
-									name="videos_uploaded_by_users" // name of input field or fieldName simply
+									name="videos_uploaded_by_user" // name of input field or fieldName simply
 									encType="multipart/form-data"
 									type="file"
 									onChange={(event) => {
@@ -253,7 +253,7 @@ class CreateVideo extends Component {
 										formData.append('all_tags', this.state.all_tags)
 										// formData.append('user_object', user_object) // not needed, since object will be pulled from passport js jwt token
 										if(this.state.video_filepath !== ''){
-											formData.append('videos_uploaded_by_users', this.state.video_filepath, this.state.video_filepath.name)
+											formData.append('videos_uploaded_by_user', this.state.video_filepath, this.state.video_filepath.name)
 										}
 
 										axios.post(utils.baseUrl + '/video/create-video-with-user', formData)
