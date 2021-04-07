@@ -148,7 +148,8 @@ class IndividualIndividualBlogPost extends Component {
 
 
 		}
-
+		console.log('this.props.current_blogpost')
+		console.log(this.props.current_blogpost)
 		var base64Image = "data:image/jpeg;base64," + this.props.current_blogpost.image_main_filepath
 		let { id } = this.props.match.params // use in render method
 		// console.log({id})
@@ -211,13 +212,13 @@ class IndividualIndividualBlogPost extends Component {
 	  				<div>
 	  					<ShowLikesOfBlogPost
 	  						dataPayloadFromParent = { this.props.current_blogpost }
-	  						likes_quantity = { this.props.current_blogpost.likes_quantity }
+	  						likes_quantity = { this.props.current_blogpost.total_likes }
 	  					/>
 	  				</div>
 	  				<div>
 	  					<ShowCommentsOfBlogPost
 	  						dataPayloadFromParent = { this.props.current_blogpost }
-	  						comments_quantity = { this.props.current_blogpost.comments_quantity }
+	  						comments_quantity = { this.props.current_blogpost.total_comments }
 	  					/>
 	  				</div>
   				</div>

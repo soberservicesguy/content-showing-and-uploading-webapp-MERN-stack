@@ -48,8 +48,9 @@ class ShowCommentsOfBlogPost extends Component {
 		.then((response) => {
 
 			// console.log('Called')
-			this.setState( prev => ({...prev, comments: ( prev.comments.length === 0 ) ? response.data : [] }) )
-			this.toggle_comment_modal()
+			// this.setState( prev => ({...prev, comments: ( prev.comments.length === 0 ) ? response.data : [] }) )
+			this.setState( prev => ({...prev, comments: response.data }) )
+			// this.toggle_comment_modal()
 			
 		})
 		.catch((error) => {
@@ -72,6 +73,14 @@ class ShowCommentsOfBlogPost extends Component {
 
 // COMPONENT DID MOUNT
 	componentDidMount() {
+
+		if (this.props.dataPayloadFromParent.total_comments){
+
+		} else {
+
+			this.fetchAllComment(this.props.dataPayloadFromParent.endpoint)
+
+		}
 
 	}
 
@@ -102,9 +111,10 @@ class ShowCommentsOfBlogPost extends Component {
 						style={styles.showSocialsButton}
 						onClick={ () => {
 							this.fetchAllComment( this.props.dataPayloadFromParent.endpoint )
+							this.toggle_comment_modal()
 						}}
 					>
-						<Comment style={{color:'orange', fontSize:30, marginRight:10,}}/> {this.props.comments_quantity} comments
+						<Comment style={{color:'orange', fontSize:30, marginRight:10,}}/> {(this.props.dataPayloadFromParent.total_comments) ? this.props.dataPayloadFromParent.total_comments: this.state.comments.length} comments
 					</button>
 				</div>
 
@@ -124,7 +134,7 @@ class ShowCommentsOfBlogPost extends Component {
 		
 						<button onClick={() => {
 							this.toggle_comment_modal()
-							this.setState( prev => ({...prev, comments: [] }) )
+							// this.setState( prev => ({...prev, comments: [] }) )
 						}}
 							style={{
 								outline:'none',

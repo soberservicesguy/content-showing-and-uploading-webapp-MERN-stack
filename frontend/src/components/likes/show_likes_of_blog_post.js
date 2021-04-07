@@ -49,6 +49,14 @@ class ShowLikesOfBlogPost extends Component {
 // COMPONENT DID MOUNT
 	componentDidMount() {
 
+		if (this.props.dataPayloadFromParent.total_likes){
+
+		} else {
+
+			this.fetchAllLike(this.props.dataPayloadFromParent.endpoint)
+
+		}
+
 	}
 
 	fetchAllLike(endpoint) {
@@ -65,7 +73,7 @@ class ShowLikesOfBlogPost extends Component {
 
 			// console.log(response.data)
 			this.setState( prev => ({...prev, likes: ( prev.likes.length === 0 ) ? response.data : [] }) )
-			this.toggle_like_modal()
+			// this.toggle_like_modal()
 
 		})
 		.catch((error) => {
@@ -105,9 +113,10 @@ class ShowLikesOfBlogPost extends Component {
 						style={styles.showSocialsButton}
 						onClick={ () => {
 							this.fetchAllLike( this.props.dataPayloadFromParent.endpoint )
+							this.toggle_like_modal()
 						}}
 					>
-						<ThumbUp style={{color:'orange', fontSize:30, marginRight:10,}}/> {this.props.dataPayloadFromParent.total_likes} likes							
+						<ThumbUp style={{color:'orange', fontSize:30, marginRight:10,}}/> {(this.props.dataPayloadFromParent.total_likes) ? this.props.dataPayloadFromParent.total_likes: this.state.likes.length} likes							
 					</button>
 				</div>
 
@@ -125,7 +134,7 @@ class ShowLikesOfBlogPost extends Component {
 		
 						<button onClick={() => {
 							this.toggle_like_modal()
-							this.setState( prev => ({...prev, likes: [] }) )
+							// this.setState( prev => ({...prev, likes: [] }) )
 						}}
 							style={{
 								outline:'none',
