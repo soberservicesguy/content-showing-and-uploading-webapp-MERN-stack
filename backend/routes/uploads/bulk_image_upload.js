@@ -101,40 +101,40 @@ let currentTime
 // });
 
 // Check File Type
-function checkFileTypeForImageAndExcelSheet(file, cb){
+// function checkFileTypeForImageAndExcelSheet(file, cb){
 
-	// Allowed ext
-	let filetypes_for_image = /jpeg|jpg|png|gif/
-	// let filetypes_for_excelsheet = /xlsx|xls/
-	let filetypes_for_excelsheet = /[A-Za-z]+/
+// 	// Allowed ext
+// 	let filetypes_for_image = /jpeg|jpg|png|gif/
+// 	// let filetypes_for_excelsheet = /xlsx|xls/
+// 	let filetypes_for_excelsheet = /[A-Za-z]+/
 
-	// Check ext
-	let extname_for_image = filetypes_for_image.test( path.extname(file.originalname).toLowerCase() );
-	let extname_for_excelsheet = filetypes_for_excelsheet.test( path.extname(file.originalname).toLowerCase() );
+// 	// Check ext
+// 	let extname_for_image = filetypes_for_image.test( path.extname(file.originalname).toLowerCase() );
+// 	let extname_for_excelsheet = filetypes_for_excelsheet.test( path.extname(file.originalname).toLowerCase() );
 
-	// Check mime
-	let mimetype_for_image = filetypes_for_image.test( file.mimetype );
-	let mimetype_for_excelsheet = filetypes_for_excelsheet.test( file.mimetype );
+// 	// Check mime
+// 	let mimetype_for_image = filetypes_for_image.test( file.mimetype );
+// 	let mimetype_for_excelsheet = filetypes_for_excelsheet.test( file.mimetype );
 
-	if (file.fieldname === "just_images_upload") { // if uploading resume
+// 	if (file.fieldname === "just_images_upload") { // if uploading resume
 		
-		if (mimetype_for_image && extname_for_image) {
-			cb(null, true);
-		} else {
-			cb('Error: jpeg, jpg, png, gif Images Only!');
-		}
+// 		if (mimetype_for_image && extname_for_image) {
+// 			cb(null, true);
+// 		} else {
+// 			cb('Error: jpeg, jpg, png, gif Images Only!');
+// 		}
 
-	} else { // else uploading images
+// 	} else { // else uploading images
 
-		if (mimetype_for_excelsheet && extname_for_excelsheet) {
-			cb(null, true);
-		} else {
-			cb('Error: only .xlsx, .xls for excel files');
-		}
+// 		if (mimetype_for_excelsheet && extname_for_excelsheet) {
+// 			cb(null, true);
+// 		} else {
+// 			cb('Error: only .xlsx, .xls for excel files');
+// 		}
 
-	}
+// 	}
 
-}
+// }
 
 // Init Upload
 function bulk_upload_images(timestamp, folder_name){
@@ -143,7 +143,7 @@ function bulk_upload_images(timestamp, folder_name){
 		storage: get_multer_storage_to_use_for_bulk_files(timestamp, folder_name),
 		limits:{fileSize: 200000000}, // 1 mb
 		fileFilter: function(req, file, cb){
-			checkFileTypeForImageAndExcelSheet(file, cb);
+			checkFileTypeForImagesAndExcelSheet(file, cb);
 		}
 	}).fields([
 		{ name: 'excel_sheet', maxCount: 1 }, 
@@ -164,8 +164,6 @@ router.post('/bulk-upload-images', passport.authenticate('jwt', { session: false
 
 	// timestamp = Date.now()
 	timestamp = new Date()
-	console.log('timestamp')
-	console.log(timestamp)
 	currentDate = timestamp.toLocaleDateString("en-US").split("/").join(" | ");
 	currentTime = timestamp.toLocaleTimeString("en-US").split("/").join(" | ");
 
@@ -219,8 +217,6 @@ router.post('/bulk-upload-images', passport.authenticate('jwt', { session: false
 				// saving file to /tmp as well since readXlsxFile in sheet_to_class needs filepath
 				let excel_filepath = await store_excel_file_at_tmp_and_get_its_path(excel_file, filepath_in_case_of_disk_storage)
 
-				// console.log('excel_filepath')
-				// console.log(excel_filepath)
 
 				let user_id = ''
 			// finding the user who is uploading so that it can be passed to sheet_to_class for assignment on posts
@@ -229,12 +225,7 @@ router.post('/bulk-upload-images', passport.authenticate('jwt', { session: false
 					if (user){
 
 						user_id = user._id
-
-					// GET FILE FROM SIMPLY req.file (excel)
-						// let uploaded_excel_sheet = path.join(__dirname , `../../assets/uploads/bulk_images/${currentDate}_${currentTime}/${req.files['excel_sheet'][0].filename}`)
-						// sheet_to_class( uploaded_excel_sheet, user_id )
-						// sheet_to_class( excel_file, user_id )
-						sheet_to_class( excel_filepath, user_id, ['image_filepath'], 'bulk_images',  `${currentDate}_${currentTime}`)
+						sheet_to_class( excel_filepath, user_id, 'bulk_images',  `${currentDate}_${currentTime}`, ['image_filepath'])
 						res.status(200).json({ success: true, msg: 'new images created'});	
 
 					} else {

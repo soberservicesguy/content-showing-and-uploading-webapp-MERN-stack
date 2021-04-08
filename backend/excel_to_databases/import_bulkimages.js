@@ -78,17 +78,27 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 	let path_attribute_value
 	let attribute_name
 	let dict_of_path_attributes = {}
-	parent_children_rows_dict.row_details.map((row, index) => {
 
-		index_of_path_attribute = indices_of_path_attribute[index] // working
+	console.log('indices_of_path_attribute')
+	console.log(indices_of_path_attribute)
 
-		attribute_name = parent_children_rows_dict.parent_header[index_of_path_attribute] // working
+	// assigning proper filepath at filepath attributes
+	indices_of_path_attribute.map((path_index) => {
 
- 		path_attribute_value = row.parent_row[index_of_path_attribute]
+		parent_children_rows_dict.row_details.map((row, index) => {
 
-		dict_of_path_attributes[attribute_name] = `${get_filepath_to_save_with_bulk_uploading(folder_name, timestamp)}${path_attribute_value}`
+			index_of_path_attribute = path_index // working
+
+			attribute_name = parent_children_rows_dict.parent_header[index_of_path_attribute] // working
+
+	 		path_attribute_value = row.parent_row[index_of_path_attribute]
+
+			dict_of_path_attributes[attribute_name] = `${get_filepath_to_save_with_bulk_uploading(folder_name, timestamp)}${path_attribute_value}`
+
+		})
 
 	})
+
 
 	for (let i = 0; i < row_details_list.length; i++) {
 
@@ -496,7 +506,7 @@ const pull_parent_child_data_from_excel = (file_name, sheet_to_class_dict, user_
 
 
 
-const sheet_to_class = (file_name, user_id, attributes_with_paths, folder_name, timestamp) => {
+const sheet_to_class = (file_name, user_id, folder_name, timestamp, attributes_with_paths) => {
 	const sheet_to_class_dict = {};
 
 	readXlsxFile( String(file_name), { sheet: String('sheets_classes') })
