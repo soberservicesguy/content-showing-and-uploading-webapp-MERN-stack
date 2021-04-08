@@ -11,6 +11,27 @@ const { get_multer_disk_storage, get_multer_disk_storage_for_bulk_files, } = req
 const { checkFileTypeForImages, checkFileTypeForImageAndVideo, checkFileTypeForImagesAndExcelSheet, checkFileTypeForVideos} = require('./file_filters')
 const base64_encode = require('../../lib/image_to_base64')
 
+function get_filepath_to_save_with_bulk_uploading(folder_name, timestamp){
+
+	let filepath
+	if (use_gcp_storage){
+	
+		filepath = `https://storage.googleapis.com/${gcp_bucket}/${folder_name}/${timestamp}/`
+	
+	} else if (use_aws_s3_storage){
+	
+		filepath = `http://s3.amazonaws.com/${s3_bucket}/${folder_name}/${timestamp}/` 
+	
+	} else {
+	
+		filepath = get_multer_disk_storage_for_bulk_files(timestamp, folder_name)
+	
+	}
+
+	return filepath
+}
+
+
 async function get_image_to_display(image_path_field, image_host_field){
 
 	let cloud_resp
@@ -316,6 +337,7 @@ function get_snapshots_fullname_and_path(folder_name, filename_without_format, t
 }
 
 module.exports = {
+	get_filepath_to_save_with_bulk_uploading,
 	store_excel_file_at_tmp_and_get_its_path,
 	get_multer_disk_storage_for_bulk_files,
 	get_file_path_to_use_alternate,

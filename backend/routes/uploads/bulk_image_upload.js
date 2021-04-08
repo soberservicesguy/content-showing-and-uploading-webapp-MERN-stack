@@ -215,7 +215,7 @@ router.post('/bulk-upload-images', passport.authenticate('jwt', { session: false
 				}
 
 
-				let filepath_in_case_of_disk_storage = get_multer_disk_storage_for_bulk_files(timestamp, 'bulk_images')
+				let filepath_in_case_of_disk_storage = get_multer_disk_storage_for_bulk_files(`${currentDate}_${currentTime}`, 'bulk_images')
 				// saving file to /tmp as well since readXlsxFile in sheet_to_class needs filepath
 				let excel_filepath = await store_excel_file_at_tmp_and_get_its_path(excel_file, filepath_in_case_of_disk_storage)
 
@@ -234,7 +234,7 @@ router.post('/bulk-upload-images', passport.authenticate('jwt', { session: false
 						// let uploaded_excel_sheet = path.join(__dirname , `../../assets/uploads/bulk_images/${currentDate}_${currentTime}/${req.files['excel_sheet'][0].filename}`)
 						// sheet_to_class( uploaded_excel_sheet, user_id )
 						// sheet_to_class( excel_file, user_id )
-						sheet_to_class( excel_filepath, user_id )
+						sheet_to_class( excel_filepath, user_id, ['image_filepath'], 'bulk_images',  `${currentDate}_${currentTime}`)
 						res.status(200).json({ success: true, msg: 'new images created'});	
 
 					} else {
