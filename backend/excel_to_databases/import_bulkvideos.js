@@ -50,7 +50,7 @@ const sheet_to_class_mapper = (sheet_name, db_object) => {
 }
 
 
-const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_to_class_dict, user_id) =>{
+const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_to_class_dict, user_id, attributes_with_paths, folder_name, timestamp, all_images_db_objects) =>{
 
 	const parent_header = parent_children_rows_dict.parent_header
 	const parent_sheet = parent_children_rows_dict.parent_sheet_name
@@ -58,6 +58,52 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 
 // finding the user 
 	let user_object = await User.findOne({ _id: user_id }) // using req.user from passport js middleware
+
+	let index_of_path_attribute
+	let indices_of_path_attribute = []
+	attributes_with_paths.map((path_attribute) => {
+
+		index_of_path_attribute = parent_children_rows_dict.parent_header.indexOf( path_attribute )
+		// path_attribute = get_filepath_to_save_with_bulk_uploading(folder_name, timestamp)
+		indices_of_path_attribute.push(index_of_path_attribute)
+	
+	})
+
+	let path_attribute_value
+	let attribute_name
+	let corresponding_image_db_objects
+	let corresponding_image_db_object
+	let dict_of_path_attributes = {}
+
+	console.log('indices_of_path_attribute')
+	console.log(indices_of_path_attribute)
+
+	// assigning proper filepath at filepath attributes
+
+	indices_of_path_attribute.map((path_index) => {
+
+		parent_children_rows_dict.row_details.map((row, index) => {
+
+			index_of_path_attribute = path_index // working
+
+			attribute_name = parent_children_rows_dict.parent_header[index_of_path_attribute] // working
+
+	 		path_attribute_value = row.parent_row[index_of_path_attribute]
+
+			corresponding_image_db_objects = all_images_db_objects.filter(
+				function(item){
+					return item['title'] === path_attribute_value
+				}
+			)
+			
+			corresponding_image_db_object = corresponding_image_db_objects[0] // sinces its a list
+
+			dict_of_path_attributes[attribute_name] = corresponding_image_db_object._id
+
+		})
+
+	})
+
 
 	for (let i = 0; i < row_details_list.length; i++) {
 
@@ -70,11 +116,18 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 
 		} 
 
-		const video = sheet_to_class_mapper(parent_sheet, {...parent_db_object_dict, _id: new mongoose.Types.ObjectId()})
+		const video = sheet_to_class_mapper(parent_sheet, {
+			_id: new mongoose.Types.ObjectId(),
+			...parent_db_object_dict,
+			...dict_of_path_attributes,
+		})
 
 		video.save(function (err, video) {
 
 			if (err) return handleError(err);
+
+			console.log('SAVING BELOW VIDEO')
+			console.log(video)
 
 		// assigning the user
 			video.user = user_object
@@ -141,7 +194,7 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 
 
 
-const parent_children_detailed = (file_name, old_parent_child_relationship_data ,  parent_completely_detailed, sheet_to_class_dict, user_id) =>{
+const parent_children_detailed = (file_name, old_parent_child_relationship_data ,  parent_completely_detailed, sheet_to_class_dict, user_id, attributes_with_paths, folder_name, timestamp, all_images_db_objects) =>{
 
 	/**
 	 * -------------- CODE BLOCK 1 START ----------------
@@ -267,7 +320,7 @@ const parent_children_detailed = (file_name, old_parent_child_relationship_data 
 						.then( (ans_for_above) => {
 							if ( !all_results2.includes(ans_for_above) && ans_for_above !== undefined  ){
 								all_results2.push(ans_for_above);
-								save_parent_and_children_in_db(ans_for_above, sheet_to_class_dict, user_id); 
+								save_parent_and_children_in_db(ans_for_above, sheet_to_class_dict, user_id, attributes_with_paths, folder_name, timestamp, all_images_db_objects); 
 							}
 						})
 						// .then( ()=> console.log(parent_completely_detailed.row_details[0].children[0].child_rows) )
@@ -302,7 +355,7 @@ const parent_children_detailed = (file_name, old_parent_child_relationship_data 
 
 
 
-const generate_parent_completely_detailed = (file_name, parent_child_relationship_data, sheet_to_class_dict, user_id) => {
+const generate_parent_completely_detailed = (file_name, parent_child_relationship_data, sheet_to_class_dict, user_id, attributes_with_paths, folder_name, timestamp, all_images_db_objects) => {
 // NOTE : TEST THIS TO WORK FOR MULTIPLE PARENTS AND THEIR CHILDREN, OR ONLY USE IT FOR SINGLE PARENT AND ITS CHILDREN
 
 	/**
@@ -373,7 +426,7 @@ const generate_parent_completely_detailed = (file_name, parent_child_relationshi
 					  return parent_complete_details
 					}) // from .then block
 					// .then( res => console.log(res) )
-					.then( parent_detailed => parent_children_detailed(file_name, parent_child_relationship_data, parent_detailed, sheet_to_class_dict, user_id) )
+					.then( parent_detailed => parent_children_detailed(file_name, parent_child_relationship_data, parent_detailed, sheet_to_class_dict, user_id, attributes_with_paths, folder_name, timestamp, all_images_db_objects) )
 
 
 			}) // from parent_child_relationship_data.map block
@@ -392,7 +445,7 @@ const generate_parent_completely_detailed = (file_name, parent_child_relationshi
 
 
 
-const pull_parent_child_data_from_excel = (file_name, sheet_to_class_dict, user_id) => {
+const pull_parent_child_data_from_excel = (file_name, sheet_to_class_dict, user_id, attributes_with_paths, folder_name, timestamp, all_images_db_objects) => {
 	var all_collection = [];
 
 	var parent_child_details = {};
@@ -454,13 +507,15 @@ const pull_parent_child_data_from_excel = (file_name, sheet_to_class_dict, user_
 		return all_collection
 
 	})
-	.then( result => generate_parent_completely_detailed(file_name, result, sheet_to_class_dict, user_id) )
+	.then( result => generate_parent_completely_detailed(file_name, result, sheet_to_class_dict, user_id, attributes_with_paths, folder_name, timestamp, all_images_db_objects) )
 	// .catch( (err) => console.log('ERROR IS ', err) )
 }
 
 
 
-const sheet_to_class = (file_name, user_id) => {
+const sheet_to_class = (file_name, user_id, folder_name, timestamp, attributes_with_paths, all_images_db_objects) => {
+
+	console.log('ENTERED SHHET TO CLASS')
 	const sheet_to_class_dict = {};
 
 	readXlsxFile( String(file_name), { sheet: String('sheets_classes') })
@@ -477,7 +532,7 @@ const sheet_to_class = (file_name, user_id) => {
 
 		})
 		// .then( (ans) => console.log(ans) )
-		.then ( (sheet_to_class_dict) => pull_parent_child_data_from_excel(file_name, sheet_to_class_dict, user_id) )
+		.then ( (sheet_to_class_dict) => pull_parent_child_data_from_excel(file_name, sheet_to_class_dict, user_id, attributes_with_paths, folder_name, timestamp, all_images_db_objects) )
 		.catch( err => console.log(err) )	
 }
 
