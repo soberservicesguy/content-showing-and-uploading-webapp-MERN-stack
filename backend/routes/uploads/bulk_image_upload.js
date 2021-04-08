@@ -24,44 +24,81 @@ const fs = require('fs')
 const sheet_to_class = require('../../excel_to_databases/import_bulkimages')
 const bulk_delete_all_images = require('../../excel_to_databases/delete_all_images')
 
-var currentDate = ''
-var currentTime = ''
+const {
+	store_excel_file_at_tmp_and_get_its_path,
+	get_multer_storage_to_use,
+	get_multer_storage_to_use_for_bulk_files,
+	get_file_storage_venue,
+	get_file_path_to_use,
+	get_file_path_to_use_for_bulk_files,
 
-// Set The Storage Engine
-const bulk_images_storage = multer.diskStorage({
-	// destination: path.join(__dirname , '../../assets/bulk_blogposts/'),
-	destination:function(req, file, cb){
-		// let file_path = `./uploads/${type}`;
-		currentDate = new Date().toLocaleDateString("en-US").split("/").join(" | ");
-		currentTime = new Date().toLocaleTimeString("en-US").split("/").join(" | ");
+	use_gcp_storage,
+	use_aws_s3_storage,
 
-		if (file.fieldname === "just_images_upload") {
+	save_file_to_gcp,
+	save_file_to_gcp_for_bulk_files,
+	gcp_bucket,
 
-			let file_path = path.join(__dirname , '../../assets/bulk_images/images')
-			cb(null, file_path)	
+	get_snapshots_storage_path,
 
-		} else {
+	save_file_to_aws_s3,
+	save_file_to_aws_s3_for_bulk_files,
 
-			fs.mkdir( path.join(__dirname , `../../assets/bulk_images/${currentDate}_${currentTime}`), { recursive: true }, (err) => {
-				if (err) throw err;
-			})
+	get_multer_disk_storage_for_bulk_files,
+
+	checkFileTypeForImages,
+	checkFileTypeForImageAndVideo,
+	checkFileTypeForImagesAndExcelSheet,
+} = require('../../config/storage/')
+
+let timestamp
+let currentDate
+let currentTime
+
+// var currentDate = ''
+// var currentTime = ''
+
+// Set The Storage Engine // NOT NEEDED NOW
+// const bulk_images_storage = multer.diskStorage({
+// 	// destination: path.join(__dirname , '../../assets/bulk_blogposts/'),
+// 	destination:function(req, file, cb){
+// 		// let file_path = `./uploads/${type}`;
+// 		currentDate = new Date().toLocaleDateString("en-US").split("/").join(" | ");
+// 		currentTime = new Date().toLocaleTimeString("en-US").split("/").join(" | ");
+
+// 		if (file.fieldname === "just_images_upload") {
+
+
+// 			fs.mkdir( path.join(__dirname , `../../assets/bulk_images/${currentDate}_${currentTime}`), { recursive: true }, (err) => {
+// 				if (err) throw err;
+// 			})
+
+// 			let file_path = path.join(__dirname , `../../assets/bulk_images/${currentDate}_${currentTime}`)
+// 			// let file_path = path.join(__dirname , '../../assets/bulk_images/images')
+// 			cb(null, file_path)	
+
+// 		} else {
+
+// 			fs.mkdir( path.join(__dirname , `../../assets/bulk_images/${currentDate}_${currentTime}`), { recursive: true }, (err) => {
+// 				if (err) throw err;
+// 			})
 			
-			let file_path = path.join(__dirname , `../../assets/bulk_images/${currentDate}_${currentTime}`)
-			cb(null, file_path)	
+// 			let file_path = path.join(__dirname , `../../assets/bulk_images/${currentDate}_${currentTime}`)
+// 			cb(null, file_path)	
 
-		}
+// 		}
 
-	},
-	filename: function(req, file, cb){
-		// file name pattern fieldname-currentDate-fileformat
-		// filename_used_to_store_image_in_assets_without_format = file.fieldname + '-' + Date.now()
-		// filename_used_to_store_image_in_assets = filename_used_to_store_image_in_assets_without_format + path.extname(file.originalname)
+// 	},
+// 	filename: function(req, file, cb){
+// 		// file name pattern fieldname-currentDate-fileformat
+// 		// filename_used_to_store_image_in_assets_without_format = file.fieldname + '-' + Date.now()
+// 		// filename_used_to_store_image_in_assets = filename_used_to_store_image_in_assets_without_format + path.extname(file.originalname)
 
-		filename_used_to_store_image_in_assets = file.originalname
-		cb(null, file.originalname);
+// 		filename_used_to_store_image_in_assets = file.originalname
+// 		cb(null, file.originalname);
 
-	}
-});
+// 	}
+// });
 
 // Check File Type
 function checkFileTypeForImageAndExcelSheet(file, cb){
@@ -100,18 +137,22 @@ function checkFileTypeForImageAndExcelSheet(file, cb){
 }
 
 // Init Upload
-const bulk_upload_images = multer({
-	storage: bulk_images_storage,
-	limits:{fileSize: 200000000}, // 1 mb
-	fileFilter: function(req, file, cb){
-		checkFileTypeForImageAndExcelSheet(file, cb);
-	}
-}).fields([
-	{ name: 'excel_sheet_for_images', maxCount: 1 }, 
-	{ name: 'just_images_upload', maxCount: 1000 }
-])  // these are the fields that will be dealt
-// .single('just_images_upload'); 
-// .array('photos', 12)
+function bulk_upload_images(timestamp, folder_name){
+
+	return multer({
+		storage: get_multer_storage_to_use_for_bulk_files(timestamp, folder_name),
+		limits:{fileSize: 200000000}, // 1 mb
+		fileFilter: function(req, file, cb){
+			checkFileTypeForImageAndExcelSheet(file, cb);
+		}
+	}).fields([
+		{ name: 'excel_sheet', maxCount: 1 }, 
+		{ name: 'just_images_upload', maxCount: 1000 }
+	])  // these are the fields that will be dealt
+	// .single('just_images_upload'); 
+	// .array('photos', 12)
+
+}
 
 
 // create blogpost with undefined
@@ -121,36 +162,91 @@ router.post('/bulk-upload-images', passport.authenticate('jwt', { session: false
 	// console.log('OUTER LOG')
 	// console.log(req.body)
 
-	bulk_upload_images(req, res, (err) => {
+	// timestamp = Date.now()
+	timestamp = new Date()
+	console.log('timestamp')
+	console.log(timestamp)
+	currentDate = timestamp.toLocaleDateString("en-US").split("/").join(" | ");
+	currentTime = timestamp.toLocaleTimeString("en-US").split("/").join(" | ");
+
+	bulk_upload_images( `${currentDate}_${currentTime}`, 'bulk_images' )(req, res, (err) => {
 		if(err){
 
 			console.log(err)
 
 		} else {
 
-			// give excel file name and run bulk import function
-			// req.files['excel_sheet_for_blogpost'][0] // pull data from it and create blogposts
+			let images
+			let excel_file = req.files['excel_sheet'][0]
 
-			let user_id = ''
-		// finding the user who is uploading so that it can be passed to sheet_to_class for assignment on posts
-			User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
-			.then((user) => {
-				if (user){
+			{(async () => {
 
-					user_id = user._id
+				if (use_gcp_storage){
 
-					let uploaded_excel_sheet = path.join(__dirname , `../../assets/bulk_images/${currentDate}_${currentTime}/${req.files['excel_sheet_for_images'][0].filename}`) 
-					sheet_to_class( uploaded_excel_sheet, user_id )
-					res.status(200).json({ success: true, msg: 'new images created'});	
+					await save_file_to_gcp_for_bulk_files( `${currentDate}_${currentTime}`, 'bulk_images', req.files['excel_sheet'][0] )
+					
+
+					images = req.files['just_images_upload']
+					Promise.all(images.map(async (image_file) => {
+						await save_file_to_gcp_for_bulk_files( `${currentDate}_${currentTime}`, 'bulk_images', image_file )
+					}))
+
+					await save_file_to_gcp_for_bulk_files( `${currentDate}_${currentTime}`, 'bulk_images', excel_file )
+
+					console.log('SAVED TO GCP')
+
+				} else if (use_aws_s3_storage) {
+
+					await save_file_to_aws_s3_for_bulk_files( `${currentDate}_${currentTime}`, 'bulk_images', req.files['excel_sheet'][0])
+
+					await save_file_to_aws_s3_for_bulk_files( `${currentDate}_${currentTime}`, 'bulk_images', excel_file )					
+					
+					images = req.files['just_images_upload']
+					Promise.all(images.map(async (image_file) => {
+						await save_file_to_aws_s3_for_bulk_files( `${currentDate}_${currentTime}`, 'bulk_images', image_file )
+					}))
+					
+					console.log('SAVED TO AWS')
 
 				} else {
-					res.status(200).json({ success: false, msg: "new images NOT created, try again" });
-				}
-			})
-			.catch((error) => {
-				res.status(200).json({ success: false, msg: "new images NOT created, try again" });
-			})
 
+					console.log('SAVED TO DISK STORAGE')
+
+				}
+
+
+				let filepath_in_case_of_disk_storage = get_multer_disk_storage_for_bulk_files(timestamp, 'bulk_images')
+				// saving file to /tmp as well since readXlsxFile in sheet_to_class needs filepath
+				let excel_filepath = await store_excel_file_at_tmp_and_get_its_path(excel_file, filepath_in_case_of_disk_storage)
+
+				// console.log('excel_filepath')
+				// console.log(excel_filepath)
+
+				let user_id = ''
+			// finding the user who is uploading so that it can be passed to sheet_to_class for assignment on posts
+				User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
+				.then((user) => {
+					if (user){
+
+						user_id = user._id
+
+					// GET FILE FROM SIMPLY req.file (excel)
+						// let uploaded_excel_sheet = path.join(__dirname , `../../assets/uploads/bulk_images/${currentDate}_${currentTime}/${req.files['excel_sheet'][0].filename}`)
+						// sheet_to_class( uploaded_excel_sheet, user_id )
+						// sheet_to_class( excel_file, user_id )
+						sheet_to_class( excel_filepath, user_id )
+						res.status(200).json({ success: true, msg: 'new images created'});	
+
+					} else {
+						res.status(200).json({ success: false, msg: "new images NOT created, try again" });
+					}
+				})
+				.catch((error) => {
+					res.status(200).json({ success: false, msg: "new images NOT created, try again" });
+				})
+
+
+			})()}
 
 		}
 	})

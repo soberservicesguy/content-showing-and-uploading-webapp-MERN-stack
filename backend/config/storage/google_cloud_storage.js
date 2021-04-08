@@ -97,8 +97,8 @@ async function save_file_to_gcp_for_bulk_files(timestamp, folder_name, file){
 
 	try{
 
-		the_file = the_bucket.file(`${folder_name}/${timestamp}/${file}`)
-		await the_file.save(file_payload.buffer)
+		the_file = the_bucket.file(`${folder_name}/${timestamp}/${file.originalname}`)
+		await the_file.save(file.buffer)
 
 	} catch (err){
 

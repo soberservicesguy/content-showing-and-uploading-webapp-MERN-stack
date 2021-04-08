@@ -230,7 +230,7 @@ class BulkImageUpload extends Component {
 										formData.append('just_images_upload', file, file.name)
 									})
 									if(this.state.excel_sheet !== ''){
-										formData.append('excel_sheet_for_images', this.state.excel_sheet, this.state.excel_sheet.name)
+										formData.append('excel_sheet', this.state.excel_sheet, this.state.excel_sheet.name)
 									}
 
 									axios.post(utils.baseUrl + '/uploads/bulk-upload-images', formData)

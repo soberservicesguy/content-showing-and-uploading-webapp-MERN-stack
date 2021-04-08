@@ -529,8 +529,8 @@ router.get('/images-list-with-children', async function(req, res, next){
 			newImage = {}
 		}))
 
-		console.log('newImages_list')
-		console.log(newImages_list)
+		// console.log('newImages_list')
+		// console.log(newImages_list)
 		return newImages_list
 	})
 	.then((newImages_list) => {

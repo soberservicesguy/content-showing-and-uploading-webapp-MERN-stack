@@ -189,7 +189,7 @@ class BulkVideoUpload extends Component {
 								<input
 									id="myExcelFileInput"
 									style={{display:'none'}}
-									name="excel_sheet_for_videos" // name of input field or fieldName simply
+									name="excel_sheet" // name of input field or fieldName simply
 									// multiple="multiple" // for selecting multiple files
 									enctype="multipart/form-data"
 									type="file"
@@ -232,7 +232,7 @@ class BulkVideoUpload extends Component {
 										formData.append('videos_to_upload', file, file.name)
 									})
 									if(this.state.excel_sheet !== ''){
-										formData.append('excel_sheet_for_videos', this.state.excel_sheet, this.state.excel_sheet.name)
+										formData.append('excel_sheet', this.state.excel_sheet, this.state.excel_sheet.name)
 									}
 
 									axios.post(utils.baseUrl + '/uploads/bulk-upload-videos', formData)

@@ -79,6 +79,50 @@ function store_video_at_tmp_and_get_its_path(file_payload, video_path_for_local_
 }
 
 
+function store_excel_file_at_tmp_and_get_its_path(file_payload, filepath_for_local_storage){
+
+	// let fileContent = await FS.readFile(file)
+
+// console.log('file_payload')
+	// console.log(file_payload)
+	// console.log(Object.keys(file_payload))
+	// console.log(typeof file_payload.buffer)
+	// console.log(file_payload.buffer)
+
+	if (use_gcp_storage || use_aws_s3_storage){
+		let promise 
+		// return new Promise(function(resolve, reject) {
+			return FS.writeFile(`/tmp/${file_payload.originalname}`, file_payload.buffer)
+			.then(() => {
+				return `/tmp/${file_payload.originalname}`			
+			})
+			.catch((err) => {
+		        console.log(err)
+		        // reject()
+			})
+		// })
+		// let promise = await FS.writeFile(`/tmp/${file_payload.originalname}`, file_payload.buffer)
+		// return `/tmp/${file_payload.originalname}`
+
+		// return fs.writeFile(`/tmp/${file_payload.originalname}`, file_payload.buffer, function(err) {
+		//     if(err) {
+		//         return console.log(err);
+		//     }
+		//     console.log("The file was saved!");
+		// 	return `/tmp/${file_payload.originalname}`
+		// })
+
+
+	} else {
+
+		// returning the old video_path
+		return filepath_for_local_storage
+		
+	}
+
+}
+
+
 
 function delete_video_at_tmp(){
 
@@ -272,6 +316,8 @@ function get_snapshots_fullname_and_path(folder_name, filename_without_format, t
 }
 
 module.exports = {
+	store_excel_file_at_tmp_and_get_its_path,
+	get_multer_disk_storage_for_bulk_files,
 	get_file_path_to_use_alternate,
 	get_image_to_display,
 	store_video_at_tmp_and_get_its_path,
