@@ -60,19 +60,35 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 	let user_object = await User.findOne({ _id: user_id }) // using req.user from passport js middleware
 
 	let index_of_path_attribute
-	let indices_of_path_attribute = []
-	attributes_with_paths.map((path_attribute) => {
+	let indices_of_path_attribute = {}
+
+	let path_attribute
+	Object.keys(attributes_with_paths).map((path_attribute_key) => {
+
+		path_attribute = attributes_with_paths[path_attribute_key]
+
+		console.log('parent_children_rows_dict.parent_header')
+		console.log(parent_children_rows_dict.parent_header)
+
+		console.log('path_attribute')
+		console.log(path_attribute)
 
 		index_of_path_attribute = parent_children_rows_dict.parent_header.indexOf( path_attribute )
 		// path_attribute = get_filepath_to_save_with_bulk_uploading(folder_name, timestamp)
-		indices_of_path_attribute.push(index_of_path_attribute)
+
+		indices_of_path_attribute[path_attribute_key] = index_of_path_attribute
+		// indices_of_path_attribute.push(index_of_path_attribute)
 	
 	})
 
-	let path_attribute_value
-	let attribute_name
+	// let path_attribute_value
+	// let attribute_value_for_snapshot // there is no value
+	let attribute_value_for_video
+	let attribute_name_for_video
+	let attribute_name_for_snapshot
 	let corresponding_image_db_objects
 	let corresponding_image_db_object
+
 	let dict_of_path_attributes = {}
 
 	console.log('indices_of_path_attribute')
@@ -80,23 +96,56 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 
 	// assigning proper filepath at filepath attributes
 
-	indices_of_path_attribute.map((path_index) => {
+	Object.keys(indices_of_path_attribute).map((path_key) => {
 
 		parent_children_rows_dict.row_details.map((row, index) => {
 
+			let path_index = indices_of_path_attribute[path_key]
 			index_of_path_attribute = path_index // working
 
-			attribute_name = parent_children_rows_dict.parent_header[index_of_path_attribute] // working
+			// attribute_name = parent_children_rows_dict.parent_header[index_of_path_attribute] // working
+	 		attribute_name_for_video = all_images_db_objects.video_key
+	 		attribute_name_for_snapshot = all_images_db_objects.snaphot_key
 
-	 		path_attribute_value = row.parent_row[index_of_path_attribute]
+	 		console.log('attribute_name_for_video')
+	 		console.log(attribute_name_for_video)
+
+	 		console.log('all_images_db_objects')
+	 		console.log(all_images_db_objects)
+	 		
+
+	 		// const index_of_videopath = parent_children_rows_dict.parent_header.indexOf( attribute_name_for_video );
+	 		// console.log('index_of_videopath')
+	 		// console.log(index_of_videopath)
+
+			attribute_value_for_video = row.parent_row[index_of_videopath] // not needed since we havent given screenshot names
+
+
+			console.log('attribute_name')
+			console.log(attribute_value_for_video)
+
+			console.log('row.parent_row')
+			console.log(row.parent_row)
+
+
+	 		console.log('path_attribute_value')
+	 		console.log(attribute_value_for_video)
 
 			corresponding_image_db_objects = all_images_db_objects.filter(
 				function(item){
-					return item['title'] === path_attribute_value
+					let all_keys = Object.keys(item)
+					console.log('all_keys')
+					console.log(all_keys)
+					let title = all_keys[0]
+					return title === path_attribute_value
 				}
 			)
-			
 			corresponding_image_db_object = corresponding_image_db_objects[0] // sinces its a list
+
+			console.log('corresponding_image_db_objects')
+			console.log(corresponding_image_db_objects)
+			console.log('corresponding_image_db_object')
+			console.log(corresponding_image_db_object)
 
 			dict_of_path_attributes[attribute_name] = corresponding_image_db_object._id
 

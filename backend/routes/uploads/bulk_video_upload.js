@@ -232,6 +232,8 @@ router.post('/bulk-upload-videos', passport.authenticate('jwt', { session: false
 				let store_video_at_tmp_promise
 				let create_snapshots_promise
 				let save_snapshots_promises
+				let all_images_db_objects = []
+
 				// let video_path = get_file_path_to_use(req.file, 'bulk_videos', timestamp)
 
 				await Promise.all(videos.map(async (video_file) => {
@@ -293,9 +295,8 @@ router.post('/bulk-upload-videos', passport.authenticate('jwt', { session: false
 						console.log(video_thumbnail_image_to_use)
 					}
 
-					let all_images_db_objects = []
+					let thumbnails_for_video = {}
 					await Promise.all(videos.map(async (video_file) => {
-
 						const newThumbnailImage = new Image({
 
 							_id: new mongoose.Types.ObjectId(),
@@ -311,7 +312,10 @@ router.post('/bulk-upload-videos', passport.authenticate('jwt', { session: false
 
 						});
 
-						all_images_db_objects.push(newThumbnailImage)
+						thumbnails_for_video[video_file.originalname] = newThumbnailImage
+						
+						all_images_db_objects.push(thumbnails_for_video)
+						thumbnails_for_video = {}
 						await newThumbnailImage.save()
 
 					}))
@@ -335,7 +339,7 @@ router.post('/bulk-upload-videos', passport.authenticate('jwt', { session: false
 
 						let uploaded_excel_sheet = path.join(__dirname , `../../assets/bulk_videos/${currentDate}_${currentTime}/${req.files['excel_sheet'][0].filename}`) 
 						console.log('ABOUT TO IMPORT DATA')
-						sheet_to_class( excel_filepath, user_id, 'bulk_videos',  `${currentDate}_${currentTime}`, ['image_thumbnail'], all_images_db_objects)
+						sheet_to_class( excel_filepath, user_id, 'bulk_videos',  `${currentDate}_${currentTime}`, {snaphot_key:'image_thumbnail', video_key:'video_filepath'}, all_images_db_objects)
 						// res.status(200).json({ success: true, msg: 'new videos created'});	
 
 						// sheet_to_class( uploaded_excel_sheet, user_id )
@@ -343,13 +347,13 @@ router.post('/bulk-upload-videos', passport.authenticate('jwt', { session: false
 
 					} else {
 						console.log({ success: false, msg: "new videos NOT created, try again" })
-						res.status(200).json({ success: false, msg: "new videos NOT created, try again" });
+						// res.status(200).json({ success: false, msg: "new videos NOT created, try again" });
 					}
 				})
 				.catch((error) => {
 					console.log('SOME ERROR CAUGHT')
 					console.log(error)
-					res.status(200).json({ success: false, msg: "new videos NOT created, try again" });
+					// res.status(200).json({ success: false, msg: "new videos NOT created, try again" });
 				})
 
 
