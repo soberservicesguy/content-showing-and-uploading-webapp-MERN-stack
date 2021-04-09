@@ -1,3 +1,5 @@
+const {get_filepath_to_save_with_bulk_uploading} = require('../config/storage/')
+
 require('./db_settings')
 
 var arguments_supplied = process.argv.slice(2);
@@ -62,6 +64,12 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 	let index_of_path_attribute
 	let indices_of_path_attribute = {}
 
+	console.log('attributes_with_paths')
+	console.log(attributes_with_paths)
+
+	console.log('all_images_db_objects')
+	console.log(all_images_db_objects)
+
 	let path_attribute
 	Object.keys(attributes_with_paths).map((path_attribute_key) => {
 
@@ -88,6 +96,7 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 	let attribute_name_for_snapshot
 	let corresponding_image_db_objects
 	let corresponding_image_db_object
+	let snapshot_id
 
 	let dict_of_path_attributes = {}
 
@@ -104,8 +113,8 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 			index_of_path_attribute = path_index // working
 
 			// attribute_name = parent_children_rows_dict.parent_header[index_of_path_attribute] // working
-	 		attribute_name_for_video = all_images_db_objects.video_key
-	 		attribute_name_for_snapshot = all_images_db_objects.snaphot_key
+	 		attribute_name_for_video = attributes_with_paths.video_key
+	 		attribute_name_for_snapshot = attributes_with_paths.snaphot_key
 
 	 		console.log('attribute_name_for_video')
 	 		console.log(attribute_name_for_video)
@@ -113,46 +122,51 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 	 		console.log('all_images_db_objects')
 	 		console.log(all_images_db_objects)
 	 		
+			console.log('row.parent_row')
+			console.log(row.parent_row)
 
+			let index1 = parent_children_rows_dict.parent_header.indexOf(attribute_name_for_video)
+			attribute_value_for_video =  row.parent_row[index1]
+			console.log(attribute_value_for_video)
 	 		// const index_of_videopath = parent_children_rows_dict.parent_header.indexOf( attribute_name_for_video );
 	 		// console.log('index_of_videopath')
 	 		// console.log(index_of_videopath)
 
-			attribute_value_for_video = row.parent_row[index_of_videopath] // not needed since we havent given screenshot names
-
-
-			console.log('attribute_name')
-			console.log(attribute_value_for_video)
-
-			console.log('row.parent_row')
-			console.log(row.parent_row)
-
-
-	 		console.log('path_attribute_value')
-	 		console.log(attribute_value_for_video)
+			attribute_value_for_video = row.parent_row[index1] // not needed since we havent given screenshot names
 
 			corresponding_image_db_objects = all_images_db_objects.filter(
 				function(item){
-					let all_keys = Object.keys(item)
-					console.log('all_keys')
-					console.log(all_keys)
-					let title = all_keys[0]
-					return title === path_attribute_value
+
+					return Object.keys(item)[0] === attribute_value_for_video
 				}
 			)
-			corresponding_image_db_object = corresponding_image_db_objects[0] // sinces its a list
 
-			console.log('corresponding_image_db_objects')
-			console.log(corresponding_image_db_objects)
+			corresponding_image_db_object = corresponding_image_db_objects[0]
+
 			console.log('corresponding_image_db_object')
 			console.log(corresponding_image_db_object)
 
-			dict_of_path_attributes[attribute_name] = corresponding_image_db_object._id
+			snapshot_id = corresponding_image_db_object[attribute_value_for_video]._id
+
+			dict_of_path_attributes[attribute_name_for_snapshot] = snapshot_id
+			// dict_of_path_attributes[attribute_name_for_video] = attribute_value_for_video
+			dict_of_path_attributes[attribute_name_for_video] = `${get_filepath_to_save_with_bulk_uploading(folder_name, timestamp)}${attribute_value_for_video}`
+			
+			// console.log('attribute_name')  folder_name, timestamp
+			// console.log(attribute_value_for_video)
+
+
+
+	 	// 	console.log('path_attribute_value')
+	 	// 	console.log(attribute_value_for_video)
+
 
 		})
 
 	})
 
+	console.log('dict_of_path_attributes')
+	console.log(dict_of_path_attributes)
 
 	for (let i = 0; i < row_details_list.length; i++) {
 
