@@ -176,7 +176,7 @@ router.post('/create-blogpost-with-user', passport.authenticate('jwt', { session
 						third_para: req.body.third_para,
 						fourth_para: req.body.fourth_para,
 						all_tags: req.body.all_tags,
-						image_main_filepath: newBlogpostImage,
+						image_main_filepath: newBlogpostImage._id,
 						// image_main_filepath: get_file_path_to_use(req.file, 'blogpost_image_mains', timestamp),
 						object_files_hosted_at: get_file_storage_venue(),
 						// image_main_filepath: `./assets/images/uploads/blogpost_image_main/${filename_used_to_store_image_in_assets}`,

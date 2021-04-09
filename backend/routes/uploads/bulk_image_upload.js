@@ -25,6 +25,7 @@ const sheet_to_class = require('../../excel_to_databases/import_bulkimages')
 const bulk_delete_all_images = require('../../excel_to_databases/delete_all_images')
 
 const {
+	get_multer_disk_storage_for_bulk_files_path_only,
 	store_excel_file_at_tmp_and_get_its_path,
 	get_multer_storage_to_use,
 	get_multer_storage_to_use_for_bulk_files,
@@ -174,7 +175,7 @@ router.post('/bulk-upload-images', passport.authenticate('jwt', { session: false
 
 		} else {
 
-			let images
+			let images = req.files['just_images_upload']
 			let excel_file = req.files['excel_sheet'][0]
 
 			{(async () => {
@@ -213,7 +214,7 @@ router.post('/bulk-upload-images', passport.authenticate('jwt', { session: false
 				}
 
 
-				let filepath_in_case_of_disk_storage = get_multer_disk_storage_for_bulk_files(`${currentDate}_${currentTime}`, 'bulk_images')
+				let filepath_in_case_of_disk_storage = get_multer_disk_storage_for_bulk_files_path_only(`${currentDate}_${currentTime}`, 'bulk_images', excel_file)
 				// saving file to /tmp as well since readXlsxFile in sheet_to_class needs filepath
 				let excel_filepath = await store_excel_file_at_tmp_and_get_its_path(excel_file, filepath_in_case_of_disk_storage)
 

@@ -30,6 +30,7 @@ const sheet_to_class = require('../../excel_to_databases/import_bulkvideos')
 const bulk_delete_all_videos = require('../../excel_to_databases/delete_all_videos')
 
 const {
+	get_multer_disk_storage_for_bulk_files_path_only,
 	get_snapshots_fullname_and_path,
 	get_file_path_to_use_alternate,
 	store_video_at_tmp_and_get_its_path,
@@ -189,7 +190,7 @@ router.post('/bulk-upload-videos', passport.authenticate('jwt', { session: false
 
 		} else {
 
-			let videos
+			let videos = req.files['videos_to_upload']
 			let excel_file = req.files['excel_sheet'][0]
 
 			{(async () => {
@@ -325,7 +326,7 @@ router.post('/bulk-upload-videos', passport.authenticate('jwt', { session: false
 				}))
 
 
-				let filepath_in_case_of_disk_storage = get_multer_disk_storage_for_bulk_files(`${currentDate}_${currentTime}`, 'bulk_videos')
+				let filepath_in_case_of_disk_storage = get_multer_disk_storage_for_bulk_files_path_only(`${currentDate}_${currentTime}`, 'bulk_videos', excel_file)
 				// saving file to /tmp as well since readXlsxFile in sheet_to_class needs filepath
 				let excel_filepath = await store_excel_file_at_tmp_and_get_its_path(excel_file, filepath_in_case_of_disk_storage)
 

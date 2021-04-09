@@ -27,6 +27,7 @@ const sheet_to_class = require('../../excel_to_databases/import_bulkblogposts')
 const bulk_delete_all_blogposts = require('../../excel_to_databases/delete_all_blogposts')
 
 const {
+	get_multer_disk_storage_for_bulk_files_path_only,
 	get_filepath_to_save_with_bulk_uploading,
 	store_excel_file_at_tmp_and_get_its_path,
 	get_multer_storage_to_use,
@@ -168,7 +169,7 @@ router.post('/bulk-upload-blogposts', passport.authenticate('jwt', { session: fa
 
 		} else {
 
-			let images
+			let images = req.files['blogpost_image_main']
 			let excel_file = req.files['excel_sheet'][0]
 
 			{(async () => {
@@ -212,7 +213,8 @@ router.post('/bulk-upload-blogposts', passport.authenticate('jwt', { session: fa
 					const newImage = new Image({
 						_id: new mongoose.Types.ObjectId(),
 						category: 'blogpost_image',
-						image_filepath: `${get_filepath_to_save_with_bulk_uploading('bulk_blogposts', `${currentDate}_${currentTime}`)}${image_file.originalname}`,
+						// image_filepath: `${get_filepath_to_save_with_bulk_uploading('bulk_blogposts', `${currentDate}_${currentTime}`)}${image_file.originalname}`,
+						image_filepath: get_file_path_to_use_for_bulk_files(`${currentDate}_${currentTime}`,'bulk_blogposts', image_file.originalname),
 						// image_filepath: get_file_path_to_use(image_file, 'blogpost_image_main', timestamp),
 						title: image_file.originalname,
 						object_files_hosted_at: get_file_storage_venue(),
@@ -222,11 +224,13 @@ router.post('/bulk-upload-blogposts', passport.authenticate('jwt', { session: fa
 						// endpoint: req.body.endpoint, // this will be taken care in db model
 
 					});
+
 					all_images_db_objects.push(newImage)
 					await newImage.save()
+
 				}))
 
-				let filepath_in_case_of_disk_storage = get_multer_disk_storage_for_bulk_files(`${currentDate}_${currentTime}`, 'bulk_blogposts')
+				let filepath_in_case_of_disk_storage = get_multer_disk_storage_for_bulk_files_path_only(`${currentDate}_${currentTime}`, 'bulk_blogposts', excel_file)
 				// saving file to /tmp as well since readXlsxFile in sheet_to_class needs filepath
 				let excel_filepath = await store_excel_file_at_tmp_and_get_its_path(excel_file, filepath_in_case_of_disk_storage)
 

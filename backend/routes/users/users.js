@@ -141,9 +141,9 @@ router.post('/login', async function(req, res, next){
 
 			let privileges_list = await get_allowed_privileges_list(user)
 
-			console.log(privileges_list)
+			// console.log(privileges_list)
 
-			console.log({user_image:user.user_image, object_files_hosted_at:user.object_files_hosted_at})
+			// console.log({user_image:user.user_image, object_files_hosted_at:user.object_files_hosted_at})
 
 			let user_image = await Image.findOne({ _id: user.user_image })
 			let user_avatar_image_to_use = await get_image_to_display(user_image.image_filepath, user.object_files_hosted_at)
