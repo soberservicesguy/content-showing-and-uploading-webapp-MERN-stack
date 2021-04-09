@@ -64,28 +64,26 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 	let index_of_path_attribute
 	let indices_of_path_attribute = {}
 
-	console.log('attributes_with_paths')
-	console.log(attributes_with_paths)
+	// console.log('attributes_with_paths')
+	// console.log(attributes_with_paths)
 
-	console.log('all_images_db_objects')
-	console.log(all_images_db_objects)
+	// console.log('all_images_db_objects')
+	// console.log(all_images_db_objects)
 
 	let path_attribute
 	Object.keys(attributes_with_paths).map((path_attribute_key) => {
 
 		path_attribute = attributes_with_paths[path_attribute_key]
 
-		console.log('parent_children_rows_dict.parent_header')
-		console.log(parent_children_rows_dict.parent_header)
+		// console.log('parent_children_rows_dict.parent_header')
+		// console.log(parent_children_rows_dict.parent_header)
 
-		console.log('path_attribute')
-		console.log(path_attribute)
+		// console.log('path_attribute')
+		// console.log(path_attribute)
 
 		index_of_path_attribute = parent_children_rows_dict.parent_header.indexOf( path_attribute )
-		// path_attribute = get_filepath_to_save_with_bulk_uploading(folder_name, timestamp)
-
 		indices_of_path_attribute[path_attribute_key] = index_of_path_attribute
-		// indices_of_path_attribute.push(index_of_path_attribute)
+
 	
 	})
 
@@ -100,11 +98,11 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 
 	let dict_of_path_attributes = {}
 
-	console.log('indices_of_path_attribute')
-	console.log(indices_of_path_attribute)
+	// console.log('indices_of_path_attribute')
+	// console.log(indices_of_path_attribute)
+
 
 	// assigning proper filepath at filepath attributes
-
 	Object.keys(indices_of_path_attribute).map((path_key) => {
 
 		parent_children_rows_dict.row_details.map((row, index) => {
@@ -112,22 +110,21 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 			let path_index = indices_of_path_attribute[path_key]
 			index_of_path_attribute = path_index // working
 
-			// attribute_name = parent_children_rows_dict.parent_header[index_of_path_attribute] // working
 	 		attribute_name_for_video = attributes_with_paths.video_key
 	 		attribute_name_for_snapshot = attributes_with_paths.snaphot_key
 
-	 		console.log('attribute_name_for_video')
-	 		console.log(attribute_name_for_video)
+	 	// 	console.log('attribute_name_for_video')
+	 	// 	console.log(attribute_name_for_video)
 
-	 		console.log('all_images_db_objects')
-	 		console.log(all_images_db_objects)
+	 	// 	console.log('all_images_db_objects')
+	 	// 	console.log(all_images_db_objects)
 	 		
-			console.log('row.parent_row')
-			console.log(row.parent_row)
+			// console.log('row.parent_row')
+			// console.log(row.parent_row)
 
 			let index1 = parent_children_rows_dict.parent_header.indexOf(attribute_name_for_video)
 			attribute_value_for_video =  row.parent_row[index1]
-			console.log(attribute_value_for_video)
+			// console.log(attribute_value_for_video)
 	 		// const index_of_videopath = parent_children_rows_dict.parent_header.indexOf( attribute_name_for_video );
 	 		// console.log('index_of_videopath')
 	 		// console.log(index_of_videopath)
@@ -143,30 +140,20 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 
 			corresponding_image_db_object = corresponding_image_db_objects[0]
 
-			console.log('corresponding_image_db_object')
-			console.log(corresponding_image_db_object)
+			// console.log('corresponding_image_db_object')
+			// console.log(corresponding_image_db_object)
 
 			snapshot_id = corresponding_image_db_object[attribute_value_for_video]._id
 
 			dict_of_path_attributes[attribute_name_for_snapshot] = snapshot_id
-			// dict_of_path_attributes[attribute_name_for_video] = attribute_value_for_video
 			dict_of_path_attributes[attribute_name_for_video] = `${get_filepath_to_save_with_bulk_uploading(folder_name, timestamp)}${attribute_value_for_video}`
-			
-			// console.log('attribute_name')  folder_name, timestamp
-			// console.log(attribute_value_for_video)
-
-
-
-	 	// 	console.log('path_attribute_value')
-	 	// 	console.log(attribute_value_for_video)
-
 
 		})
 
 	})
 
-	console.log('dict_of_path_attributes')
-	console.log(dict_of_path_attributes)
+	// console.log('dict_of_path_attributes')
+	// console.log(dict_of_path_attributes)
 
 	for (let i = 0; i < row_details_list.length; i++) {
 
@@ -189,8 +176,8 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 
 			if (err) return handleError(err);
 
-			console.log('SAVING BELOW VIDEO')
-			console.log(video)
+			// console.log('SAVING BELOW VIDEO')
+			// console.log(video)
 
 		// assigning the user
 			video.user = user_object
