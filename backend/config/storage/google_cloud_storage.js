@@ -49,8 +49,8 @@ function save_file_to_gcp(timestamp, file_payload){
 
 	try{
 
-		console.log('FILE BEING SAVED AT GCP')
-		console.log(`${file_payload.fieldname}s/${path.basename( file_payload.originalname, path.extname( file_payload.originalname ) ) + '-' + timestamp + path.extname( file_payload.originalname )}`)
+		// console.log('FILE BEING SAVED AT GCP')
+		// console.log(`${file_payload.fieldname}s/${path.basename( file_payload.originalname, path.extname( file_payload.originalname ) ) + '-' + timestamp + path.extname( file_payload.originalname )}`)
 		the_file = the_bucket.file(`${file_payload.fieldname}s/${path.basename( file_payload.originalname, path.extname( file_payload.originalname ) ) + '-' + timestamp + path.extname( file_payload.originalname )}`);
 		return the_file.save(file_payload.buffer)
 

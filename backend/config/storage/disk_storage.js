@@ -100,8 +100,8 @@ function get_multer_disk_storage_for_bulk_files(timestamp, folder_name){
 				// }
 			// });
 
-			console.log('FILES WILL BE SAVED HERE')
-			console.log(file_path)
+			// console.log('FILES WILL BE SAVED HERE')
+			// console.log(file_path)
 
 			cb(null, file_path)	
 

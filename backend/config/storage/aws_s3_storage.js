@@ -172,8 +172,8 @@ function save_file_to_aws_s3(file_payload, timestamp){
 // USED WHEN FILE IS READ FROM SOMEWHERE AND IS BEING UPLOADED
 async function save_file_to_s3(file, filename_to_set, path_to_upload){
 
-	console.log('file.buffer')
-	console.log(file)
+	// console.log('file.buffer')
+	// console.log(file)
 
 	let fileContent = await FS.readFile(file)
 
