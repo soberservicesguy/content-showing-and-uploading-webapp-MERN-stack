@@ -471,7 +471,13 @@ router.get('/blogposts-list-with-children', async function(req, res, next){
 			var newBlogPost = {}
 
 			let image_object = await Image.findOne({_id:blogpost.image_main_filepath})
+
+			console.log('IMAGE OBJECT FOUND')
+			console.log(image_object)
+
 			let base64_encoded_image = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
+			console.log('base64_encoded_image')
+			console.log(base64_encoded_image)
 
 			newBlogPost.category = blogpost[ 'category' ]
 			newBlogPost.image_main_filepath = base64_encoded_image
@@ -494,13 +500,13 @@ router.get('/blogposts-list-with-children', async function(req, res, next){
 			console.log('newBlogPosts_list')
 			console.log(newBlogPosts_list)
 
-		if (!newBlogPosts_list) {
+		if (newBlogPosts_list.length > 0) {
 
-			res.status(401).json({ success: false, msg: "could not find BlogPosts_list" });
+			res.status(200).json({success:true, blogposts:newBlogPosts_list});
 
 		} else {
 
-			res.status(200).json(newBlogPosts_list);
+			res.status(200).json({ success: false, msg: "could not find BlogPosts_list" });
 
 		}
 

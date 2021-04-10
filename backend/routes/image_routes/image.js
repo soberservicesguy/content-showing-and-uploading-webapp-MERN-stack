@@ -535,13 +535,13 @@ router.get('/images-list-with-children', async function(req, res, next){
 	})
 	.then((newImages_list) => {
 
-		if (!newImages_list) {
+		if (newImages_list.length > 0) {
 
-			res.status(401).json({ success: false, msg: "could not find Images_list" });
+			res.status(200).json({success: true, images:newImages_list});
 
 		} else {
 
-			res.status(200).json(newImages_list);
+			res.status(200).json({ success: false, msg: "could not find Images_list" });
 
 		}
 

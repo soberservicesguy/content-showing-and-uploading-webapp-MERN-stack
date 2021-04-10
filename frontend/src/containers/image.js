@@ -39,10 +39,19 @@ class ImageContainer extends Component {
 // FETCHING DATA FOR COMPONENT
 		axios.get(utils.baseUrl + '/image/images-list-with-children',)
 		.then((response) => {
-			console.log(response.data)
-			this.props.set_fetched_images(response.data)
+			
+			if (response.data.success){
+
+				this.props.set_fetched_images(response.data.images)
+
+			} else {
+
+				this.props.set_fetched_images([])
+
+			}
 		})
 		.catch((error) => {
+			this.props.set_fetched_images([])
 			console.log(error);
 		})
 

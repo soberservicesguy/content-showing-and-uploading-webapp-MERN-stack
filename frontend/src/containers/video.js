@@ -33,11 +33,20 @@ class VideoContainer extends Component {
 // FETCHING DATA FOR COMPONENT
 			axios.get(utils.baseUrl + '/video/videos-list-with-children',)
 			.then((response) => {
-				console.log('response.data')
-				console.log(response.data)
-				this.props.set_fetched_videos(response.data)
+				if (response.data.success){
+
+					console.log('response.data')
+					console.log(response.data)
+					this.props.set_fetched_videos(response.data.videos)
+
+				} else {
+
+					this.props.set_fetched_videos([])
+
+				}
 			})
 			.catch((error) => {
+				this.props.set_fetched_videos([])
 				console.log(error);
 			})
 

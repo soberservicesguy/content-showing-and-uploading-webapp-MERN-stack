@@ -715,15 +715,15 @@ router.get('/videos-list-with-children', passport.authenticate('jwt', { session:
 	})
 	.then((newVideos_list) => {
 
-		if (!newVideos_list) {
+		if (newVideos_list.length > 0) {
 
-			res.status(401).json({ success: false, msg: "could not find video_list" });
+			res.status(200).json({success: true, videos:newVideos_list});
 
 		} else {
 
 			// console.log('newVideos_list')
 			// console.log(newVideos_list)
-			res.status(200).json(newVideos_list);
+			res.status(200).json({ success: false, msg: "could not find video_list" });
 
 		}
 

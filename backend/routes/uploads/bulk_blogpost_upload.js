@@ -159,8 +159,8 @@ router.post('/bulk-upload-blogposts', passport.authenticate('jwt', { session: fa
 
 	// timestamp = Date.now()
 	timestamp = new Date()
-	currentDate = timestamp.toLocaleDateString("en-US").split("/").join(" | ");
-	currentTime = timestamp.toLocaleTimeString("en-US").split("/").join(" | ");
+	currentDate = timestamp.toLocaleDateString("en-US").split("/").join(":");
+	currentTime = timestamp.toLocaleTimeString("en-US", { hour12: false }).split("/").join("|");
 
 	bulk_upload_blogposts( `${currentDate}_${currentTime}`, 'bulk_blogposts' )(req, res, (err) => {
 		if(err){
@@ -210,6 +210,10 @@ router.post('/bulk-upload-blogposts', passport.authenticate('jwt', { session: fa
 				// creating image db objects
 				let all_images_db_objects = []
 				Promise.all(images.map(async (image_file) => {
+
+					console.log('FILEPATH WHERE IMAGES PATH IS GOING TO BE')
+					console.log(get_file_path_to_use_for_bulk_files(`${currentDate}_${currentTime}`,'bulk_blogposts', image_file.originalname))
+
 					const newImage = new Image({
 						_id: new mongoose.Types.ObjectId(),
 						category: 'blogpost_image',

@@ -42,6 +42,8 @@ async function get_image_to_display(image_path_field, image_host_field){
 
 	if (image_host_field === 'gcp_storage'){
 
+		console.log('GETTING IMAGE FROM HERE')
+		console.log(image_path_field)
 		cloud_resp = await get_file_from_gcp(image_path_field)
 		image = cloud_resp.toString('base64')
 

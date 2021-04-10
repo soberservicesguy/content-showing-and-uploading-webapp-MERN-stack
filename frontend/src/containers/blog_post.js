@@ -48,11 +48,20 @@ class BlogPostContainer extends Component {
 // FETCHING DATA FOR COMPONENT
 		axios.get(utils.baseUrl + '/blogpostings/blogposts-list-with-children',)
 		.then((response) => {
-			console.log('response.data')
-			console.log(response.data)
-			this.props.set_fetched_blogposts(response.data)
+			if (response.data.success){
+
+				console.log('blogposs.data')
+				console.log(response.data)
+				this.props.set_fetched_blogposts(response.data.blogposts)
+
+			} else {
+
+				this.props.set_fetched_blogposts([])
+
+			}
 		})
 		.catch((error) => {
+			this.props.set_fetched_blogposts([])
 			console.log(error);
 		})
 
