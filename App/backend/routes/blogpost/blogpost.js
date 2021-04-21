@@ -1,3 +1,4 @@
+require('../../models/image');
 require('../../models/blogpost');
 require('../../models/comment');
 require('../../models/like');
