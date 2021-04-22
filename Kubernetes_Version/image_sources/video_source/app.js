@@ -33,10 +33,10 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 
-// app.use(require('./routes'));
+app.use(require('./routes'));
 
-app.use(require('./routes/video_routes/videos'));
-app.use(require('./routes/video_routes/video_stream'));
+// app.use(require('./routes/video_routes/videos'));
+// app.use(require('./routes/video_routes/video_stream'));
 
 
 const env = require("dotenv").config({ path: "./.env" });

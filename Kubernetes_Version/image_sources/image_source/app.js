@@ -33,8 +33,8 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 
-// app.use(require('./routes'));
-app.use(require('./routes/image_routes/image'));
+app.use(require('./routes'));
+// app.use(require('./routes/image_routes/image'));
 
 const env = require("dotenv").config({ path: "./.env" });
 

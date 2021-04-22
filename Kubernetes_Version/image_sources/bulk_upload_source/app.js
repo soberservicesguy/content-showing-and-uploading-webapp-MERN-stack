@@ -33,11 +33,11 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 
-// app.use(require('./routes'));
+app.use(require('./routes'));
 
-app.use(require('./routes/uploads/bulk_blogpost_upload'));
-app.use(require('./routes/uploads/bulk_video_upload'));
-app.use(require('./routes/uploads/bulk_image_upload'));
+// app.use(require('./routes/uploads/bulk_blogpost_upload'));
+// app.use(require('./routes/uploads/bulk_video_upload'));
+// app.use(require('./routes/uploads/bulk_image_upload'));
 
 
 

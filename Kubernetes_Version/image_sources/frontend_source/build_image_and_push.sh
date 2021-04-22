@@ -1,4 +1,3 @@
-
-docker image build -t appointment_frontend_7 .
-docker image tag appointment_frontend_7 soberservicesguy/portfolio-images:appointment_frontend_7
-docker image push soberservicesguy/portfolio-images:appointment_frontend_7
+docker image build -t content_frontend_4 .
+docker image tag content_frontend_4 soberservicesguy/portfolio-images:content_frontend_4
+docker image push soberservicesguy/portfolio-images:content_frontend_4

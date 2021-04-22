@@ -33,10 +33,10 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 
-// app.use(require('./routes'));
+app.use(require('./routes'));
 
-app.use(require('./routes/users/users'));
-app.use(require('./routes/users/sign_up'));
+// app.use(require('./routes/users/users'));
+// app.use(require('./routes/users/sign_up'));
 
 
 // --------------------------PUSH NOTIFICATIONS start here-------------------------------
