@@ -48,13 +48,12 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 // setting up cors
-app.use(
-  cors({
-    origin: "http://localhost:3000", // restrict calls to those this address
-    methods: ['GET', 'POST'] // only allow GET, POST requests
-  })
-);
-
+// app.use(
+//   cors({
+//     origin: "http://localhost:3000", // restrict calls to those this address
+//     methods: ['GET', 'POST'] // only allow GET, POST requests
+//   })
+// );
 
 /**
  * -------------- ROUTES ----------------
@@ -64,7 +63,6 @@ app.use(
 // Imports all of the routes from ./routes/index.js
 app.use(require('./routes'));
 
-
 /**
  * -------------- INCLUDING REACT FRONTEND ----------------
  */
@@ -73,9 +71,12 @@ app.use(require('./routes'));
 // UNCOMMENT THIS AFTER DEVELOPEMENT
 app.use(express.static(path.join(__dirname, 'build')));
 
-// app.get('/*', function(req, res){
-//   res.sendFile(path.join(__dirname, 'build', 'index.html'));
-// });
+app.get('/*', function(req, res){
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+
+
+
 
 
 /**

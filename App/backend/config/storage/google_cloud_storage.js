@@ -1,11 +1,12 @@
 const path = require('path')
 const { Storage } = require("@google-cloud/storage");
 const gcp_storage = new Storage({
-	keyFilename: path.join(__dirname, "../../keys/android-app-backend-307507-d8ea1fdf8d98.json"),
-	projectId: "android-app-backend-307507",
+	keyFilename: path.join(__dirname, "../../keys/portfolio-apps-311617-9e5ae7843e5d.json"),
+	projectId: "portfolio-apps-311617",
 })
 
-let gcp_bucket = 'portfolio_social_app'
+let gcp_bucket = 'portfolio_content_app'
+
 
 function get_file_from_gcp(complete_file_name){
 
