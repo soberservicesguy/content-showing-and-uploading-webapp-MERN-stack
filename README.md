@@ -1,4 +1,9 @@
-# social_network_webapp_MERN_stack
+# content_showing_and_uploading_webapp_MERN_stack
+
+**Live App:**
+
+https://content-app-dot-portfolio-apps-311617.uc.r.appspot.com
+
 
 **Project Details:**
 
@@ -13,15 +18,9 @@ Make sure to add some data in the app right after turning on any of the three fo
 
 **App Features:**
 	
-User can sign up, select privileges, upload avatar, add friends, create written posts, image posts, video posts. User can also interact with posts from friends, send and accept friend requests, like / comment  / share posts of friends.
+User can sign up, select privileges, upload avatar, read blogposts and watch images and videos, upload images / blogposts / videos if privileged, also user can upload images / blogposts / videos in bulk using excel files. User can also interact with images / blogposts /videos like commenting, liking. 
 
 Video posts are created and 4-5 snaphosts are taken and everytime that video posts is shown, different snapshot is shown with it.
-
-Every post has different visual way of showing
-
-User can like, comment on books, pages, sports etc
-
-User can upload advertisements if privileged.
 
 Users powers are determined with the privileges he carries.
 
@@ -44,12 +43,9 @@ Includes jwt authentication and authorization system, as well as privileges syst
 
 /login allows user to login
 /signup allows user to sign up, select privileges and upload avatar
-user can create posts here such as simple written post, post with  image, post with video
-notification bell shows notifications of friends activities
-settings icon allows user to set his personal details including cover image
-/socialposts where user is redirected once he logins, shows posts from friends at center, pages suggestions along friends suggestions at left, and advertisement at right
-/settings allows user to upload cover image, and enter his details to show
-/about-me shows users own personal details, along with friends and pages and books liked
-/books allows user to create or like books
-/pages allows user to create or like pages
-/sports allows user to create or like sports
+/blogposts where user is redirected once he logins, blogpost cards are shown in masonry as well as forms for creating blogpost if user is privileged
+/videos video thumbnails are shown as well as forms for uploading video if user is privileged
+/images images are shown in masonry as well as forms for uploading image if user is privileged
+/Bulk-Upload-Image allows user to upload images in bulk along with excel file having details, if privileged
+/Bulk-Upload-Video allows user to upload videos in bulk along with excel file having details, if privileged
+/Bulk-Upload-Blogpost allows user to upload blogposts in bulk along with excel file having details, if privileged
