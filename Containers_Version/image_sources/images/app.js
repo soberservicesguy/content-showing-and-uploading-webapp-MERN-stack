@@ -36,7 +36,5 @@ app.use(express.urlencoded({extended: true}));
 // app.use(require('./routes'));
 app.use(require('./routes/image_routes/image'));
 
-const env = require("dotenv").config({ path: "./.env" });
-
 
 module.exports = app;

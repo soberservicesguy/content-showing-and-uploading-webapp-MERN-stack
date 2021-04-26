@@ -38,7 +38,5 @@ app.use(require('./routes/blogpost/blogpost'));
 
 
 
-const env = require("dotenv").config({ path: "./.env" });
-
 
 module.exports = app;

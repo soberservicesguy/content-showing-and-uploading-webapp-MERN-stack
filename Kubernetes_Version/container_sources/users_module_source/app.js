@@ -41,22 +41,22 @@ app.use(require('./routes'));
 
 // --------------------------PUSH NOTIFICATIONS start here-------------------------------
 
-const webpush = require("web-push");
-app.use(express.static(path.join(__dirname, "push_notifications")));
+// const webpush = require("web-push");
+// app.use(express.static(path.join(__dirname, "push_notifications")));
 
-// app.use(bodyParser.json()); // commented out since we using express own alternative for it
+// // app.use(bodyParser.json()); // commented out since we using express own alternative for it
 
-// public and private keys are generated using some command on terminal
-const publicVapidKey =
-  "BJthRQ5myDgc7OSXzPCMftGw-n16F7zQBEN7EUD6XxcfTTvrLGWSIG7y_JxiWtVlCFua0S8MTB5rPziBqNx1qIo";
-const privateVapidKey = "3KzvKasA2SoCxsp0iIG_o9B0Ozvl1XDwI63JRKNIWBM";
+// // public and private keys are generated using some command on terminal
+// const publicVapidKey =
+//   "";
+// const privateVapidKey = "";
 
-// SEARCH ABOUT BOTTOM ???
-webpush.setVapidDetails(
-  "mailto:test@test.com",
-  publicVapidKey,
-  privateVapidKey
-);
+// // SEARCH ABOUT BOTTOM ???
+// webpush.setVapidDetails(
+//   "mailto:test@test.com",
+//   publicVapidKey,
+//   privateVapidKey
+// );
 
 // --------------------------PUSH NOTIFICATIONS ends here-------------------------------
 
