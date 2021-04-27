@@ -28,6 +28,12 @@ require('./config/passport')(passport);
 // This will initialize the passport object on every request
 app.use(passport.initialize());
 
+try {
+	app.use(require('./config/cors_policy'))
+} catch (err){
+	console.log('couldnt incorporate cors policy')
+}
+
 // Instead of using body-parser middleware, use the new Express implementation of the same thing
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
