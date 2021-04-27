@@ -20,14 +20,7 @@ require('./config/database');
 // Must first load the models
 require('./models/user');
 require('./models/push_user');
-    
-// require('./models/sport');
-
-// Must first load the models
-
-// require('./models/user');
-// require('./models/push_user');
-    
+        
 // Pass the global passport object into the configuration function
 require('./config/passport')(passport);
 
@@ -38,13 +31,6 @@ app.use(passport.initialize());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-// // setting up cors
-// app.use(
-//   cors({
-//     origin: "http://localhost:3000", // restrict calls to those this address
-//     methods: ['GET', 'POST'] // only allow GET, POST requests
-//   })
-// );
 
 try {
 	app.use(require('./config/cors_policy'))
@@ -65,11 +51,11 @@ app.use(require('./routes'));
  * -------------- INCLUDING REACT FRONTEND ----------------
  */
 // LOAD FRONTEND FOR ALL REQUESTS OTHER THAN BACKEND ROUTER, IE FOR REACT-ROUTER-DOM
-// app.use(express.static(path.join(__dirname, 'build')));
+app.use(express.static(path.join(__dirname, 'build')));
 
-// app.get('/*', function(req, res){
-//   res.sendFile(path.join(__dirname, 'build', 'index.html'));
-// });
+app.get('/*', function(req, res){
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 
 
 /**
