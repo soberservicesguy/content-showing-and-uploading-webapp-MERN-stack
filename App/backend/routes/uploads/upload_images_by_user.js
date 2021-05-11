@@ -58,9 +58,6 @@ function checkFileTypeForUserContentImage(file, cb){
 
 router.post('/protected-image-upload', passport.authenticate('jwt', { session: false }), (req, res, next) => {
 
-	console.log('OUTER LOG')
-	console.log(req.body)
-
 	user_content_image_upload(req, res, (err) => {
 		if(err){
 
@@ -73,8 +70,6 @@ router.post('/protected-image-upload', passport.authenticate('jwt', { session: f
 				res.status(404).json({ success: false, msg: 'File is undefined!',file: `uploads/${req.file.filename}`})
 
 			} else {
-				// console.log('INNER LOG')
-				// console.log(req.body)
 
 			// image is uploaded , now saving image in db
 				const newImage = new Image({

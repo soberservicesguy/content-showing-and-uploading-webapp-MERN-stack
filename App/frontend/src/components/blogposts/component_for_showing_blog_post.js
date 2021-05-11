@@ -23,8 +23,30 @@ class ComponentForShowingBlogPost extends Component {
 		super(props);
 // STATE	
 		this.state = {
-
+			image_src: null,
 		}
+
+	}
+
+	getImage(){
+
+		// this.setState({ image_src: null })
+		let image_object_id = this.props.dataPayloadFromParent.image_main_filepath
+
+		axios.get(`${utils.baseUrl}/blogpostings/get-image`, 
+			{
+				params: {
+					image_object_id: image_object_id
+				}
+			}
+		)
+	    .then(async (response) => {
+	    	if (response.data.success){
+		    	this.setState({ image_src: "data:image/jpeg;base64," + response.data.image})
+	    	}
+
+		});
+
 
 	}
 
@@ -32,6 +54,18 @@ class ComponentForShowingBlogPost extends Component {
 	componentDidMount() {
 
 	}
+
+	componentDidUpdate(prevProps, prevState, snapshot) {
+
+
+		if (prevProps.getIndividualImage === false && this.props.getIndividualImage === true){
+			console.log('getting image')
+			this.getImage()
+
+		}
+
+	}
+
 
 	render() {
 
@@ -82,7 +116,8 @@ class ComponentForShowingBlogPost extends Component {
 				
 				<div style={styles.imageContainer}>
 					<img 
-						src={base64Image} 
+						src={this.state.image_src}
+						// src={base64Image} 
 						// src={utils.image}
 						alt="" 
 						style={styles.imageStyle}
@@ -90,13 +125,12 @@ class ComponentForShowingBlogPost extends Component {
 				</div>
 
 				<p style={styles.titleText}>
-					Title{ data.title }
+					{ data.title }
 				</p>
 				<p style={styles.categoryText}>
-					Category{ data.category }
+					{ data.category }
 				</p>
 				<p style={styles.paraText}>
-					Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum Loren ipsum 
 					{ data.first_para }
 				</p>
 			</div>
@@ -110,28 +144,3 @@ ComponentForShowingBlogPost.defaultProps = {
 
 // export default ComponentForShowingBlogPost;  // REMOVE withResponsiveness and withStyles as much as possible
 export default withRouter(withResponsiveness(ComponentForShowingBlogPost))
-
-				// <p>
-				// 	{ data.timestamp_of_uploading }
-				// </p>
-				// <p>
-				// 	{ data.initial_tags }
-				// </p>
-				// <p>
-				// 	{ data.endpoint }
-				// </p>
-				// <p>
-				// 	{ data.second_para }
-				// </p>
-				// <p>
-				// 	{ data.qouted_para }
-				// </p>
-				// <p>
-				// 	{ data.third_para }
-				// </p>
-				// <p>
-				// 	{ data.fourth_para }
-				// </p>
-				// <p>
-				// 	{ data.all_tags }
-				// </p>

@@ -38,6 +38,7 @@ class BlogPostContainer extends Component {
 		super(props);
 // STATE	
 		this.state = {
+			get_individual_image:false,
 		}	
 	}
 
@@ -50,9 +51,9 @@ class BlogPostContainer extends Component {
 		.then((response) => {
 			if (response.data.success){
 
-				console.log('blogposs.data')
-				console.log(response.data)
 				this.props.set_fetched_blogposts(response.data.blogposts)
+				console.log('allowing to get individual image')
+		    	this.setState({ get_individual_image: true })
 
 			} else {
 
@@ -114,8 +115,6 @@ class BlogPostContainer extends Component {
 
 	// copying EXACT same children being passed to VerticalMasonriesContainer below but without local_height prop
 	  	let total_children = total_blogposts.map((item, index) => {
-	  	console.log('item.total_likes')
-	  	console.log(item.total_likes)
 
 			return(
 
@@ -146,19 +145,6 @@ class BlogPostContainer extends Component {
 
 			<Grid container direction="row">
 
-				{console.log(this.props.isAllowedBlogpostsControl)}
-				{(this.props.isAllowedBlogpostsControl) ? (
-
-					<Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-			  			<ConnectedCreateBlogPost/>
-			  		</Grid>
-
-					) : (
-						null
-					)
-				}
-
-
 		  		<VerticalMasonriesContainer
 		  			child_addition_pattern_heights={[800, 400+200, 800, 400+200, 800, 400+200, ]}
 		  			containerBGcolor={'none'}
@@ -181,6 +167,8 @@ class BlogPostContainer extends Component {
 		  					</div>*/
 		  					<div>
 								<ConnectedBlogPostCard
+									getIndividualImage = {this.state.get_individual_image}
+
 									dataPayloadFromParent = { item }
 
 									comments_quantity = { item.comments_quantity }
@@ -199,6 +187,19 @@ class BlogPostContainer extends Component {
 
 		  			})}
 		  		</VerticalMasonriesContainer>
+
+
+				{(this.props.isAllowedBlogpostsControl) ? (
+
+					<Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+			  			<ConnectedCreateBlogPost/>
+			  		</Grid>
+
+					) : (
+						null
+					)
+				}
+
 
 			</Grid>
 		);

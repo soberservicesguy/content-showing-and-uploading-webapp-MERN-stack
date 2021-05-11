@@ -59,9 +59,6 @@ async function save_socialpost_and_activity(req, res, err, newSocialPost, social
 
 							socialpost_endpoint = saved_socialpost.endpoint
 
-							console.log('newSocialPost.image_for_post')
-							console.log(newSocialPost.image_for_post)
-
 							let image_for_post_to_use = await get_image_to_display(newSocialPost.image_for_post, newSocialPost.object_files_hosted_at)
 
 							new_socialpost = {
@@ -104,8 +101,7 @@ async function save_socialpost_and_activity(req, res, err, newSocialPost, social
 							socialpost_endpoint = saved_socialpost.endpoint
 
 							let get_random_screenshot = select_random_screenshot(newSocialPost.video_thumbnail_image, total_snapshots_count)
-							console.log('get_random_screenshot')
-							console.log(get_random_screenshot)
+
 							let video_thumbnail_image_to_use
 							if (use_gcp_storage || use_aws_s3_storage){
 
@@ -171,8 +167,6 @@ async function save_socialpost_and_activity(req, res, err, newSocialPost, social
 
 				}
 
-				console.log('TILL HERE1')
-
 				let newActivity = new Activity({
 					_id: new mongoose.Types.ObjectId(),
 					user: user,
@@ -182,12 +176,8 @@ async function save_socialpost_and_activity(req, res, err, newSocialPost, social
 				newActivity.save()
 				user.activities.push(newActivity)
 				user.save()
-				
-				console.log('TILL HERE2')
 
 			} else {
-
-				console.log('TILL HERE3')
 
 				res.status(200).json({ success: false, msg: "couldnt save social post" });
 

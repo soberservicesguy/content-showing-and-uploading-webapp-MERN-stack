@@ -98,11 +98,17 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 
 	let dict_of_path_attributes = {}
 
+	let all_dicts = []
+
+
 	// console.log('indices_of_path_attribute')
 	// console.log(indices_of_path_attribute)
 
 
 	// assigning proper filepath at filepath attributes
+	console.log('all_images_db_objects')
+	console.log(all_images_db_objects)
+
 	Object.keys(indices_of_path_attribute).map((path_key) => {
 
 		parent_children_rows_dict.row_details.map((row, index) => {
@@ -116,8 +122,6 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 	 	// 	console.log('attribute_name_for_video')
 	 	// 	console.log(attribute_name_for_video)
 
-	 	// 	console.log('all_images_db_objects')
-	 	// 	console.log(all_images_db_objects)
 	 		
 			// console.log('row.parent_row')
 			// console.log(row.parent_row)
@@ -131,22 +135,52 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 
 			attribute_value_for_video = row.parent_row[index1] // not needed since we havent given screenshot names
 
+			// console.log('all_images_db_objects')
+			// console.log(all_images_db_objects)
+
+			console.log('attribute_value_for_video')
+			console.log(attribute_value_for_video)
+
 			corresponding_image_db_objects = all_images_db_objects.filter(
 				function(item){
 
-					return Object.keys(item)[0] === attribute_value_for_video
+					let name_key = Object.keys(item)[0]
+					name_key = name_key.charAt(0).toUpperCase() + name_key.slice(1)
+					// name_key[0] = name_key[0].toUpperCase()
+					name_key = name_key.split(" ").join("-")
+					// return Object.keys(item)[0] === attribute_value_for_video
+					console.log('name_key')
+					console.log(name_key)
+
+					return name_key === attribute_value_for_video
 				}
 			)
 
 			corresponding_image_db_object = corresponding_image_db_objects[0]
 
-			// console.log('corresponding_image_db_object')
-			// console.log(corresponding_image_db_object)
+			console.log('corresponding_image_db_object')
+			console.log(corresponding_image_db_object)
 
 			snapshot_id = corresponding_image_db_object[attribute_value_for_video]._id
 
 			dict_of_path_attributes[attribute_name_for_snapshot] = snapshot_id
 			dict_of_path_attributes[attribute_name_for_video] = `${get_filepath_to_save_with_bulk_uploading(folder_name, timestamp)}${attribute_value_for_video}`
+
+			// console.log( 'corresponding_image_db_object[attribute_value_for_video].title.split(" ").join("-")' )
+			// console.log( corresponding_image_db_object[attribute_value_for_video].title.split(" ").join("-") )
+
+			let title_to_use = corresponding_image_db_object[attribute_value_for_video].title.split(" ").join("-")
+			title_to_use = title_to_use.charAt(0).toUpperCase() + title_to_use.slice(1) // making first letter uppercase
+			dict_of_path_attributes.title = title_to_use 
+			dict_of_path_attributes.object_files_hosted_at = corresponding_image_db_object[attribute_value_for_video].object_files_hosted_at
+
+
+			console.log('dict_of_path_attributes')
+			console.log(dict_of_path_attributes)
+
+			all_dicts.push(dict_of_path_attributes)
+			dict_of_path_attributes = {}
+
 
 		})
 
@@ -166,10 +200,12 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 
 		} 
 
+		let dict_to_use = all_dicts[i]
+
 		const video = sheet_to_class_mapper(parent_sheet, {
 			_id: new mongoose.Types.ObjectId(),
 			...parent_db_object_dict,
-			...dict_of_path_attributes,
+			...dict_to_use,
 		})
 
 		video.save(function (err, video) {

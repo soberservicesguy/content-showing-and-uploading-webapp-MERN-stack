@@ -54,37 +54,6 @@ const {
 
 let timestamp
 
-// NOT NEEDED
-// Set The Storage Engine
-// const image_storage = multer.diskStorage({
-// 	destination: path.join(__dirname , '../../assets/images/uploads/blogpost_image_main'),
-// 	filename: function(req, file, cb){
-// 		// file name pattern fieldname-currentDate-fileformat
-// 		// filename_used_to_store_image_in_assets_without_format = file.fieldname + '-' + Date.now()
-// 		// filename_used_to_store_image_in_assets = filename_used_to_store_image_in_assets_without_format + path.extname(file.originalname)
-
-// 		filename_used_to_store_image_in_assets = file.originalname
-// 		cb(null, file.originalname);
-
-// 	}
-// });
-
-// NOT NEEDED
-// Check File Type
-// function checkFileTypeForBlogpostImage(file, cb){
-// 	// Allowed ext
-// 	let filetypes = /jpeg|jpg|png|gif/;
-// 	// Check ext
-// 	let extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-// 	// Check mime
-// 	let mimetype = filetypes.test(file.mimetype);
-
-// 	if(mimetype && extname){
-// 		return cb(null,true);
-// 	} else {
-// 		cb('Error: jpeg, jpg, png, gif Images Only!');
-// 	}
-// }
 
 // Init Upload
 function upload_main_image_by_user_of_blog(timestamp){
@@ -107,10 +76,6 @@ function upload_main_image_by_user_of_blog(timestamp){
 // USED IN CREATING BLOGPOST
 router.post('/create-blogpost-with-user', passport.authenticate('jwt', { session: false }), isAllowedWritingBlogposts, function(req, res, next){
 
-	console.log('roeute called')	
-
-	console.log('OUTER LOG')
-	console.log(req.body)
 
 	timestamp = Date.now()
 
@@ -244,6 +209,19 @@ router.post('/create-blogpost-with-user', passport.authenticate('jwt', { session
 
 	})
 })
+
+
+
+router.get('/get-image', async function(req, res, next){
+
+
+	let image_object = await Image.findOne({_id:req.query.image_object_id})
+	let base64_encoded_image = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
+	res.status(200).json({success: true, image: base64_encoded_image});
+
+})
+
+
 
 
 // get n childs of blogpost
@@ -451,7 +429,6 @@ router.post('/create-like-for-blogpost', passport.authenticate('jwt', { session:
 // get blogposts_list_with_children
 // USED
 router.get('/blogposts-list-with-children', async function(req, res, next){
-	console.log('called')
 
 	BlogPost.
 	find().
@@ -466,22 +443,16 @@ router.get('/blogposts-list-with-children', async function(req, res, next){
 		var newBlogPosts_list = []
 		let all_blogposts = await Promise.all(blogposts.map(async (blogpost, index)=>{
 			
-			console.log('blogpost')
-			console.log(blogpost)
 
 			var newBlogPost = {}
 
 			let image_object = await Image.findOne({_id:blogpost.image_main_filepath})
 
-			console.log('IMAGE OBJECT FOUND')
-			console.log(image_object)
-
-			let base64_encoded_image = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
-			console.log('base64_encoded_image')
-			console.log(base64_encoded_image)
+			// let base64_encoded_image = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
 
 			newBlogPost.category = blogpost[ 'category' ]
-			newBlogPost.image_main_filepath = base64_encoded_image
+			// newBlogPost.image_main_filepath = base64_encoded_image
+			newBlogPost.image_main_filepath = blogpost.image_main_filepath
 			newBlogPost.title = blogpost[ 'title' ]
 			newBlogPost.timestamp_of_uploading = blogpost[ 'timestamp_of_uploading' ]
 			newBlogPost.initial_tags = blogpost[ 'initial_tags' ]
@@ -498,8 +469,6 @@ router.get('/blogposts-list-with-children', async function(req, res, next){
 		return newBlogPosts_list
 	})
 	.then((newBlogPosts_list) => {
-			console.log('newBlogPosts_list')
-			console.log(newBlogPosts_list)
 
 		if (newBlogPosts_list.length > 0) {
 

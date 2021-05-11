@@ -66,8 +66,6 @@ class BlogPostCard extends Component {
 		.then((response) => {
 			// console.log(response.data);
 			this.setState( prev => ({...prev, comments: ( prev.comments.length === 0 ) ? response.data : [] }) )
-			console.log('COMMENTS OBTAINED ARE BELOW')
-			console.log(this.state.comments)
 		})
 		.catch((error) => {
 			console.log(error);
@@ -86,8 +84,6 @@ class BlogPostCard extends Component {
 			    }
 			})
 		.then((response) => {
-			console.log('LIKES ACHIEVED')
-			console.log(response.data);
 			this.setState( prev => ({...prev, likes: ( prev.likes.length === 0 ) ? response.data : [] }) )
 			
 		})
@@ -154,6 +150,7 @@ class BlogPostCard extends Component {
 		  			style={{color: 'inherit', textDecoration: 'inherit'}}
 				>
 			  		<ComponentForShowingBlogPost
+			  			getIndividualImage = {this.props.getIndividualImage}
 						dataPayloadFromParent = { this.props.dataPayloadFromParent }
 						local_height = { this.props.local_height } // being passed so that heights can be assigned to each image backgorund
 			  		/>

@@ -25,8 +25,7 @@ function save_generated_snapshots(video_file, timestamp, total_snapshots_count){
 		for (let i = 0; i < array_from_snapshot_count.length; i++) {
 
 			file_path = `${get_snapshots_storage_path()}/${file_without_format}-${timestamp}_${i+1}.png`
-			// console.log('file_path from where snapshot is being pulled to upload in cloud')
-			// console.log(file_path)
+
 			if (use_gcp_storage){
 
 				response = save_file_to_gcp_storage( file_path, `${file_without_format}-${timestamp}_${i+1}.png` ,'upload_thumbnails' )
@@ -52,13 +51,6 @@ function save_generated_snapshots(video_file, timestamp, total_snapshots_count){
 
 	}
 
-		// Promise.all(promises).then((vals) => {
-
-		// 	console.log(vals)
-		// 	console.log('REOVEDEDS')
-		// 	resolve()
-
-		// })
 
 }
 

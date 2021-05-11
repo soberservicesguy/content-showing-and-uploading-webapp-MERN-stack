@@ -1,9 +1,3 @@
-// for using jwt in subsequest requests, put the jwt in 'bearer token` OR Authorization key in header of request'
-// ALSO IN REACT / REACT NATIVE PUT IT IN EVERY REQUEST OTHERWISE route will not be shown
-
-// passport jwt strategy checks jwt token in each request to verify the user is valid or should be entertained or not
-// passport local strategy checks session ie user.loggedin / isauthenticated methods, once user is logged in it can do what he is allowed to do untill he logs out
-
 require('../../models/video');
 require('../../models/user');
 require('../../models/image');
@@ -65,7 +59,7 @@ let timestamp
 
 
 router.get('/protected', passport.authenticate('jwt', { session: false }), isAllowedSurfing, isAllowedUploadingVideos, (req, res, next) => {
-	// // payload recieved from passport.authenticate jwt middleware
+	// payload recieved from passport.authenticate jwt middleware
 	// console.log(req.user.msg)
 	// console.log(req.user.user_object)
 
@@ -95,55 +89,9 @@ router.post('/login', async function(req, res, next){
 
 		if (isValid) {
 
-		// not needed here, this is done in passport middleware
-		// 	let privileges_list = []
-		// 	user.privileges.map((privilege_object) => {
-
-		// 		if ( privilege_object.privilege_name === 'allow_surfing' ){
-			
-		// 			privileges_list.push( 'Basic' )
-
-		// 		} else if ( privilege_object.privilege_name === 'is_allowed_image_upload' ){
-
-		// 			privileges_list.push( 'Images control' )
-
-		// 		} else if ( privilege_object.privilege_name === 'is_allowed_video_upload' ){
-
-		// 			privileges_list.push( 'Videos control' )
-
-		// 		} else if ( privilege_object.privilege_name === 'is_allowed_writing_blopost' ){
-
-		// 			privileges_list.push( 'Blogposts control' )
-
-		// 		} else {
-		// 		}
-
-		// 	})
-
-		// // add revoked or privileges that are not given
-		// 	if ( !privileges_list.includes('Basic') ){
-		// 		privileges_list.push('Revoke Basic')
-		// 	} 
-
-		// 	if ( !privileges_list.includes('Images control') ){
-		// 		privileges_list.push('Revoke Images control')
-		// 	} 
-
-		// 	if ( !privileges_list.includes('Videos control') ){
-		// 		privileges_list.push('Revoke Videos control')
-		// 	} 
-
-		// 	if ( !privileges_list.includes('Blogposts control') ){
-		// 		privileges_list.push('Revoke Blogposts control')
-		// 	} 
-
 			const tokenObject = utils.issueJWT(user);
 
 			let privileges_list = await get_allowed_privileges_list(user)
-
-			// console.log(privileges_list)
-
-			// console.log({user_image:user.user_image, object_files_hosted_at:user.object_files_hosted_at})
 
 			let user_image = await Image.findOne({ _id: user.user_image })
 			let user_avatar_image_to_use = await get_image_to_display(user_image.image_filepath, user.object_files_hosted_at)
@@ -162,7 +110,6 @@ router.post('/login', async function(req, res, next){
 			res.status(401).json({ success: false, msg: "you entered the wrong password" });
 
 		}
-	    // console.log(user);
 	})
 	.catch((err1) => {
 
@@ -216,36 +163,6 @@ router.get('/delete-all-comments', async (req, res, next) => {
 
 });
 
-
-// DEPRECATED
-// 	User.findOne({ phone_number: req.body.phone_number })
-// 	.then((user) => {
-
-// 		console.log(user)
-
-// 		if (!user) {
-// 			res.status(401).json({ success: false, msg: "could not find user" });
-// 		}
-
-// 		// Function defined at bottom of app.js
-// 		const isValid = utils.validPassword(req.body.password, user.hash, user.salt);
-
-// 		if (isValid) {
-
-// 			const tokenObject = utils.issueJWT(user);
-// 			res.status(200).json({ success: true, token: tokenObject.token, expiresIn: tokenObject.expires });
-
-// 		} else {
-
-// 			res.status(401).json({ success: false, msg: "you entered the wrong password" });
-
-// 		}
-
-// 	})
-// 	.catch((err) => {
-// 		next(err);
-// 	});
-// });
 
 // Register a new user
 router.post('/register', function(req, res, next){

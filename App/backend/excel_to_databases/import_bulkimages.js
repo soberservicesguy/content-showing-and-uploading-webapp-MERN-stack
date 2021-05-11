@@ -79,8 +79,9 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 	let attribute_name
 	let dict_of_path_attributes = {}
 
-	console.log('indices_of_path_attribute')
-	console.log(indices_of_path_attribute)
+
+	// console.log('indices_of_path_attribute')
+	// console.log(indices_of_path_attribute)
 
 	// assigning proper filepath at filepath attributes
 	indices_of_path_attribute.map((path_index) => {

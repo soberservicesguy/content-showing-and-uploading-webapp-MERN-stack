@@ -1,26 +1,26 @@
 const initialState = {
 
 	currentImage:{
-			category:'dummy',
-			image_source:'dummy',
-			title:'dummy',
-			endpoint:'dummy',
-			timestamp_of_uploading:'dummy',
-			description:'dummy',
-			all_tags:'dummy',
+			// category:'dummy',
+			// image_source:'dummy',
+			// title:'dummy',
+			// endpoint:'dummy',
+			// timestamp_of_uploading:'dummy',
+			// description:'dummy',
+			// all_tags:'dummy',
 		},
 
 	totalImage: [
-			{ category:'dummy1', image_source:'dummy1', title:'dummy1', endpoint:'dummy1', timestamp_of_uploading:'dummy1', description:'dummy1', all_tags:'dummy1',},
-			{ category:'dummy2', image_source:'dummy2', title:'dummy2', endpoint:'dummy2', timestamp_of_uploading:'dummy2', description:'dummy2', all_tags:'dummy2',},
-			{ category:'dummy3', image_source:'dummy3', title:'dummy3', endpoint:'dummy3', timestamp_of_uploading:'dummy3', description:'dummy3', all_tags:'dummy3',},
-			{ category:'dummy4', image_source:'dummy4', title:'dummy4', endpoint:'dummy4', timestamp_of_uploading:'dummy4', description:'dummy4', all_tags:'dummy4',},
-			{ category:'dummy5', image_source:'dummy5', title:'dummy5', endpoint:'dummy5', timestamp_of_uploading:'dummy5', description:'dummy5', all_tags:'dummy5',},
-			{ category:'dummy6', image_source:'dummy6', title:'dummy6', endpoint:'dummy6', timestamp_of_uploading:'dummy6', description:'dummy6', all_tags:'dummy6',},
-			{ category:'dummy7', image_source:'dummy7', title:'dummy7', endpoint:'dummy7', timestamp_of_uploading:'dummy7', description:'dummy7', all_tags:'dummy7',},
-			{ category:'dummy8', image_source:'dummy8', title:'dummy8', endpoint:'dummy8', timestamp_of_uploading:'dummy8', description:'dummy8', all_tags:'dummy8',},
-			{ category:'dummy9', image_source:'dummy9', title:'dummy9', endpoint:'dummy9', timestamp_of_uploading:'dummy9', description:'dummy9', all_tags:'dummy9',},
-			{ category:'dummy10', image_source:'dummy10', title:'dummy10', endpoint:'dummy10', timestamp_of_uploading:'dummy10', description:'dummy10', all_tags:'dummy10',},
+			// { category:'dummy1', image_source:'dummy1', title:'dummy1', endpoint:'dummy1', timestamp_of_uploading:'dummy1', description:'dummy1', all_tags:'dummy1',},
+			// { category:'dummy2', image_source:'dummy2', title:'dummy2', endpoint:'dummy2', timestamp_of_uploading:'dummy2', description:'dummy2', all_tags:'dummy2',},
+			// { category:'dummy3', image_source:'dummy3', title:'dummy3', endpoint:'dummy3', timestamp_of_uploading:'dummy3', description:'dummy3', all_tags:'dummy3',},
+			// { category:'dummy4', image_source:'dummy4', title:'dummy4', endpoint:'dummy4', timestamp_of_uploading:'dummy4', description:'dummy4', all_tags:'dummy4',},
+			// { category:'dummy5', image_source:'dummy5', title:'dummy5', endpoint:'dummy5', timestamp_of_uploading:'dummy5', description:'dummy5', all_tags:'dummy5',},
+			// { category:'dummy6', image_source:'dummy6', title:'dummy6', endpoint:'dummy6', timestamp_of_uploading:'dummy6', description:'dummy6', all_tags:'dummy6',},
+			// { category:'dummy7', image_source:'dummy7', title:'dummy7', endpoint:'dummy7', timestamp_of_uploading:'dummy7', description:'dummy7', all_tags:'dummy7',},
+			// { category:'dummy8', image_source:'dummy8', title:'dummy8', endpoint:'dummy8', timestamp_of_uploading:'dummy8', description:'dummy8', all_tags:'dummy8',},
+			// { category:'dummy9', image_source:'dummy9', title:'dummy9', endpoint:'dummy9', timestamp_of_uploading:'dummy9', description:'dummy9', all_tags:'dummy9',},
+			// { category:'dummy10', image_source:'dummy10', title:'dummy10', endpoint:'dummy10', timestamp_of_uploading:'dummy10', description:'dummy10', all_tags:'dummy10',},
 		],
 	}
 

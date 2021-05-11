@@ -1,24 +1,24 @@
 const initialState = {
 
 	currentComment:{
-			user_name:'dummy',
-			phone_number:'dummy',
-			user_image:'dummy',
-			hash:'dummy',
-			salt:'dummy',
+			// user_name:'dummy',
+			// phone_number:'dummy',
+			// user_image:'dummy',
+			// hash:'dummy',
+			// salt:'dummy',
 		},
 
 	totalComment: [
-			{ user_name:'dummy1', phone_number:'dummy1', user_image:'dummy1', hash:'dummy1', salt:'dummy1',},
-			{ user_name:'dummy2', phone_number:'dummy2', user_image:'dummy2', hash:'dummy2', salt:'dummy2',},
-			{ user_name:'dummy3', phone_number:'dummy3', user_image:'dummy3', hash:'dummy3', salt:'dummy3',},
-			{ user_name:'dummy4', phone_number:'dummy4', user_image:'dummy4', hash:'dummy4', salt:'dummy4',},
-			{ user_name:'dummy5', phone_number:'dummy5', user_image:'dummy5', hash:'dummy5', salt:'dummy5',},
-			{ user_name:'dummy6', phone_number:'dummy6', user_image:'dummy6', hash:'dummy6', salt:'dummy6',},
-			{ user_name:'dummy7', phone_number:'dummy7', user_image:'dummy7', hash:'dummy7', salt:'dummy7',},
-			{ user_name:'dummy8', phone_number:'dummy8', user_image:'dummy8', hash:'dummy8', salt:'dummy8',},
-			{ user_name:'dummy9', phone_number:'dummy9', user_image:'dummy9', hash:'dummy9', salt:'dummy9',},
-			{ user_name:'dummy10', phone_number:'dummy10', user_image:'dummy10', hash:'dummy10', salt:'dummy10',},
+			// { user_name:'dummy1', phone_number:'dummy1', user_image:'dummy1', hash:'dummy1', salt:'dummy1',},
+			// { user_name:'dummy2', phone_number:'dummy2', user_image:'dummy2', hash:'dummy2', salt:'dummy2',},
+			// { user_name:'dummy3', phone_number:'dummy3', user_image:'dummy3', hash:'dummy3', salt:'dummy3',},
+			// { user_name:'dummy4', phone_number:'dummy4', user_image:'dummy4', hash:'dummy4', salt:'dummy4',},
+			// { user_name:'dummy5', phone_number:'dummy5', user_image:'dummy5', hash:'dummy5', salt:'dummy5',},
+			// { user_name:'dummy6', phone_number:'dummy6', user_image:'dummy6', hash:'dummy6', salt:'dummy6',},
+			// { user_name:'dummy7', phone_number:'dummy7', user_image:'dummy7', hash:'dummy7', salt:'dummy7',},
+			// { user_name:'dummy8', phone_number:'dummy8', user_image:'dummy8', hash:'dummy8', salt:'dummy8',},
+			// { user_name:'dummy9', phone_number:'dummy9', user_image:'dummy9', hash:'dummy9', salt:'dummy9',},
+			// { user_name:'dummy10', phone_number:'dummy10', user_image:'dummy10', hash:'dummy10', salt:'dummy10',},
 		],
 	}
 

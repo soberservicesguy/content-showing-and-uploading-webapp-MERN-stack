@@ -12,8 +12,6 @@ async function get_allowed_privileges_list(user_object){
 // getting privilege names
 	await Promise.all(user_object.privileges.map(async (privilege_id) => {
 		let privilege_object = await Privilege.findOne({_id: privilege_id})
-		console.log(privilege_id)
-		console.log(privilege_object)
 		privileges_names.push( privilege_object.privilege_name )
 	}))
 

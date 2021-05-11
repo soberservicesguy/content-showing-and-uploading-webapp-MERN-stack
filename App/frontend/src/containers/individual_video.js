@@ -119,8 +119,11 @@ class IndividualIndividualVideo extends Component {
 
 			console.log('ITS GCP')
 			console.log(video_data.video_filepath)
-		 	video_source = `https://storage.googleapis.com/${ video_data.video_filepath }`
+		 	// video_source = `https://storage.googleapis.com/${ video_data.video_filepath.split(" ").join("-") }`
+		 	video_source = `${ video_data.video_filepath.split(" ").join("-") }`
 
+		 	console.log('video_source final')
+		 	console.log(video_source)
 			post_video_content = (
 				<div style={styles.postVideoContainer}>
 					<video
@@ -140,7 +143,8 @@ class IndividualIndividualVideo extends Component {
 
 			console.log('ITS AWS')
 			// video_source = `https://s3.amazonaws.com/${ data.video_filepath }`
-			video_source = `https://d3iwm50qkhk5zm.cloudfront.net/${ video_data.video_filepath }`
+			video_source = `${ video_data.video_filepath }` // VERIFY
+			// video_source = `https://d3iwm50qkhk5zm.cloudfront.net/${ video_data.video_filepath }`
 			// console.log('video_source')
 			// console.log(video_source)
 

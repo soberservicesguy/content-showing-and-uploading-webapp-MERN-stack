@@ -73,8 +73,7 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 	let corresponding_image_db_object
 	let dict_of_path_attributes = {}
 
-	console.log('indices_of_path_attribute')
-	console.log(indices_of_path_attribute)
+	let all_dicts = []
 
 	// assigning proper filepath at filepath attributes
 
@@ -96,7 +95,10 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 			
 			corresponding_image_db_object = corresponding_image_db_objects[0] // sinces its a list
 
-			dict_of_path_attributes[attribute_name] = corresponding_image_db_object._id
+			dict_of_path_attributes[attribute_name] = corresponding_image_db_object._doc._id // using _doc as well since we destructured and added a new field in it
+
+			all_dicts.push(dict_of_path_attributes)
+			dict_of_path_attributes = {}
 
 		})
 
@@ -114,10 +116,12 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 
 		} 
 
+		let dict_to_use = all_dicts[i]
+
 		const blogpost = sheet_to_class_mapper(parent_sheet, {
 			_id: new mongoose.Types.ObjectId(),
 			...parent_db_object_dict,
-			...dict_of_path_attributes,
+			...dict_to_use,
 		})
 
 		blogpost.save(function (err, blogpost) {

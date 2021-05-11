@@ -56,86 +56,6 @@ let timestamp
 let currentDate
 let currentTime
 
-// var currentDate = ''
-// var currentTime = ''
-
-// Set The Storage Engine // NOT NEEDED NOW
-// const bulk_images_storage = multer.diskStorage({
-// 	// destination: path.join(__dirname , '../../assets/bulk_blogposts/'),
-// 	destination:function(req, file, cb){
-// 		// let file_path = `./uploads/${type}`;
-// 		currentDate = new Date().toLocaleDateString("en-US").split("/").join(" | ");
-// 		currentTime = new Date().toLocaleTimeString("en-US").split("/").join(" | ");
-
-// 		if (file.fieldname === "just_images_upload") {
-
-
-// 			fs.mkdir( path.join(__dirname , `../../assets/bulk_images/${currentDate}_${currentTime}`), { recursive: true }, (err) => {
-// 				if (err) throw err;
-// 			})
-
-// 			let file_path = path.join(__dirname , `../../assets/bulk_images/${currentDate}_${currentTime}`)
-// 			// let file_path = path.join(__dirname , '../../assets/bulk_images/images')
-// 			cb(null, file_path)	
-
-// 		} else {
-
-// 			fs.mkdir( path.join(__dirname , `../../assets/bulk_images/${currentDate}_${currentTime}`), { recursive: true }, (err) => {
-// 				if (err) throw err;
-// 			})
-			
-// 			let file_path = path.join(__dirname , `../../assets/bulk_images/${currentDate}_${currentTime}`)
-// 			cb(null, file_path)	
-
-// 		}
-
-// 	},
-// 	filename: function(req, file, cb){
-// 		// file name pattern fieldname-currentDate-fileformat
-// 		// filename_used_to_store_image_in_assets_without_format = file.fieldname + '-' + Date.now()
-// 		// filename_used_to_store_image_in_assets = filename_used_to_store_image_in_assets_without_format + path.extname(file.originalname)
-
-// 		filename_used_to_store_image_in_assets = file.originalname
-// 		cb(null, file.originalname);
-
-// 	}
-// });
-
-// Check File Type
-// function checkFileTypeForImageAndExcelSheet(file, cb){
-
-// 	// Allowed ext
-// 	let filetypes_for_image = /jpeg|jpg|png|gif/
-// 	// let filetypes_for_excelsheet = /xlsx|xls/
-// 	let filetypes_for_excelsheet = /[A-Za-z]+/
-
-// 	// Check ext
-// 	let extname_for_image = filetypes_for_image.test( path.extname(file.originalname).toLowerCase() );
-// 	let extname_for_excelsheet = filetypes_for_excelsheet.test( path.extname(file.originalname).toLowerCase() );
-
-// 	// Check mime
-// 	let mimetype_for_image = filetypes_for_image.test( file.mimetype );
-// 	let mimetype_for_excelsheet = filetypes_for_excelsheet.test( file.mimetype );
-
-// 	if (file.fieldname === "just_images_upload") { // if uploading resume
-		
-// 		if (mimetype_for_image && extname_for_image) {
-// 			cb(null, true);
-// 		} else {
-// 			cb('Error: jpeg, jpg, png, gif Images Only!');
-// 		}
-
-// 	} else { // else uploading images
-
-// 		if (mimetype_for_excelsheet && extname_for_excelsheet) {
-// 			cb(null, true);
-// 		} else {
-// 			cb('Error: only .xlsx, .xls for excel files');
-// 		}
-
-// 	}
-
-// }
 
 // Init Upload
 function bulk_upload_images(timestamp, folder_name){
@@ -160,10 +80,6 @@ function bulk_upload_images(timestamp, folder_name){
 // USED IN CREATING BLOGPOST
 router.post('/bulk-upload-images', passport.authenticate('jwt', { session: false }), isAllowedUploadingImages, function(req, res, next){
 	
-	// console.log('OUTER LOG')
-	// console.log(req.body)
-
-	// timestamp = Date.now()
 	timestamp = new Date()
 	currentDate = timestamp.toLocaleDateString("en-US").split("/").join(" | ");
 	currentTime = timestamp.toLocaleTimeString("en-US").split("/").join(" | ");

@@ -1,5 +1,6 @@
 module.exports.isAllowedUploadingVideos = (req, res, next) => {
-	console.log(req.user)
+
+	// console.log(req.user)
 
     if (req.user.user_object && req.user.user_object.isLoggedIn) {
 

@@ -156,14 +156,14 @@ class BulkVideoUpload extends Component {
 							
 							{/*image upload*/}
 							<div>
-								<label htmlFor="myImageInput">
+								<label htmlFor="myVideosInput">
 									{/* below div will act as myInput button*/}
 									<div style={styles.uploadImageButton}>
-										Upload Image
+										Upload Videos
 									</div>
 								</label>
 								<input
-									id="myImageInput"
+									id="myVideosInput"
 									style={{display:'none'}}
 									name="videos_to_upload" // name of input field or fieldName simply
 									multiple="multiple" // for selecting multiple files
@@ -228,27 +228,36 @@ class BulkVideoUpload extends Component {
 									const formData = new FormData()
 									// attaching multiple files with formData
 
-									Array.from(this.state.videos_to_upload).forEach((file) => {
-										formData.append('videos_to_upload', file, file.name)
-									})
+									if (this.state.videos_to_upload.length > 0){
+
+										Array.from(this.state.videos_to_upload).forEach((file) => {
+											formData.append('videos_to_upload', file, file.name)
+										})
+
+									}
 									if(this.state.excel_sheet !== ''){
 										formData.append('excel_sheet', this.state.excel_sheet, this.state.excel_sheet.name)
 									}
 
-									axios.post(utils.baseUrl + '/uploads/bulk-upload-videos', formData)
-									.then(function (response) {
-										console.log(response.data) // current blogpost screen data
-										
-										// set to current parent object
-										// setResponseInFetchedVideos(response.data.new_blogpost)
+									if (this.state.excel_sheet !== '' && this.state.videos_to_upload.length > 0){
 
-										// change route to current_blogpost
-										redirectToNewVideos()
 
-									})
-									.catch(function (error) {
-										console.log(error)
-									});						
+										axios.post(utils.baseUrl + '/uploads/bulk-upload-videos', formData)
+										.then(function (response) {
+											console.log(response.data) // current blogpost screen data
+											
+											// set to current parent object
+											// setResponseInFetchedVideos(response.data.new_blogpost)
+
+											// change route to current_blogpost
+											redirectToNewVideos()
+
+										})
+										.catch(function (error) {
+											console.log(error)
+										});						
+
+									}
 
 								}}
 							>

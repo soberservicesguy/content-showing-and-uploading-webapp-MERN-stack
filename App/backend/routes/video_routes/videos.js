@@ -71,19 +71,6 @@ let timestamp
 
 const total_snapshots_count = 4
 
-// Set The Storage Engine
-// const video_storage = multer.diskStorage({
-// 	destination: path.join(__dirname , '../../assets/videos/uploads/videos_uploaded_by_user'),
-// 	filename: function(req, file, cb){
-// 		// file name pattern fieldname-currentDate-fileformat
-// 		filename_used_to_store_video_in_assets_without_format = file.originalname.replace( path.extname(file.originalname), "");
-// 		// filename_used_to_store_video_in_assets = filename_used_to_store_video_in_assets_without_format + path.extname(file.originalname)
-// 		filename_used_to_store_video_in_assets = file.originalname
-// 		cb(null, filename_used_to_store_video_in_assets)
-// 	}
-// });
-
-
 // Init Upload
 function upload_video_by_user(){
 
@@ -105,9 +92,6 @@ function upload_video_by_user(){
 // USED IN CREATING Video
 router.post('/create-video-with-user', passport.authenticate('jwt', { session: false }), isAllowedUploadingVideos, function(req, res, next){
 	
-	console.log('OUTER LOG')
-	console.log(req.body)
-
 	timestamp = Date.now()
 
 	upload_video_by_user(timestamp)(req, res, (err) => {
@@ -140,8 +124,6 @@ router.post('/create-video-with-user', passport.authenticate('jwt', { session: f
 
 					} else if (use_aws_s3_storage) {
 
-						// console.log(`req.file['videos_uploaded_by_user']`)
-						// console.log(req.file)
 						// save_image_or_video_promise = await save_file_to_aws_s3( req.file )
 						save_image_or_video_promise = save_file_to_aws_s3( req.file, timestamp )
 						promises.push(save_image_or_video_promise)
@@ -157,7 +139,6 @@ router.post('/create-video-with-user', passport.authenticate('jwt', { session: f
 					let store_video_at_tmp_promise
 					let create_snapshots_promise
 					let save_snapshots_promises
-					// let video_path = get_file_path_to_use(req.file, 'videos_uploaded_by_users', timestamp)
 					let video_path = get_file_path_to_use_alternate(req.file, 'videos_uploaded_by_users', timestamp)
 
 					if (use_gcp_storage){
@@ -177,13 +158,6 @@ router.post('/create-video-with-user', passport.authenticate('jwt', { session: f
 
 
 					var video_id = ''
-				// video is uploaded , NOW creating thumbnail from video using snapshot
-					console.log('req.file')
-					console.log(req.file)
-
-					console.log('video_path')
-					console.log(video_path)
-
 
 					if (use_gcp_storage || use_aws_s3_storage){
 
@@ -204,46 +178,24 @@ router.post('/create-video-with-user', passport.authenticate('jwt', { session: f
 
 					}
 
-
-
-					// promises.push(store_video_at_tmp_promise)
-
-					// promise_fulfilled = await Promise.all(promises)
-
-
 					let user = await User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
 
 					let file_without_format = path.basename( req.file.originalname, path.extname( req.file.originalname ) )
 
-					console.log('RESULT')
-					console.log(get_snapshots_fullname_and_path('upload_thumbnails', file_without_format, timestamp))
-
 					let random_screenshot = get_snapshots_fullname_and_path('upload_thumbnails', file_without_format, timestamp)  
 					
-
-					// let get_random_screenshot = select_random_screenshot(req.file.originalname, total_snapshots_count)
-					// let get_random_screenshot = select_random_screenshot(file_without_format, total_snapshots_count)
 					let get_random_screenshot = select_random_screenshot(random_screenshot, total_snapshots_count)
-
-					// console.log('get_random_screenshot')
-					// console.log(get_random_screenshot)
 
 					let video_thumbnail_image_to_use
 					if (use_gcp_storage || use_aws_s3_storage){
 
 					// getting image from cloud
-						// video_thumbnail_image_to_use = get_snapshots_fullname_and_path(get_snapshots_storage_path(), file_without_format, timestamp)
-						// video_thumbnail_image_to_use = await get_image_to_display(`upload_thumbnails/${get_random_screenshot}`, (use_gcp_storage) ? 'gcp_storage' : 'aws_s3')
 						video_thumbnail_image_to_use = get_snapshots_fullname_and_path('upload_thumbnails', file_without_format, timestamp)
 
-						// console.log('video_thumbnail_image_to_use')
-						// console.log(video_thumbnail_image_to_use)
 					} else {
 
 						video_thumbnail_image_to_use = `${get_snapshots_fullname_and_path('upload_thumbnails', file_without_format, timestamp)}/${file_without_format}-${timestamp}_.png`
 
-						console.log('CHECK THIS')
-						console.log(video_thumbnail_image_to_use)
 					}
 
 
@@ -293,21 +245,6 @@ router.post('/create-video-with-user', passport.authenticate('jwt', { session: f
 					await user.save()
 
 					let saved_video = await Video.findOne({ _id: video_id })
-
-					// console.log('newThumbnailImage.image_filepath')
-					// console.log(newThumbnailImage.image_filepath)
-					// console.log('newThumbnailImage.object_files_hosted_at')
-					// console.log(newThumbnailImage.object_files_hosted_at)
-
-					// get_random_screenshot = select_random_screenshot(newThumbnailImage.image_filepath, total_snapshots_count)
-					// console.log('get_random_screenshot')
-					// console.log(get_random_screenshot)
-					// // let image_in_base64_encoding = await get_image_to_display(newThumbnailImage.image_filepath, newThumbnailImage.object_files_hosted_at)
-					// // let image_in_base64_encoding = await get_image_to_display(screenshot_image, newThumbnailImage.object_files_hosted_at)
-					// console.log('FINAL')
-					// console.log(`${get_snapshots_storage_path()}/${get_random_screenshot}`)
-					
-					// let image_in_base64_encoding = await get_image_to_display(`${get_snapshots_storage_path()}/${get_random_screenshot}`, newThumbnailImage.object_files_hosted_at)
 				
 					if (use_gcp_storage || use_aws_s3_storage){
 
@@ -316,12 +253,7 @@ router.post('/create-video-with-user', passport.authenticate('jwt', { session: f
 					} else {
 
 						let filepath_for_screenshot = get_snapshots_fullname_and_path('upload_thumbnails', file_without_format, timestamp)  
-						console.log('random_screenshot')
-						console.log(random_screenshot)
 						get_random_screenshot = select_random_screenshot(`${filepath_for_screenshot}/${file_without_format}-${timestamp}_.png`, total_snapshots_count)
-						console.log('get_random_screenshot')
-						console.log(get_random_screenshot)
-
 						video_thumbnail_image_to_use = await get_image_to_display(`${get_snapshots_storage_path()}/${get_random_screenshot}`, get_file_storage_venue())
 
 					}
@@ -343,102 +275,6 @@ router.post('/create-video-with-user', passport.authenticate('jwt', { session: f
 						// success: true, msg: 'new video saved', endpoint: saved_video.endpoint
 					});	
 
-						// newVideo.save(function (err, newVideo) {
-
-						// 	if (err){
-						// 		res.status(404).json({ success: false, msg: 'couldnt create video database entry'})
-						// 		return console.log(err)
-						// 	}
-
-						// 	// assign user object then save
-						// 	User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
-						// 	.then((user) => {
-						// 		if (user){
-
-						// 			newVideo.user = user
-						// 			newVideo.save()
-						// 		// finding video saved to access its endpoint since its created at model level
-									
-						// 		} else {
-
-						// 			res.status(200).json({ success: false, msg: "user doesnt exists, try logging in again" });
-
-						// 		}
-						// 	})
-						// 	.then(() => {
-
-						// 		Video.findOne({ _id: video_id })
-						// 		.then((saved_video) => {
-
-						// 			console.log(saved_video.endpoint)
-
-						// 			res.status(200).json({ 
-						// 				category: saved_video.category,
-						// 				image_thumbnail: base64_encode( saved_video.image_thumbnail ),
-						// 				video_filepath: saved_video.video_filepath,
-						// 				title: saved_video.title,
-						// 				endpoint: saved_video.endpoint,
-						// 				description: saved_video.description,
-						// 				timestamp_of_uploading: saved_video.timestamp_of_uploading,
-						// 				all_tags: saved_video.all_tags,
-						// 				total_comments: saved_video.total_comments,
-						// 				total_likes: saved_video.total_likes,
-						// 				// success: true, msg: 'new video saved', endpoint: saved_video.endpoint
-						// 			});	
-
-						// 		})
-
-						// 	})
-						// 	.catch((err) => {
-
-						// 		next(err);
-
-						// 	})
-
-						// 	// not needed, used for multer
-						// 	// res.status(200).json({ success: false, msg: 'couldnt create video database entry',file: `uploads/${req.file.filename}`})
-						// })
-
-
-
-	 			// 	ffmpeg(`./assets/videos/uploads/videos_uploaded_by_user/${filename_used_to_store_video_in_assets}`)
-					// .on('end', async function() {
-					// 	console.log('Screenshots taken');
-
-					// })
-					// .on('error', function(err) {
-					// 	console.error(err);
-					// })
-					// .on('filenames', function(filenames) {
-					// 	console.log('screenshots are ' + filenames.join(', '));
-					// })
-					// // screenshots at mentioned times
-					// // .takeScreenshots({ 
-					// // 	count: 2, 
-					// // 	timemarks: [ '00:00:02.000', '6' ], 
-					// // 	filenames: [
-					// // 		`${filename_used_to_store_video_in_assets_without_format}1.png`, 
-					// // 		`${filename_used_to_store_video_in_assets_without_format}2.png`, 
-					// // 	],
-					// // 	size: '150x100', 
-					// // }, '../assets/videos/uploads/upload_thumbnails/')
-					// // screenshots at % completion ie 20%, 40%, 60%, 80%
-					// .screenshots({
-					// 	filename: `${filename_used_to_store_video_in_assets_without_format}.png`, // if single snapshot is needed
-					// 	// timemarks: [ '00:00:02.000', '6' ], 
-					// 	// Will take screenshots at 20%, 40%, 60% and 80% of the video
-					// 	count: 4,
-					// 	// filenames: [
-					// 	// 	`${filename_used_to_store_video_in_assets_without_format}1.png`, 
-					// 	// 	`${filename_used_to_store_video_in_assets_without_format}2.png`, 
-					// 	// 	`${filename_used_to_store_video_in_assets_without_format}3.png`, 
-					// 	// 	`${filename_used_to_store_video_in_assets_without_format}4.png`,
-					// 	// ],
-					// 	size: '150x100', 
-					// 	folder: './assets/videos/uploads/upload_thumbnails/',
-					// })
-
-				// }
 				}
 			}
 
@@ -484,18 +320,12 @@ router.get('/get-all-comments-of-video', async function(req, res, next){
 
 	}))
 
-	// final_result.map((result) => {
-	// 	console.log(Object.keys(result))
-	// })
-	console.log('final_result')
-	console.log(final_result)
 	res.status(200).json( final_result );
 })
 
 // USED
 router.get('/get-all-likes-of-video',async function(req, res, next){
 
-	console.log(req.query.endpoint)
 // find video
 	var video_with_likes = await Video.findOne({endpoint:req.query.endpoint}).populate('likes')
 
@@ -521,10 +351,6 @@ router.get('/get-all-likes-of-video',async function(req, res, next){
 		})
 
 	}))
-
-	// final_result.map((result) => {
-	// 	console.log(Object.keys(result))
-	// })
 
 	res.status(200).json( final_result );
 })
@@ -645,7 +471,6 @@ router.post('/create-like-for-video', passport.authenticate('jwt', { session: fa
 			})
 		})
 		.catch((err1) => {
-			console.log('CAUGHT')
 			console.log(err1)
 		})
 
@@ -671,6 +496,8 @@ router.get('/videos-list-with-children', passport.authenticate('jwt', { session:
 	populate('likes').
 	// populate('user').
 	then(async (videos)=>{
+		console.log(`total videos are ${videos.length}`)
+
 		var newVideos_list = []
 
 		let all_videos = await Promise.all(videos.map(async (video, index)=>{
@@ -678,15 +505,15 @@ router.get('/videos-list-with-children', passport.authenticate('jwt', { session:
 			
 			newVideo.category = video[ 'category' ]
 
+
 			let image_object = await Image.findOne({ _id: video.image_thumbnail })
 			// let image_object = await Image.findOne({_id:req.user.user_object.user_image})
 
 		// video_thumbnail_image_to_use = await get_image_to_display(`${get_snapshots_storage_path()}/${get_random_screenshot}`, get_file_storage_venue())
 
 			let random_thumbnail = select_random_screenshot(image_object.image_filepath, total_snapshots_count)
-			console.log('random_thumbnail')
-			console.log(random_thumbnail)
 			
+
 			if (use_gcp_storage || use_aws_s3_storage){
 				`/${random_thumbnail}`
 				// newVideo.image_thumbnail = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
@@ -698,11 +525,18 @@ router.get('/videos-list-with-children', passport.authenticate('jwt', { session:
 
 			}
 
-			// newVideo.image_thumbnail = base64_encode( video[ 'image_thumbnail' ] )
-			newVideo.title = video[ 'title' ]
+			console.log(`video[ 'object_files_hosted_at' ]`)
+			console.log(video[ 'object_files_hosted_at' ])
+			newVideo.video_filepath = video[ 'video_filepath' ] 
+			let title_to_use = video[ 'title' ].split("-").join(" ")
+			title_to_use = title_to_use.split('.').slice(0, -1).join('.') // removing file format name from end
+			newVideo.title = title_to_use
+
+
 			newVideo.all_tags = video[ 'all_tags' ]
 			newVideo.description = video[ 'description' ]
 			newVideo.endpoint = video[ 'endpoint' ]
+			newVideo.object_files_hosted_at = video[ 'object_files_hosted_at' ]
 
 			newVideo.total_comments = video['total_comments']
 			newVideo.total_likes = video['total_likes']
@@ -721,8 +555,6 @@ router.get('/videos-list-with-children', passport.authenticate('jwt', { session:
 
 		} else {
 
-			// console.log('newVideos_list')
-			// console.log(newVideos_list)
 			res.status(200).json({ success: false, msg: "could not find video_list" });
 
 		}
@@ -957,123 +789,6 @@ router.get('/top-n-like-of-video', function(req, res, next){
 
 	});
 })
-
-// get n childs of video
-
-// router.get('/get-all-likes-of-video', function(req, res, next){
-// 	Video.findOne({endpoint:req.query.endpoint}).
-// 	populate('likes').
-// 	exec(function (err, video_with_likes) {
-
-// 		if (err) return console.log(err);
-
-// 		if ( video_with_likes ){
-
-// 			var likes = video_with_likes.likes
-// 			res.status(200).json( likes );
-
-// 		} else {
-
-// 			res.status(500).json({msg: 'sorry no video found'});				
-
-// 		}
-// 	})
-// })
-
-
-// create video with undefined
-
-// router.post('/create-video-with-user', function(req, res, next){
-	
-// 	var video_object = req.body.video_object
-// 	var user_object = req.body.user_object
-
-// 	var newVideo = new Video({
-// 		_id: new mongoose.Types.ObjectId(),
-// 		...video_object
-// 	})
-
-// 	newVideo.save(function (err, newVideo) {
-// 		if (err) return console.log(err);
-
-// 			User.
-// 			findOne({...user_object})
-// 		.then((user) => {
-			
-// 			if( !user ){
-			
-// 				console.log('no User found')
-			
-// 			} else {
-			
-// 				newVideo.user = user
-// 				res.status(200).json( newVideo )
-			
-// 			}
-// 		})
-// 		.catch((err) => {
-// 			console.log(err)
-// 		})
-// 	})
-// })
-
-
-
-// create Like for video
-
-// router.post('/create-like-for-video', function(req, res, next){
-
-// 	var like_object = req.body.like_object	
-// 	var video_object = req.body.video_object
-// 	var user_object = req.body.user_object
-
-// 	var newLike = new Like({
-// 		_id: new mongoose.Types.ObjectId(),
-// 		...like_object
-// 	})
-
-// 	newLike.save(function (err, newLike) {
-// 		if (err) return console.log(err);
-
-// 			User.findOne({...user_object})
-// 		.then((user) => {
-			
-// 			if( !user ){
-			
-// 				console.log('no User found')
-			
-// 			} else {
-			
-// 				newLike.user = user
-
-// 			// finding Video object
-// 					Video.findOne({endpoint: video_object.endpoint})
-// 				.then((video) => {
-
-// 					if ( !video ){
-
-// 						console.log('no Video found')
-
-// 					} else {
-
-// 						video.likes.push( newLike )
-// 						video.save((err, blogpost) => res.status(200).json(video) )
-						
-// 					}
-// 				})
-// 				.catch((err1) => {
-// 					console.log(err1)
-// 				})
-
-// 			}
-// 		})
-// 		.catch((err) => {
-// 			console.log(err)
-// 		})
-// 	})
-// })
-
-
 
 // get videos_list
 

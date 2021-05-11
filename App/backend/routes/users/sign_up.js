@@ -51,18 +51,6 @@ const {
 
 let timestamp
 
-// Set The Storage Engine
-// const image_storage = multer.diskStorage({
-// 	destination: path.join(__dirname , '../../assets/images/uploads/avatar_image'),
-// 	filename: function(req, file, cb){
-// 		// file name pattern fieldname-currentDate-fileformat
-// 		filename_used_to_store_image_in_assets_without_format = file.fieldname + '-' + Date.now()
-// 		filename_used_to_store_image_in_assets = filename_used_to_store_image_in_assets_without_format + path.extname(file.originalname)
-
-// 		cb(null, filename_used_to_store_image_in_assets);
-
-// 	}
-// });
 
 // Init Upload
 function user_avatar_image_upload(timestamp){
@@ -77,30 +65,11 @@ function user_avatar_image_upload(timestamp){
 
 }
 
-// Check File Type
-// function checkFileTypeForUserAvatar(file, cb){
-// 	// Allowed ext
-// 	let filetypes = /jpeg|jpg|png|gif/;
-// 	// Check ext
-// 	let extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-// 	// Check mime
-// 	let mimetype = filetypes.test(file.mimetype);
-
-// 	if(mimetype && extname){
-// 		return cb(null,true);
-// 	} else {
-// 		cb('Error: jpeg, jpg, png, gif Images Only!');
-// 	}
-// }
 
 
 // router.post('/protected-avatar-image-upload', passport.authenticate('jwt', { session: false }), (req, res, next) => {
 router.post('/signup-and-get-privileges', (req, res, next) => {
 
-	console.log('INCOMING')
-//	here there will be no req.body due to multer 
-	// console.log('OUTER LOG')
-	// console.log(req.body)
 	timestamp = Date.now()
 
 	user_avatar_image_upload(timestamp)(req, res, (err) => {

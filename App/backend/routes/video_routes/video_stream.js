@@ -20,14 +20,12 @@ router.get('/video-streaming', function(req, res) {
 
 		if(!video_requested){
 
-			console.log('NO VIDEO FOUND')
 			res.status(200).json({ success: false, msg: "no such video exists" });
 
 		} else {
-			console.log('FILE PATH')
-			console.log(video_requested.video_filepath)
 // video_filepath
 			path = video_requested.video_filepath
+			path = path.split(" ").join("-") // removing spaces and joining with - since we saved it this way
 			// const path = '/home/arsalan/Work_stuff/Full_stack_apps/REACT_APPS/Final_portfolio/content_app/backend/assets/videos/sample.mp4'
 			const stat = fs.statSync(path)
 			const fileSize = stat.size
