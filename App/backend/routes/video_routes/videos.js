@@ -143,7 +143,7 @@ router.post('/create-video-with-user', passport.authenticate('jwt', { session: f
 
 					if (use_gcp_storage){
 
-						video_for_post = `${ gcp_bucket }/${ video_path }`
+						video_for_post = `https://storage.googleapis.com/${ gcp_bucket }/${ video_path }`
 
 					} else if (use_aws_s3_storage){
 
@@ -257,6 +257,10 @@ router.post('/create-video-with-user', passport.authenticate('jwt', { session: f
 						video_thumbnail_image_to_use = await get_image_to_display(`${get_snapshots_storage_path()}/${get_random_screenshot}`, get_file_storage_venue())
 
 					}
+
+
+					console.log('saved_video.video_filepath')
+					console.log(saved_video.video_filepath)
 
 					res.status(200).json({ 
 						category: saved_video.category,
@@ -525,8 +529,6 @@ router.get('/videos-list-with-children', passport.authenticate('jwt', { session:
 
 			}
 
-			console.log(`video[ 'object_files_hosted_at' ]`)
-			console.log(video[ 'object_files_hosted_at' ])
 			newVideo.video_filepath = video[ 'video_filepath' ] 
 			let title_to_use = video[ 'title' ].split("-").join(" ")
 			title_to_use = title_to_use.split('.').slice(0, -1).join('.') // removing file format name from end

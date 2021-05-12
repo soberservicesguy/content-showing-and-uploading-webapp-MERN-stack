@@ -25,7 +25,7 @@ async function create_snapshots_from_uploaded_video(timestamp, video_file, video
 		})
 		.screenshots({
 			filename: `${file_without_format}-${timestamp}.png`, // if single snapshot is needed
-			size: '150x100', 
+			size: '600x400', // '150x100' 
 			count: total_snapshots_count,
 
 			// folder unless is local machine, should be tmp of google compute / aws amplify since aws s3 / gcp storage they don't allow to save at their tmp

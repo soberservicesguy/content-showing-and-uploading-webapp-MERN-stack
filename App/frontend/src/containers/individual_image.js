@@ -196,11 +196,6 @@ class IndividualIndividualImage extends Component {
 		);
 	}
 }
-	
-// category
-// title
-// description
-// all_tags
 
 IndividualIndividualImage.defaultProps = {
 	//:,

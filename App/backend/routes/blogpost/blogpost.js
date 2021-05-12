@@ -432,7 +432,7 @@ router.get('/blogposts-list-with-children', async function(req, res, next){
 
 	BlogPost.
 	find().
-	limit(10).
+	limit(12).
 	populate('comments').
 	populate('likes').
 	// populate('user').

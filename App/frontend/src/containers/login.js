@@ -35,6 +35,8 @@ class LoginContainer extends Component {
 
 			redirectToBlogposts:false,
 
+			showAdminControls: false,
+
 		}
 	}
 
@@ -436,6 +438,7 @@ class LoginContainer extends Component {
 
 
 
+				{this.state.showAdminControls && (
 
 					<div style={{
 						width:'90%',
@@ -503,6 +506,8 @@ class LoginContainer extends Component {
 
 
 					</div>
+
+				)}
 				
 				</div>
 			);
