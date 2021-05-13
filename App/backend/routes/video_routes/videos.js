@@ -486,6 +486,117 @@ router.post('/create-like-for-video', passport.authenticate('jwt', { session: fa
 })
 
 
+router.get('/get-image', async function(req, res, next){
+
+	let image_object = await Image.findOne({ _id: req.query.image_object_id })
+
+	let random_thumbnail = select_random_screenshot(image_object.image_filepath, total_snapshots_count)
+	let base64_encoded_image
+
+	if (use_gcp_storage || use_aws_s3_storage){
+		`/${random_thumbnail}`
+		// newVideo.image_thumbnail = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
+			base64_encoded_image = await get_image_to_display(`upload_thumbnails/${random_thumbnail}`, image_object.object_files_hosted_at)
+
+	} else {
+
+			base64_encoded_image = await get_image_to_display(`${get_snapshots_storage_path()}/${random_thumbnail}`, image_object.object_files_hosted_at)
+
+	}
+
+	res.status(200).json({success: true, image: base64_encoded_image});
+
+
+})
+
+
+
+// DOESNT SEND IMAGE IN BASE64 VER, BUT RATHER INSTEAD IMAGE OBJECT ID
+router.get('/videos-list-with-children-light', passport.authenticate('jwt', { session: false }), isAllowedSurfing, async function(req, res, next){
+	console.log('called')
+
+	Video.
+	find().
+	// limit(10).
+	populate('comments').
+	populate('likes').
+	// populate('user').
+	then(async (videos)=>{
+		console.log(`total videos are ${videos.length}`)
+
+		var newVideos_list = []
+
+		let all_videos = await Promise.all(videos.map(async (video, index)=>{
+			var newVideo = {}
+			
+			newVideo.category = video[ 'category' ]
+
+
+		// 	let image_object = await Image.findOne({ _id: video.image_thumbnail })
+		// 	// let image_object = await Image.findOne({_id:req.user.user_object.user_image})
+
+		// // video_thumbnail_image_to_use = await get_image_to_display(`${get_snapshots_storage_path()}/${get_random_screenshot}`, get_file_storage_venue())
+
+		// 	let random_thumbnail = select_random_screenshot(image_object.image_filepath, total_snapshots_count)
+			
+
+		// 	if (use_gcp_storage || use_aws_s3_storage){
+		// 		`/${random_thumbnail}`
+		// 		// newVideo.image_thumbnail = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
+	 // 			newVideo.image_thumbnail = await get_image_to_display(`upload_thumbnails/${random_thumbnail}`, image_object.object_files_hosted_at)
+
+		// 	} else {
+
+	 // 			newVideo.image_thumbnail = await get_image_to_display(`${get_snapshots_storage_path()}/${random_thumbnail}`, image_object.object_files_hosted_at)
+
+		// 	}
+
+			newVideo.image_thumbnail = video.image_thumbnail
+
+			newVideo.video_filepath = video[ 'video_filepath' ] 
+			let title_to_use = video[ 'title' ].split("-").join(" ")
+			title_to_use = title_to_use.split('.').slice(0, -1).join('.') // removing file format name from end
+			newVideo.title = title_to_use
+
+
+			newVideo.all_tags = video[ 'all_tags' ]
+			newVideo.description = video[ 'description' ]
+			newVideo.endpoint = video[ 'endpoint' ]
+			newVideo.object_files_hosted_at = video[ 'object_files_hosted_at' ]
+
+			newVideo.total_comments = video['total_comments']
+			newVideo.total_likes = video['total_likes']
+
+			newVideos_list.push({...newVideo})
+			newVideo = {}
+		}))
+
+		return newVideos_list
+	})
+	.then((newVideos_list) => {
+
+		if (newVideos_list.length > 0) {
+
+			res.status(200).json({success: true, videos:newVideos_list});
+
+		} else {
+
+			res.status(200).json({ success: false, msg: "could not find video_list" });
+
+		}
+
+	})
+	.catch((err) => {
+
+		console.log(err)
+		next(err);
+
+	});
+});
+
+
+
+
 
 
 // get blogposts_list_with_children

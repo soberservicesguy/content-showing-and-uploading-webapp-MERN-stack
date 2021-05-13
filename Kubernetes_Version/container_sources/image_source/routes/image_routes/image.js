@@ -364,6 +364,71 @@ router.post('/create-like-for-image', passport.authenticate('jwt', { session: fa
 })
 
 
+// TO BE USED FOR MOBILE APP, DOESNT SEND BASE64 VER OF IMAGES, BUT RATHER OBJECTS ONLY
+router.get('/images-list-with-children-light', async function(req, res, next){
+
+	Image.
+	find().
+	limit(20).
+	// populate('comments'). // not needed since Image stored total number of likes and comments in it
+	// populate('likes').
+	// populate('user').
+	then(async (images)=>{
+
+		var newImages_list = []
+		let all_images = await Promise.all(images.map(async(image, index)=>{
+
+			var newImage = {}
+
+			// let image_object = await Image.findOne({ _id: image })
+			// let base64_encoded_image = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
+
+			// let base64_encoded_image = await get_image_to_display(image.image_filepath, image.object_files_hosted_at)
+			newImage.category = image_object['category']
+			newImage.image_filepath = image
+			// newImage.image_filepath = base64_encoded_image
+			newImage.title = image_object['title']
+			newImage.endpoint = image_object['endpoint']
+			newImage.comments_quantity = image_object.total_comments
+			newImage.likes_quantity = image_object.total_likes
+
+			if (image_object.category !== 'user_avatar'){
+
+				newImages_list.push({...newImage})
+
+			}
+
+			newImage = {}
+
+		}))
+
+		// console.log('newImages_list')
+		// console.log(newImages_list)
+		return newImages_list
+	})
+	.then((newImages_list) => {
+
+		if (newImages_list.length > 0) {
+
+			res.status(200).json({success: true, images:newImages_list});
+
+		} else {
+
+			res.status(200).json({ success: false, msg: "could not find Images_list" });
+
+		}
+
+	})
+	.catch((err) => {
+
+		console.log(err)
+		next(err);
+
+	});
+});
+
+
+
 
 
 // get blogposts_list_with_children
