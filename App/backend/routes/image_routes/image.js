@@ -380,7 +380,7 @@ router.get('/images-list-with-children-light', async function(req, res, next){
 
 			var newImage = {}
 
-			// let image_object = await Image.findOne({ _id: image })
+			let image_object = await Image.findOne({ _id: image })
 			// let base64_encoded_image = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
 
 			// let base64_encoded_image = await get_image_to_display(image.image_filepath, image.object_files_hosted_at)
