@@ -2,8 +2,7 @@
 
 **Live App:**
 
-https://content-app-dot-portfolio-apps-311617.uc.r.appspot.com
-
+https://content-mern-stack.herokuapp.com
 
 **Project Details:**
 
