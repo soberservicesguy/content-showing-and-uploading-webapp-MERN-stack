@@ -1,6 +1,6 @@
 
 const utils = {
-	baseUrl: 'https://content-app-dot-portfolio-apps-311617.uc.r.appspot.com',
+	baseUrl: 'https://content-mern-stack.herokuapp.com',
 	// baseUrl: 'https://content-app-dot-portfolio-apps-311617.uc.r.appspot.com',
     // baseUrl:'http://localhost:80', // for docker
 	// baseUrl: 'https://content-app-dot-portfolio-apps-311617.uc.r.appspot.com',

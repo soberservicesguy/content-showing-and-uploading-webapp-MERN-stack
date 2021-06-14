@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: content-frontend
-        image: soberservicesguy/portfolio-images:content_frontend_167
+        image: soberservicesguy/portfolio-images:content_frontend_168
         ports:
           - containerPort: 80
             name: http-port

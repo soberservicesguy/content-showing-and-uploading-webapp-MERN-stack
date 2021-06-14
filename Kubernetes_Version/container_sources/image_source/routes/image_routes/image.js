@@ -378,27 +378,32 @@ router.get('/images-list-with-children-light', async function(req, res, next){
 		var newImages_list = []
 		let all_images = await Promise.all(images.map(async(image, index)=>{
 
+
 			var newImage = {}
 
 			let image_object = await Image.findOne({ _id: image })
-			// let base64_encoded_image = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
 
-			// let base64_encoded_image = await get_image_to_display(image.image_filepath, image.object_files_hosted_at)
-			newImage.category = image_object['category']
-			newImage.image_filepath = image
-			// newImage.image_filepath = base64_encoded_image
-			newImage.title = image_object['title']
-			newImage.endpoint = image_object['endpoint']
-			newImage.comments_quantity = image_object.total_comments
-			newImage.likes_quantity = image_object.total_likes
+			if (image_object.category !== 'blogpost_image'){
+				// let base64_encoded_image = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
 
-			if (image_object.category !== 'user_avatar'){
+				// let base64_encoded_image = await get_image_to_display(image.image_filepath, image.object_files_hosted_at)
+				newImage.category = image_object['category']
+				newImage.image_filepath = image
+				// newImage.image_filepath = base64_encoded_image
+				newImage.title = image_object['title']
+				newImage.endpoint = image_object['endpoint']
+				newImage.comments_quantity = image_object.total_comments
+				newImage.likes_quantity = image_object.total_likes
 
-				newImages_list.push({...newImage})
+				if (image_object.category !== 'user_avatar'){
 
+					newImages_list.push({...newImage})
+
+				}
+
+				newImage = {}
+				
 			}
-
-			newImage = {}
 
 		}))
 
