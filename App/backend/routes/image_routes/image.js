@@ -448,6 +448,8 @@ router.get('/images-list-with-children', async function(req, res, next){
 	// populate('user').
 	then(async (images)=>{
 
+		console.log(`total images are ${images.length}`)
+
 		var newImages_list = []
 		let all_images = await Promise.all(images.map(async(image, index)=>{
 

@@ -48,6 +48,9 @@ ImageSchema.post('save', function() {
 	// console.log('SAVED CONDITION')
     // console.log(this)
 
+    console.log('image_filepath while saving')
+    console.log(this.image_filepath)
+
 });
 
 

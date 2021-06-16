@@ -23,6 +23,21 @@ const User = mongoose.model('User');
 const file_name = excel_file || '/home/arsalan/Work_stuff/Full_stack_apps/REACT_APPS/Final_portfolio/content_app/backend/excel_to_databases/all_blogposts.xlsx'
 // const file_name = '/home/arsalan/Work_stuff/Full_stack_apps/REACT_APPS/Final_portfolio/content_app/backend/excel_to_databases/all_blogposts.xlsx'
 
+
+require('dotenv').config({ path: "../.env" })
+let use_aws_s3 = ( process.env.AWS_S3_STORAGE_ENABLED === 'true' ) ? true : false
+let use_gcp_storage = ( process.env.GOOGLE_CLOUD_STORAGE_ENABLED === 'true' ) ? true : false
+
+let platform_to_save
+if (use_gcp_storage){
+	platform_to_save = 'gcp_storage'
+} else if (use_aws_s3){
+	platform_to_save = 'aws_s3'
+} else {
+	platform_to_save = 'disk_storage'
+}
+
+
 const sheet_to_class_mapper = (sheet_name, db_object) => {
 	if (sheet_name === 'all_blogposts'){
 

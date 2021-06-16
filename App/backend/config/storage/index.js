@@ -22,7 +22,12 @@ function get_filepath_to_save_with_bulk_uploading(folder_name, timestamp){
 	
 	} else if (use_aws_s3_storage){
 	
-		filepath = `http://s3.amazonaws.com/${s3_bucket}/${folder_name}/${timestamp}/` 
+		// OLD VERSION
+		// filepath = `http://s3.amazonaws.com/${s3_bucket}/${folder_name}/${timestamp}/` 
+		// NEW VERSION
+		// filepath = `https://${s3_bucket}.s3.amazonaws.com/${folder_name}/${timestamp}/` 
+		// NEWEST VERSION
+		filepath = `${folder_name}/${timestamp}/` 
 	
 	} else {
 	
@@ -50,6 +55,10 @@ async function get_image_to_display(image_path_field, image_host_field){
 	} else if (image_host_field === 'aws_s3'){
 
 		console.log('ATTEMPTING TO GET')
+		image_path_field = image_path_field.replace("https://portfolio-apps-mern-native.s3.amazonaws.com/", "")
+		console.log('image_path_field')
+		console.log(image_path_field)
+
 		cloud_resp = await get_file_from_aws(image_path_field)
 		image = cloud_resp.toString('base64')
 
@@ -282,7 +291,7 @@ function get_file_path_to_use_alternate(file_to_save, folder_name, timestamp){
 	}	
 }
 
-
+// 
 
 function get_file_path_to_use_for_bulk_files(timestamp, folder_name, file_to_save){
 
@@ -302,7 +311,10 @@ function get_file_path_to_use_for_bulk_files(timestamp, folder_name, file_to_sav
 	} else if (use_aws_s3_storage){
 
 		// return `${bucket_name}/${file_to_save}`
-		return `http://s3.amazonaws.com/${s3_bucket}/${folder_name}/${timestamp}/${filename_to_use}`
+		// OLD VERSION
+		// return `http://s3.amazonaws.com/${s3_bucket}/${folder_name}/${timestamp}/${filename_to_use}`
+		// NEW VERSION
+		return `https://${s3_bucket}.s3.amazonaws.com/${folder_name}/${timestamp}/${filename_to_use}`
 
 	} else {
 

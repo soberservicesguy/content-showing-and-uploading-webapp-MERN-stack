@@ -81,8 +81,11 @@ function bulk_upload_images(timestamp, folder_name){
 router.post('/bulk-upload-images', passport.authenticate('jwt', { session: false }), isAllowedUploadingImages, function(req, res, next){
 	
 	timestamp = new Date()
-	currentDate = timestamp.toLocaleDateString("en-US").split("/").join(" | ");
-	currentTime = timestamp.toLocaleTimeString("en-US").split("/").join(" | ");
+	currentDate = timestamp.toLocaleDateString("en-US").split("/").join("xx");
+	currentTime = timestamp.toLocaleTimeString("en-US").split("/").join("xx");
+	currentDate = currentDate.split(" ").join("xx")
+	currentTime = currentTime.split(":").join("xx")
+	currentTime = currentTime.split(" ").join("xx")
 
 	bulk_upload_images( `${currentDate}_${currentTime}`, 'bulk_images' )(req, res, (err) => {
 		if(err){
@@ -133,6 +136,9 @@ router.post('/bulk-upload-images', passport.authenticate('jwt', { session: false
 				let filepath_in_case_of_disk_storage = get_multer_disk_storage_for_bulk_files_path_only(`${currentDate}_${currentTime}`, 'bulk_images', excel_file)
 				// saving file to /tmp as well since readXlsxFile in sheet_to_class needs filepath
 				let excel_filepath = await store_excel_file_at_tmp_and_get_its_path(excel_file, filepath_in_case_of_disk_storage)
+
+				console.log('excel_filepath')
+				console.log(excel_filepath)
 
 
 				let user_id = ''

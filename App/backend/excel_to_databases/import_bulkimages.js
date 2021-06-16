@@ -29,6 +29,26 @@ const {
 	get_filepath_to_save_with_bulk_uploading,
 } = require('../config/storage/')
 
+require('dotenv').config({ path: "../.env" })
+let use_aws_s3 = ( process.env.AWS_S3_STORAGE_ENABLED === 'true' ) ? true : false
+let use_gcp_storage = ( process.env.GOOGLE_CLOUD_STORAGE_ENABLED === 'true' ) ? true : false
+
+let platform_to_save
+if (use_gcp_storage){
+
+	platform_to_save = 'gcp_storage'
+
+} else if (use_aws_s3){
+
+	platform_to_save = 'aws_s3'
+
+} else {
+
+	platform_to_save = 'disk_storage'
+}
+
+
+
 
 const sheet_to_class_mapper = (sheet_name, db_object) => {
 	if (sheet_name === 'all_images'){
@@ -53,6 +73,8 @@ const sheet_to_class_mapper = (sheet_name, db_object) => {
 
 	}
 }
+
+
 
 
 const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_to_class_dict, user_id, attributes_with_paths, folder_name, timestamp) =>{
@@ -94,6 +116,13 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 
 	 		path_attribute_value = row.parent_row[index_of_path_attribute]
 
+ 		    // its making first letter of filepath as uppercase for gcp, turning it lowercase for aws
+ 		    if (platform_to_save === 'aws_s3'){
+
+		 		path_attribute_value = path_attribute_value.charAt(0).toLowerCase() + path_attribute_value.slice(1);
+
+		    }
+
 			dict_of_path_attributes[attribute_name] = `${get_filepath_to_save_with_bulk_uploading(folder_name, timestamp)}${path_attribute_value}`
 
 		})
@@ -117,9 +146,13 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 			_id: new mongoose.Types.ObjectId(),
 			...parent_db_object_dict,
 			...dict_of_path_attributes,
+			object_files_hosted_at: platform_to_save,
 		})
 
 		image.save(function (err, image) {
+
+			console.log('image')
+			console.log(image)
 
 			if (err) return handleError(err);
 
