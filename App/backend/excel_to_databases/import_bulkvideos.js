@@ -33,12 +33,18 @@ let use_gcp_storage = ( process.env.GOOGLE_CLOUD_STORAGE_ENABLED === 'true' ) ? 
 
 let platform_to_save
 if (use_gcp_storage){
+
 	platform_to_save = 'gcp_storage'
+
 } else if (use_aws_s3){
+
 	platform_to_save = 'aws_s3'
+
 } else {
+
 	platform_to_save = 'disk_storage'
 }
+
 
 
 const sheet_to_class_mapper = (sheet_name, db_object) => {
@@ -120,8 +126,6 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 
 
 	// assigning proper filepath at filepath attributes
-	console.log('all_images_db_objects')
-	console.log(all_images_db_objects)
 
 	Object.keys(indices_of_path_attribute).map((path_key) => {
 
@@ -163,8 +167,6 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 					// name_key[0] = name_key[0].toUpperCase()
 					name_key = name_key.split(" ").join("-")
 					// return Object.keys(item)[0] === attribute_value_for_video
-					console.log('name_key')
-					console.log(name_key)
 
 					return name_key === attribute_value_for_video
 				}
@@ -172,8 +174,6 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 
 			corresponding_image_db_object = corresponding_image_db_objects[0]
 
-			console.log('corresponding_image_db_object')
-			console.log(corresponding_image_db_object)
 
 			snapshot_id = corresponding_image_db_object[attribute_value_for_video]._id
 
@@ -188,9 +188,6 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 			dict_of_path_attributes.title = title_to_use 
 			dict_of_path_attributes.object_files_hosted_at = corresponding_image_db_object[attribute_value_for_video].object_files_hosted_at
 
-
-			console.log('dict_of_path_attributes')
-			console.log(dict_of_path_attributes)
 
 			all_dicts.push(dict_of_path_attributes)
 			dict_of_path_attributes = {}
@@ -220,6 +217,7 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 			_id: new mongoose.Types.ObjectId(),
 			...parent_db_object_dict,
 			...dict_to_use,
+			object_files_hosted_at: platform_to_save,
 		})
 
 		video.save(function (err, video) {

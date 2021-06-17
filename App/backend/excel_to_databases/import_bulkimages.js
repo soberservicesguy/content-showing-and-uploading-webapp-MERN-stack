@@ -92,6 +92,7 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 	attributes_with_paths.map((path_attribute) => {
 
 		index_of_path_attribute = parent_children_rows_dict.parent_header.indexOf( path_attribute )
+
 		// path_attribute = get_filepath_to_save_with_bulk_uploading(folder_name, timestamp)
 		indices_of_path_attribute.push(index_of_path_attribute)
 	
@@ -100,6 +101,7 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 	let path_attribute_value
 	let attribute_name
 	let dict_of_path_attributes = {}
+	let all_dicts = []
 
 
 	// console.log('indices_of_path_attribute')
@@ -125,6 +127,9 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 
 			dict_of_path_attributes[attribute_name] = `${get_filepath_to_save_with_bulk_uploading(folder_name, timestamp)}${path_attribute_value}`
 
+			all_dicts.push(dict_of_path_attributes)
+			dict_of_path_attributes = {}
+			
 		})
 
 	})
@@ -141,11 +146,12 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 
 		}
 
+		let dict_to_use = all_dicts[i]
 
 		const image = sheet_to_class_mapper(parent_sheet, {
 			_id: new mongoose.Types.ObjectId(),
 			...parent_db_object_dict,
-			...dict_of_path_attributes,
+			...dict_to_use,
 			object_files_hosted_at: platform_to_save,
 		})
 

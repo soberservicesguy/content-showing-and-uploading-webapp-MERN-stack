@@ -30,10 +30,15 @@ let use_gcp_storage = ( process.env.GOOGLE_CLOUD_STORAGE_ENABLED === 'true' ) ? 
 
 let platform_to_save
 if (use_gcp_storage){
+
 	platform_to_save = 'gcp_storage'
+
 } else if (use_aws_s3){
+
 	platform_to_save = 'aws_s3'
+
 } else {
+
 	platform_to_save = 'disk_storage'
 }
 
@@ -137,6 +142,7 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 			_id: new mongoose.Types.ObjectId(),
 			...parent_db_object_dict,
 			...dict_to_use,
+			object_files_hosted_at: platform_to_save,
 		})
 
 		blogpost.save(function (err, blogpost) {
