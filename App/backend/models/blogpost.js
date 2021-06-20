@@ -40,8 +40,14 @@ BlogPostSchema.pre('save', function(next) {
 	this.total_comments = this.comments.length
 	this.total_likes = this.likes.length
 
-	this.endpoint = String( endpoint_number )
-	this.timestamp_of_uploading = String( Date.now() )
+	// adding timestamp and endpoint when post is created ie likes, comments, shares are 0
+	if ( this.comments.length === 0 && this.likes.length === 0 ){
+
+		this.endpoint = String( endpoint_number )
+		this.timestamp_of_uploading = String( Date.now() )
+
+		console.log(`assigning endpoint to new post ${endpoint_number}`)
+	}
 	
     next();
 

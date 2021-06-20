@@ -21,7 +21,8 @@ require('dotenv').config({path: resolve(__dirname,"../.env")})
 
 
 function bulk_delete_all_images(){
-	Image.deleteMany({}, ()=>null)
+// 
+	Image.deleteMany({category:{$ne: 'video_thumbnail'}, category:{$ne: 'blogpost_image'}, category:{$ne: 'user_avatar'}}, ()=>null)
 }
 
 

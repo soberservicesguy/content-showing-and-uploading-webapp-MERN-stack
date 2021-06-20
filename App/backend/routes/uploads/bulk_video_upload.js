@@ -295,9 +295,7 @@ router.post('/bulk-upload-videos', passport.authenticate('jwt', { session: false
 						user_id = user._id
 
 						let uploaded_excel_sheet = path.join(__dirname , `../../assets/bulk_videos/${currentDate}_${currentTime}/${req.files['excel_sheet'][0].filename}`) 
-						sheet_to_class( excel_filepath, user_id, 'bulk_videos',  `${currentDate}_${currentTime}`, {snaphot_key:'image_thumbnail', video_key:'video_filepath'}, all_images_db_objects)
-						res.status(200).json({ success: true, msg: 'new videos created'});	
-
+						sheet_to_class( excel_filepath, user_id, 'bulk_videos',  `${currentDate}_${currentTime}`, {snaphot_key:'image_thumbnail', video_key:'video_filepath'}, all_images_db_objects, res)
 
 					} else {
 						console.log({ success: false, msg: "new videos NOT created, try again" })

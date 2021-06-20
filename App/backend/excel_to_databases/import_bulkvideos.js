@@ -72,7 +72,7 @@ const sheet_to_class_mapper = (sheet_name, db_object) => {
 }
 
 
-const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_to_class_dict, user_id, attributes_with_paths, folder_name, timestamp, all_images_db_objects) =>{
+const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_to_class_dict, user_id, attributes_with_paths, folder_name, timestamp, all_images_db_objects, res) =>{
 
 	const parent_header = parent_children_rows_dict.parent_header
 	const parent_sheet = parent_children_rows_dict.parent_sheet_name
@@ -184,7 +184,9 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 			// console.log( corresponding_image_db_object[attribute_value_for_video].title.split(" ").join("-") )
 
 			let title_to_use = corresponding_image_db_object[attribute_value_for_video].title.split(" ").join("-")
-			title_to_use = title_to_use.charAt(0).toUpperCase() + title_to_use.slice(1) // making first letter uppercase
+			if (platform_to_save === 'gcp_storage'){
+				title_to_use = title_to_use.charAt(0).toUpperCase() + title_to_use.slice(1) // making first letter uppercase
+			}
 			dict_of_path_attributes.title = title_to_use 
 			dict_of_path_attributes.object_files_hosted_at = corresponding_image_db_object[attribute_value_for_video].object_files_hosted_at
 
@@ -286,13 +288,16 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 			}			
 		})
 	}
+
+	res.status(200).json({ success: true, msg: 'new videos created'})
+	console.log('response sent')
 }
 
 
 
 
 
-const parent_children_detailed = (file_name, old_parent_child_relationship_data ,  parent_completely_detailed, sheet_to_class_dict, user_id, attributes_with_paths, folder_name, timestamp, all_images_db_objects) =>{
+const parent_children_detailed = (file_name, old_parent_child_relationship_data ,  parent_completely_detailed, sheet_to_class_dict, user_id, attributes_with_paths, folder_name, timestamp, all_images_db_objects, res) =>{
 
 	/**
 	 * -------------- CODE BLOCK 1 START ----------------
@@ -418,7 +423,7 @@ const parent_children_detailed = (file_name, old_parent_child_relationship_data 
 						.then( (ans_for_above) => {
 							if ( !all_results2.includes(ans_for_above) && ans_for_above !== undefined  ){
 								all_results2.push(ans_for_above);
-								save_parent_and_children_in_db(ans_for_above, sheet_to_class_dict, user_id, attributes_with_paths, folder_name, timestamp, all_images_db_objects); 
+								save_parent_and_children_in_db(ans_for_above, sheet_to_class_dict, user_id, attributes_with_paths, folder_name, timestamp, all_images_db_objects, res); 
 							}
 						})
 						// .then( ()=> console.log(parent_completely_detailed.row_details[0].children[0].child_rows) )
@@ -453,7 +458,7 @@ const parent_children_detailed = (file_name, old_parent_child_relationship_data 
 
 
 
-const generate_parent_completely_detailed = (file_name, parent_child_relationship_data, sheet_to_class_dict, user_id, attributes_with_paths, folder_name, timestamp, all_images_db_objects) => {
+const generate_parent_completely_detailed = (file_name, parent_child_relationship_data, sheet_to_class_dict, user_id, attributes_with_paths, folder_name, timestamp, all_images_db_objects, res) => {
 // NOTE : TEST THIS TO WORK FOR MULTIPLE PARENTS AND THEIR CHILDREN, OR ONLY USE IT FOR SINGLE PARENT AND ITS CHILDREN
 
 	/**
@@ -524,7 +529,7 @@ const generate_parent_completely_detailed = (file_name, parent_child_relationshi
 					  return parent_complete_details
 					}) // from .then block
 					// .then( res => console.log(res) )
-					.then( parent_detailed => parent_children_detailed(file_name, parent_child_relationship_data, parent_detailed, sheet_to_class_dict, user_id, attributes_with_paths, folder_name, timestamp, all_images_db_objects) )
+					.then( parent_detailed => parent_children_detailed(file_name, parent_child_relationship_data, parent_detailed, sheet_to_class_dict, user_id, attributes_with_paths, folder_name, timestamp, all_images_db_objects, res) )
 
 
 			}) // from parent_child_relationship_data.map block
@@ -543,7 +548,7 @@ const generate_parent_completely_detailed = (file_name, parent_child_relationshi
 
 
 
-const pull_parent_child_data_from_excel = (file_name, sheet_to_class_dict, user_id, attributes_with_paths, folder_name, timestamp, all_images_db_objects) => {
+const pull_parent_child_data_from_excel = (file_name, sheet_to_class_dict, user_id, attributes_with_paths, folder_name, timestamp, all_images_db_objects, res) => {
 	var all_collection = [];
 
 	var parent_child_details = {};
@@ -605,13 +610,13 @@ const pull_parent_child_data_from_excel = (file_name, sheet_to_class_dict, user_
 		return all_collection
 
 	})
-	.then( result => generate_parent_completely_detailed(file_name, result, sheet_to_class_dict, user_id, attributes_with_paths, folder_name, timestamp, all_images_db_objects) )
+	.then( result => generate_parent_completely_detailed(file_name, result, sheet_to_class_dict, user_id, attributes_with_paths, folder_name, timestamp, all_images_db_objects, res) )
 	// .catch( (err) => console.log('ERROR IS ', err) )
 }
 
 
 
-const sheet_to_class = (file_name, user_id, folder_name, timestamp, attributes_with_paths, all_images_db_objects) => {
+const sheet_to_class = (file_name, user_id, folder_name, timestamp, attributes_with_paths, all_images_db_objects, res) => {
 
 	console.log('ENTERED SHHET TO CLASS')
 	const sheet_to_class_dict = {};
@@ -630,7 +635,7 @@ const sheet_to_class = (file_name, user_id, folder_name, timestamp, attributes_w
 
 		})
 		// .then( (ans) => console.log(ans) )
-		.then ( (sheet_to_class_dict) => pull_parent_child_data_from_excel(file_name, sheet_to_class_dict, user_id, attributes_with_paths, folder_name, timestamp, all_images_db_objects) )
+		.then ( (sheet_to_class_dict) => pull_parent_child_data_from_excel(file_name, sheet_to_class_dict, user_id, attributes_with_paths, folder_name, timestamp, all_images_db_objects, res) )
 		.catch( err => console.log(err) )	
 }
 

@@ -148,8 +148,7 @@ router.post('/bulk-upload-images', passport.authenticate('jwt', { session: false
 					if (user){
 
 						user_id = user._id
-						sheet_to_class( excel_filepath, user_id, 'bulk_images',  `${currentDate}_${currentTime}`, ['image_filepath'])
-						res.status(200).json({ success: true, msg: 'new images created'});	
+						sheet_to_class( excel_filepath, user_id, 'bulk_images',  `${currentDate}_${currentTime}`, ['image_filepath'], res)
 
 					} else {
 						res.status(200).json({ success: false, msg: "new images NOT created, try again" });

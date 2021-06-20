@@ -313,6 +313,7 @@ router.post('/create-like-for-image', passport.authenticate('jwt', { session: fa
 
 	var image_endpoint = req.body.image_endpoint
 
+
 	User.findOne({ phone_number: req.user.user_object.phone_number })
 	.then(async (user) => {
 					
@@ -369,19 +370,27 @@ router.get('/images-list-with-children-light', async function(req, res, next){
 
 	Image.
 	find().
+	where('category').ne('blogpost_image').
 	limit(20).
 	// populate('comments'). // not needed since Image stored total number of likes and comments in it
 	// populate('likes').
 	// populate('user').
 	then(async (images)=>{
 
+		console.log(`total images are ${images.length}`)
+
 		var newImages_list = []
 		let all_images = await Promise.all(images.map(async(image, index)=>{
 
+			console.log('image')
+			console.log(image)
 
 			var newImage = {}
 
 			let image_object = await Image.findOne({ _id: image })
+
+			console.log('image_object')
+			console.log(image_object)
 
 			if (image_object.category !== 'blogpost_image'){
 				// let base64_encoded_image = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
@@ -395,9 +404,15 @@ router.get('/images-list-with-children-light', async function(req, res, next){
 				newImage.comments_quantity = image_object.total_comments
 				newImage.likes_quantity = image_object.total_likes
 
+				console.log('newImage')
+				console.log(newImage)
+
 				if (image_object.category !== 'user_avatar'){
 
 					newImages_list.push({...newImage})
+					console.log('OBJECT PUSHED')
+					console.log('newImages_list quantity')
+					console.log(newImages_list.length)
 
 				}
 
@@ -407,13 +422,15 @@ router.get('/images-list-with-children-light', async function(req, res, next){
 
 		}))
 
-		// console.log('newImages_list')
-		// console.log(newImages_list)
+		console.log('newImages_list')
+		console.log(newImages_list)
 		return newImages_list
 	})
 	.then((newImages_list) => {
 
 		if (newImages_list.length > 0) {
+
+			console.log(`total images sending are ${newImages_list.length}`)
 
 			res.status(200).json({success: true, images:newImages_list});
 
