@@ -69,7 +69,7 @@ function user_avatar_image_upload(timestamp){
 
 // router.post('/protected-avatar-image-upload', passport.authenticate('jwt', { session: false }), (req, res, next) => {
 router.post('/signup-and-get-privileges', (req, res, next) => {
-
+	console.log('INCOMING')
 	timestamp = Date.now()
 
 	user_avatar_image_upload(timestamp)(req, res, (err) => {

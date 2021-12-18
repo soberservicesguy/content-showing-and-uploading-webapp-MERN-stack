@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: user-module
-        image: soberservicesguy/portfolio-images:content_user_module_5
+        image: content_users_module:latest
         resources:
           limits:
             cpu: "200m"
