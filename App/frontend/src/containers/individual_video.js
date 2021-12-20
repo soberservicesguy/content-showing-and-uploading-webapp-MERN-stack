@@ -142,11 +142,13 @@ class IndividualIndividualVideo extends Component {
 		} else if (video_data.object_files_hosted_at === 'aws_s3'){
 
 			console.log('ITS AWS')
-			// video_source = `https://s3.amazonaws.com/${ data.video_filepath }`
-			video_source = `${ video_data.video_filepath }` // VERIFY
-			// video_source = `https://d3iwm50qkhk5zm.cloudfront.net/${ video_data.video_filepath }`
-			// console.log('video_source')
-			// console.log(video_source)
+			// video_source = `https://s3.amazonaws.com/${ video_data.video_filepath }`
+			// video_source = `https://portfolio-apps-mern-native.s3.ap-southeast-1.amazonaws.com/${ video_data.video_filepath }`
+
+			// video_source = `${ video_data.video_filepath }` // VERIFY
+			video_source = `http://d33yizdt8hggvw.cloudfront.net/${ video_data.video_filepath }`
+			console.log('video_source')
+			console.log(video_source)
 
 			post_video_content = (
 				<div style={styles.postVideoContainer}>
