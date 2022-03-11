@@ -261,7 +261,7 @@ class CreateVideo extends Component {
 											console.log(response.data) // current video screen data
 											
 											setNewVideoIDInState(response)
-
+											console.log({data:response.data})
 											// set to current parent object
 											setResponseInCurrentVideo(response.data)
 

@@ -125,8 +125,8 @@ const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_t
 
 		    }
 
-			dict_of_path_attributes[attribute_name] = `${get_filepath_to_save_with_bulk_uploading(folder_name, timestamp)}${path_attribute_value}`
-
+			dict_of_path_attributes[attribute_name] = `${get_filepath_to_save_with_bulk_uploading(folder_name, timestamp)}${path_attribute_value.replace("./assets/bulk_images/images/", "")}`
+			console.log({fileNameBeingUsed: `${get_filepath_to_save_with_bulk_uploading(folder_name, timestamp)}${path_attribute_value.replace("./assets/bulk_images/images/", "")}`})
 			all_dicts.push(dict_of_path_attributes)
 			dict_of_path_attributes = {}
 			

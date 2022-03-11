@@ -240,7 +240,7 @@ class BulkVideoUpload extends Component {
 									}
 
 									if (this.state.excel_sheet !== '' && this.state.videos_to_upload.length > 0){
-
+										console.log('ATTEMPTING TO UPLOAD VIDEOS')
 
 										axios.post(utils.baseUrl + '/uploads/bulk-upload-videos', formData)
 										.then(function (response) {

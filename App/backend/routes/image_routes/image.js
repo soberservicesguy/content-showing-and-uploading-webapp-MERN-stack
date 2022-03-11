@@ -473,22 +473,25 @@ router.get('/images-list-with-children', async function(req, res, next){
 			var newImage = {}
 
 			let image_object = await Image.findOne({ _id: image })
-			let base64_encoded_image = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
+			if (image_object){
+				let base64_encoded_image = await get_image_to_display(image_object.image_filepath, image_object.object_files_hosted_at)
 
-			// let base64_encoded_image = await get_image_to_display(image.image_filepath, image.object_files_hosted_at)
-			newImage.category = image_object['category']
-			newImage.image_filepath = base64_encoded_image
-			newImage.title = image_object['title']
-			newImage.endpoint = image_object['endpoint']
-			newImage.comments_quantity = image_object.total_comments
-			newImage.likes_quantity = image_object.total_likes
+				// let base64_encoded_image = await get_image_to_display(image.image_filepath, image.object_files_hosted_at)
+				newImage.category = image_object['category']
+				newImage.image_filepath = base64_encoded_image
+				newImage.title = image_object['title']
+				newImage.endpoint = image_object['endpoint']
+				newImage.comments_quantity = image_object.total_comments
+				newImage.likes_quantity = image_object.total_likes
 
-			if (image_object.category !== 'user_avatar'){
+				if (image_object.category !== 'user_avatar' && image_object.category !== 'video_thumbnail'){
 
-				newImages_list.push({...newImage})
+					newImages_list.push({...newImage})
+
+				}
+
 
 			}
-
 			newImage = {}
 
 		}))
@@ -803,15 +806,17 @@ router.get('/images-list-with-children', function(req, res, next){
 		then((images)=>{
 			var newImages_list = []
 			images.map((image, index)=>{
-				var newImage = {}
+				if (image && image[ 'image_source' ] && image.category !== 'user_avatar' && image.category !== 'video_thumbnail'){
+					var newImage = {}
 
-				newImage.category = image[ 'category' ]
-				newImage.image_source = base64_encode( image[ 'image_source' ] )
-				newImage.title = image[ 'title' ]
-				newImage.endpoint = image[ 'endpoint' ]
+					newImage.category = image[ 'category' ]
+					newImage.image_source = base64_encode( image[ 'image_filepath' ] )
+					newImage.title = image[ 'title' ]
+					newImage.endpoint = image[ 'endpoint' ]
 
-				newImages_list.push({...newImage})
-				newImage = {}
+					newImages_list.push({...newImage})
+					newImage = {}
+				}
 			});
 
 			return newImages_list
@@ -860,7 +865,7 @@ router.get('/images-list-next-10-with-children', function(req, res, next){
 				var newImage = {}
 
 				newImage.category = image[ 'category' ]
-				newImage.image_source = base64_encode( image[ 'image_source' ] )
+				newImage.image_filepath = base64_encode( image[ 'image_filepath' ] )
 				newImage.title = image[ 'title' ]
 				newImage.endpoint = image[ 'endpoint' ]
 

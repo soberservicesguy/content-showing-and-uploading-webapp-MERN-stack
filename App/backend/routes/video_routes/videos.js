@@ -563,6 +563,7 @@ router.get('/videos-list-with-children-light', passport.authenticate('jwt', { se
 			newVideo.description = video[ 'description' ]
 			newVideo.endpoint = video[ 'endpoint' ]
 			newVideo.object_files_hosted_at = video[ 'object_files_hosted_at' ]
+			newVideo.timestamp_of_uploading = video['timestamp_of_uploading']
 
 			newVideo.total_comments = video['total_comments']
 			newVideo.total_likes = video['total_likes']
@@ -650,7 +651,7 @@ router.get('/videos-list-with-children', passport.authenticate('jwt', { session:
 			newVideo.description = video[ 'description' ]
 			newVideo.endpoint = video[ 'endpoint' ]
 			newVideo.object_files_hosted_at = video[ 'object_files_hosted_at' ]
-
+			newVideo.timestamp_of_uploading = video['timestamp_of_uploading']
 			newVideo.total_comments = video['total_comments']
 			newVideo.total_likes = video['total_likes']
 
