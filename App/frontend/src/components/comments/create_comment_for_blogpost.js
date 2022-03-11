@@ -183,7 +183,7 @@ class CreateCommentForBlogpost extends Component {
 
 								}}
 							>
-								<Comment style={{color:'grey', fontSize:30, marginRight:40,}}/>
+								<Comment style={{color:'grey', fontSize:30, marginRight:10,}}/>
 							</button>
 						</div>
 

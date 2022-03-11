@@ -33,7 +33,7 @@ function get_multers3_storage(timestamp){
 	return multerS3({
 		s3: s3,
 		bucket: s3_bucket, // bucket name
-		acl: 'aws-exec-read',
+		acl: 'public-read',
 		key: function (req, file, cb) {
 			cb(null, `${file.fieldname}s/${path.basename( file.originalname, path.extname( file.originalname ) ) + '-' + timestamp + path.extname( file.originalname )}`)
 		}
@@ -101,6 +101,7 @@ function save_file_to_aws_s3(file_payload, timestamp){
 				Bucket:s3_bucket, 
 				Key:`${file_payload.fieldname}s/${filename_to_use}`, 
 				// Body: file_payload,
+				ACL:'public-read',
 				Body: file_payload.buffer,
 			}
 
@@ -242,6 +243,7 @@ async function save_file_to_aws_s3_for_bulk_files(timestamp, folder_name, file){
 	let params = { 
 		Bucket:s3_bucket, 
 		Key:`${folder_name}/${timestamp}/${file.originalname}`, 
+		ACL:'public-read',
 		Body: file.buffer
 	}
 

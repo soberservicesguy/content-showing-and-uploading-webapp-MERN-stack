@@ -352,7 +352,7 @@ class LoginContainer extends Component {
 				<div style={styles.outerContainer}>
 
 
-					<div style={{...styles.formAndRounButtonContainer, width:'30%', margin:'auto', backgroundColor: '#3B5998'}}>
+					<div style={{...styles.formAndRounButtonContainer, width:'28%', margin:'auto', backgroundColor: '#3B5998'}}>
 						<button 
 							style={styles.roundButton}
 							onClick={ () => {}}
@@ -406,7 +406,7 @@ class LoginContainer extends Component {
 					</div>
 
 					<div style={{
-						width:'90%',
+						width:'50%',
 						margin:'auto',
 						display:'flex',
 						flexDirection:'row',

@@ -9,10 +9,6 @@ import {
 	Redirect,
 } from "react-router-dom";
 
-import {
-	MyResponsiveNavigation,
-} from "./"
-
 // IMPORT CONNECTED CONTAINERS
 import {
 	ConnectedLoginContainer,
@@ -24,6 +20,7 @@ import {
 	ConnectedImageContainer,
 	ConnectedIndividualImage,
 	ConnectedFooterContainer,
+	ConnectedResponsiveNavigation,
 } from "../redux_stuff/connected_components";
 
 import {
@@ -87,7 +84,7 @@ class RootRouterContainer extends Component {
 							(this.props.isSignedIn) ? (
 								<React.Fragment>
 									<div style={{width:'95%', margin:'auto'}}>
-										<MyResponsiveNavigation/>
+										<ConnectedResponsiveNavigation/>
 									</div>
 				
 									<ConnectedBlogPostContainer/>
@@ -105,7 +102,7 @@ class RootRouterContainer extends Component {
 							(this.props.isSignedIn) ? (
 								<React.Fragment>
 									<div style={{width:'95%', margin:'auto'}}>
-										<MyResponsiveNavigation/>
+										<ConnectedResponsiveNavigation/>
 									</div>
 				
 									<ConnectedIndividualBlogPost/>
@@ -123,7 +120,7 @@ class RootRouterContainer extends Component {
 							(this.props.isSignedIn) ? (
 								<React.Fragment>
 									<div style={{width:'95%', margin:'auto'}}>
-										<MyResponsiveNavigation/>
+										<ConnectedResponsiveNavigation/>
 									</div>
 				
 									<ConnectedVideoContainer/>
@@ -141,7 +138,7 @@ class RootRouterContainer extends Component {
 							(this.props.isSignedIn) ? (
 								<React.Fragment>
 									<div style={{width:'95%', margin:'auto'}}>
-										<MyResponsiveNavigation/>
+										<ConnectedResponsiveNavigation/>
 									</div>
 				
 									<ConnectedIndividualVideo/>
@@ -160,7 +157,7 @@ class RootRouterContainer extends Component {
 							(this.props.isSignedIn) ? (
 								<React.Fragment>
 									<div style={{width:'95%', margin:'auto'}}>
-										<MyResponsiveNavigation/>
+										<ConnectedResponsiveNavigation/>
 									</div>
 				
 									<ConnectedImageContainer/>
@@ -179,7 +176,7 @@ class RootRouterContainer extends Component {
 							(this.props.isSignedIn) ? (
 								<React.Fragment>
 									<div style={{width:'95%', margin:'auto'}}>
-										<MyResponsiveNavigation/>
+										<ConnectedResponsiveNavigation/>
 									</div>
 				
 									<ConnectedIndividualImage/>
@@ -198,7 +195,7 @@ class RootRouterContainer extends Component {
 							(this.props.isSignedIn) ? (
 								<React.Fragment>
 									<div style={{width:'95%', margin:'auto'}}>
-										<MyResponsiveNavigation/>
+										<ConnectedResponsiveNavigation/>
 									</div>
 				
 									<BulkImageUpload/>
@@ -217,7 +214,7 @@ class RootRouterContainer extends Component {
 							(this.props.isSignedIn) ? (
 								<React.Fragment>
 									<div style={{width:'95%', margin:'auto'}}>
-										<MyResponsiveNavigation/>
+										<ConnectedResponsiveNavigation/>
 									</div>
 				
 									<BulkVideoUpload/>
@@ -236,7 +233,7 @@ class RootRouterContainer extends Component {
 							(this.props.isSignedIn) ? (
 								<React.Fragment>
 									<div style={{width:'95%', margin:'auto'}}>
-										<MyResponsiveNavigation/>
+										<ConnectedResponsiveNavigation/>
 									</div>
 				
 									<BulkBlogpostUpload/>

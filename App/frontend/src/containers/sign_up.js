@@ -126,7 +126,7 @@ class SignUpContainer extends Component {
 			formAndRounButtonContainer:{
 				marginTop:20,
 				// flex:1,
-				flexBasis:'50%',
+				flexBasis:'35%',
 				// width: '20%',
 				// width: 100,
 				height: 40,

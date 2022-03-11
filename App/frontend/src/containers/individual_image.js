@@ -162,13 +162,13 @@ class IndividualIndividualImage extends Component {
 	  				<div>
 	  					<ShowLikesOfImage
 	  						dataPayloadFromParent = { this.props.current_image }
-	  						likes_quantity = { this.props.current_image.likes_quantity }
+	  						likes_quantity = { this.props.current_image.total_likes }
 	  					/>
 	  				</div>
 	  				<div>
 	  					<ShowCommentsOfImage
 	  						dataPayloadFromParent = { this.props.current_image }
-	  						comments_quantity = { this.props.current_image.comments_quantity }
+	  						comments_quantity = { this.props.current_image.total_comments }
 	  					/>
 	  				</div>
   				</div>

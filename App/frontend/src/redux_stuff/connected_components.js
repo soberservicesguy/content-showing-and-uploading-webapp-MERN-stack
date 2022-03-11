@@ -14,6 +14,7 @@ import {
 	LoginContainer,
 	SignUpContainer,
 	FooterContainer,
+	MyResponsiveNavigation
 } from "../containers";
 
 
@@ -58,6 +59,11 @@ import {
 import {
 	CreateLikeForImage,
 } from "../components/likes"
+
+export const ConnectedResponsiveNavigation = connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(MyResponsiveNavigation);
 
 
 export const ConnectedFooterContainer = connect(
